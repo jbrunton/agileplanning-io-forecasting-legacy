@@ -24,11 +24,11 @@ RSpec.describe IssuesController, type: :controller do
   # Issue. As you add validations to Issue, be sure to
   # adjust the attributes here as well.
   let(:valid_attributes) {
-    skip("Add a hash of attributes valid for your model")
+    { key: 'DEMO-101', summary: 'Some Issue' }
   }
 
   let(:invalid_attributes) {
-    skip("Add a hash of attributes invalid for your model")
+    { key: '', summary: '' }
   }
 
   # This should return the minimal set of values that should be in the session
@@ -103,14 +103,16 @@ RSpec.describe IssuesController, type: :controller do
   describe "PUT #update" do
     context "with valid params" do
       let(:new_attributes) {
-        skip("Add a hash of attributes valid for your model")
+        { summary: 'Another Issue' }
       }
 
       it "updates the requested issue" do
         issue = Issue.create! valid_attributes
+
         put :update, {:id => issue.to_param, :issue => new_attributes}, valid_session
+
         issue.reload
-        skip("Add assertions for updated state")
+        expect(issue.summary).to eq(new_attributes[:summary])
       end
 
       it "assigns the requested issue as @issue" do
