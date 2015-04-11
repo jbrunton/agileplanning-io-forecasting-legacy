@@ -1,4 +1,4 @@
-class JiraClient
+class Jira::Client
   def initialize(domain, params)
     @domain = domain
     @credentials = params.slice(:username, :password)

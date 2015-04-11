@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe JiraClient do
+RSpec.describe Jira::Client do
   let(:domain) { 'http://www.example.com' }
   let(:username) { 'some_user' }
   let(:password) { 's0m3 passw0rd' }
@@ -13,7 +13,7 @@ RSpec.describe JiraClient do
   let(:dummy_query) { 'issuetype=Epic' }
 
   before(:each) do
-    @client = JiraClient.new(domain, params)
+    @client = Jira::Client.new(domain, params)
   end
 
   describe "#request" do
