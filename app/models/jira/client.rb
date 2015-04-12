@@ -6,10 +6,8 @@ class Jira::Client
 
   def request(method, relative_url)
     uri = URI::join(@domain, relative_url)
-    puts "issue request to #{uri}"
     request = setup_request(uri)
     response = issue_request(uri, request)
-    puts "response: #{response.body}"
     JSON.parse(response.body)
   end
 
@@ -26,7 +24,6 @@ class Jira::Client
   def get_rapid_boards
     url = "/rest/greenhopper/1.0/rapidviews/list"
     response = request(:get, url)
-    puts "***views: #{response}"
     response['views'].map do |raw_view|
       Jira::RapidBoardBuilder.new(raw_view).build
     end
