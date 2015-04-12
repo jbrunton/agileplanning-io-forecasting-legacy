@@ -36,28 +36,21 @@ RSpec.describe IssuesController, type: :controller do
   # IssuesController. Be sure to keep this updated too.
   let(:valid_session) { {} }
 
-  let!(:project) {
-    Project.create!(domain: 'http://www.example.com', board_id: '123', name: 'Some Project')
-  }
+  let(:project) { create(:project) }
+  let(:issue) { create(:issue, project: project) }
 
   describe "GET #index" do
-    let!(:other_project) {
-      Project.create!(domain: 'http://www.example.com', board_id: '123', name: 'Some Project')
-    }
+    let!(:other_project) { create(:project) }
 
     it "assigns all issues as @issues" do
-      issue = project.issues.create! valid_attributes
       other_project.issues.create! valid_attributes
-
       get :index, {:project_id => project.to_param}, valid_session
-
       expect(assigns(:issues)).to eq([issue])
     end
   end
 
   describe "GET #show" do
     it "assigns the requested issue as @issue" do
-      issue = Issue.create! valid_attributes
       get :show, {:id => issue.to_param}, valid_session
       expect(assigns(:issue)).to eq(issue)
     end

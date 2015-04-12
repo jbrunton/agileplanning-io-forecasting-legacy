@@ -36,9 +36,10 @@ RSpec.describe ProjectsController, type: :controller do
   # ProjectsController. Be sure to keep this updated too.
   let(:valid_session) { {} }
 
+  let!(:project) { create(:project) }
+
   describe "GET #index" do
     it "assigns all projects as @projects" do
-      project = Project.create! valid_attributes
       get :index, {}, valid_session
       expect(assigns(:projects)).to eq([project])
     end
@@ -46,7 +47,6 @@ RSpec.describe ProjectsController, type: :controller do
 
   describe "GET #show" do
     it "assigns the requested project as @project" do
-      project = Project.create! valid_attributes
       get :show, {:id => project.to_param}, valid_session
       expect(assigns(:project)).to eq(project)
     end
@@ -61,7 +61,6 @@ RSpec.describe ProjectsController, type: :controller do
 
   describe "GET #edit" do
     it "assigns the requested project as @project" do
-      project = Project.create! valid_attributes
       get :edit, {:id => project.to_param}, valid_session
       expect(assigns(:project)).to eq(project)
     end
@@ -107,8 +106,6 @@ RSpec.describe ProjectsController, type: :controller do
       }
 
       it "updates the requested project" do
-        project = Project.create! valid_attributes
-
         put :update, {:id => project.to_param, :project => new_attributes}, valid_session
 
         project.reload
@@ -116,13 +113,11 @@ RSpec.describe ProjectsController, type: :controller do
       end
 
       it "assigns the requested project as @project" do
-        project = Project.create! valid_attributes
         put :update, {:id => project.to_param, :project => valid_attributes}, valid_session
         expect(assigns(:project)).to eq(project)
       end
 
       it "redirects to the project" do
-        project = Project.create! valid_attributes
         put :update, {:id => project.to_param, :project => valid_attributes}, valid_session
         expect(response).to redirect_to(project)
       end
@@ -130,13 +125,11 @@ RSpec.describe ProjectsController, type: :controller do
 
     context "with invalid params" do
       it "assigns the project as @project" do
-        project = Project.create! valid_attributes
         put :update, {:id => project.to_param, :project => invalid_attributes}, valid_session
         expect(assigns(:project)).to eq(project)
       end
 
       it "re-renders the 'edit' template" do
-        project = Project.create! valid_attributes
         put :update, {:id => project.to_param, :project => invalid_attributes}, valid_session
         expect(response).to render_template("edit")
       end
@@ -145,14 +138,12 @@ RSpec.describe ProjectsController, type: :controller do
 
   describe "DELETE #destroy" do
     it "destroys the requested project" do
-      project = Project.create! valid_attributes
       expect {
         delete :destroy, {:id => project.to_param}, valid_session
       }.to change(Project, :count).by(-1)
     end
 
     it "redirects to the projects list" do
-      project = Project.create! valid_attributes
       delete :destroy, {:id => project.to_param}, valid_session
       expect(response).to redirect_to(projects_url)
     end

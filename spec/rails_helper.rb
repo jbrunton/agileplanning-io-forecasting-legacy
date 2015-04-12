@@ -27,6 +27,9 @@ require 'webmock/rspec'
 ActiveRecord::Migration.maintain_test_schema!
 
 RSpec.configure do |config|
+  # factory_girl setup
+  config.include FactoryGirl::Syntax::Methods
+
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   config.fixture_path = "#{::Rails.root}/spec/fixtures"
 
