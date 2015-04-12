@@ -4,12 +4,14 @@ class IssuesController < ApplicationController
   # GET /issues
   # GET /issues.json
   def index
-    @issues = Project.find(params[:project_id]).issues
+    @project = Project.find(params[:project_id])
+    @issues = @project.issues
   end
 
   # GET /issues/1
   # GET /issues/1.json
   def show
+    @project = @issue.project
   end
 
   private

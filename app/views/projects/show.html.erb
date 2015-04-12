@@ -15,5 +15,17 @@
   <%= @project.name %>
 </p>
 
+<%= form_tag(sync_project_path(@project), method: "post") do %>
+    <p>
+      <%= label_tag(:username, "Username:") %>
+      <input value="jbrunton" type="text" name="username" id="username">
+
+      <%= label_tag(:password, "Password:") %>
+      <input type="text" name="password" id="password">
+
+      <%= submit_tag("Sync") %>
+    </p>
+<% end %>
+
 <%= link_to 'Edit', edit_project_path(@project) %> |
 <%= link_to 'Back', projects_path %>
