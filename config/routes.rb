@@ -1,6 +1,9 @@
 Rails.application.routes.draw do
-  resources :issues
-  resources :projects
+  resources :issues, only: [:show]
+
+  resources :projects do
+    resources :issues, only: [:index]
+  end
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

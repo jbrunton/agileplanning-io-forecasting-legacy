@@ -1,5 +1,5 @@
 class Issue < ActiveRecord::Base
-  belongs_to :project_id
+  belongs_to :project
 
   validates :key, presence: true
   validates :summary, presence: true

@@ -36,10 +36,21 @@ RSpec.describe IssuesController, type: :controller do
   # IssuesController. Be sure to keep this updated too.
   let(:valid_session) { {} }
 
+  let!(:project) {
+    Project.create!(domain: 'http://www.example.com', board_id: '123', name: 'Some Project')
+  }
+
   describe "GET #index" do
+    let!(:other_project) {
+      Project.create!(domain: 'http://www.example.com', board_id: '123', name: 'Some Project')
+    }
+
     it "assigns all issues as @issues" do
-      issue = Issue.create! valid_attributes
-      get :index, {}, valid_session
+      issue = project.issues.create! valid_attributes
+      other_project.issues.create! valid_attributes
+
+      get :index, {:project_id => project.to_param}, valid_session
+
       expect(assigns(:issues)).to eq([issue])
     end
   end
@@ -51,111 +62,4 @@ RSpec.describe IssuesController, type: :controller do
       expect(assigns(:issue)).to eq(issue)
     end
   end
-
-  describe "GET #new" do
-    it "assigns a new issue as @issue" do
-      get :new, {}, valid_session
-      expect(assigns(:issue)).to be_a_new(Issue)
-    end
-  end
-
-  describe "GET #edit" do
-    it "assigns the requested issue as @issue" do
-      issue = Issue.create! valid_attributes
-      get :edit, {:id => issue.to_param}, valid_session
-      expect(assigns(:issue)).to eq(issue)
-    end
-  end
-
-  describe "POST #create" do
-    context "with valid params" do
-      it "creates a new Issue" do
-        expect {
-          post :create, {:issue => valid_attributes}, valid_session
-        }.to change(Issue, :count).by(1)
-      end
-
-      it "assigns a newly created issue as @issue" do
-        post :create, {:issue => valid_attributes}, valid_session
-        expect(assigns(:issue)).to be_a(Issue)
-        expect(assigns(:issue)).to be_persisted
-      end
-
-      it "redirects to the created issue" do
-        post :create, {:issue => valid_attributes}, valid_session
-        expect(response).to redirect_to(Issue.last)
-      end
-    end
-
-    context "with invalid params" do
-      it "assigns a newly created but unsaved issue as @issue" do
-        post :create, {:issue => invalid_attributes}, valid_session
-        expect(assigns(:issue)).to be_a_new(Issue)
-      end
-
-      it "re-renders the 'new' template" do
-        post :create, {:issue => invalid_attributes}, valid_session
-        expect(response).to render_template("new")
-      end
-    end
-  end
-
-  describe "PUT #update" do
-    context "with valid params" do
-      let(:new_attributes) {
-        { summary: 'Another Issue' }
-      }
-
-      it "updates the requested issue" do
-        issue = Issue.create! valid_attributes
-
-        put :update, {:id => issue.to_param, :issue => new_attributes}, valid_session
-
-        issue.reload
-        expect(issue.summary).to eq(new_attributes[:summary])
-      end
-
-      it "assigns the requested issue as @issue" do
-        issue = Issue.create! valid_attributes
-        put :update, {:id => issue.to_param, :issue => valid_attributes}, valid_session
-        expect(assigns(:issue)).to eq(issue)
-      end
-
-      it "redirects to the issue" do
-        issue = Issue.create! valid_attributes
-        put :update, {:id => issue.to_param, :issue => valid_attributes}, valid_session
-        expect(response).to redirect_to(issue)
-      end
-    end
-
-    context "with invalid params" do
-      it "assigns the issue as @issue" do
-        issue = Issue.create! valid_attributes
-        put :update, {:id => issue.to_param, :issue => invalid_attributes}, valid_session
-        expect(assigns(:issue)).to eq(issue)
-      end
-
-      it "re-renders the 'edit' template" do
-        issue = Issue.create! valid_attributes
-        put :update, {:id => issue.to_param, :issue => invalid_attributes}, valid_session
-        expect(response).to render_template("edit")
-      end
-    end
-  end
-
-  describe "DELETE #destroy" do
-    it "destroys the requested issue" do
-      issue = Issue.create! valid_attributes
-      expect {
-        delete :destroy, {:id => issue.to_param}, valid_session
-      }.to change(Issue, :count).by(-1)
-    end
-
-    it "redirects to the issues list" do
-      issue = Issue.create! valid_attributes
-      delete :destroy, {:id => issue.to_param}, valid_session
-      expect(response).to redirect_to(issues_url)
-    end
-  end
-
 end
