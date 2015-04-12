@@ -11,11 +11,21 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150411090402) do
+ActiveRecord::Schema.define(version: 20150411091706) do
+
+  create_table "issues", force: :cascade do |t|
+    t.string   "key"
+    t.string   "summary"
+    t.integer  "project_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "issues", ["project_id"], name: "index_issues_on_project_id"
 
   create_table "projects", force: :cascade do |t|
     t.string   "domain"
-    t.string   "board_id"
+    t.integer  "board_id"
     t.string   "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

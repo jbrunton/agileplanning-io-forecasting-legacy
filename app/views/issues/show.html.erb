@@ -1,0 +1,18 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Key:</strong>
+  <%= @issue.key %>
+</p>
+
+<p>
+  <strong>Summary:</strong>
+  <%= @issue.summary %>
+</p>
+
+<p>
+  <strong>Project:</strong>
+  <%= @issue.project_id %>
+</p>
+
+<%= link_to 'Back', project_issues_path(@project) %>

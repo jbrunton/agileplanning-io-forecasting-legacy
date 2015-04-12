@@ -1,5 +1,5 @@
 class ProjectsController < ApplicationController
-  before_action :set_project, only: [:show, :edit, :update, :destroy]
+  before_action :set_project, only: [:show, :edit, :update, :destroy, :sync]
 
   # GET /projects
   # GET /projects.json
@@ -59,6 +59,24 @@ class ProjectsController < ApplicationController
       format.html { redirect_to projects_url, notice: 'Project was successfully destroyed.' }
       format.json { head :no_content }
     end
+  end
+
+  # POST /projects/1/sync
+  # POST /projects/1/sync.json
+  def sync
+    @project.issues.destroy_all
+
+    jira_client = Jira::Client.new(@project.domain, params.permit(:username, :password))
+
+    rapid_board = jira_client.get_rapid_board(@project.board_id)
+
+    jira_client.search_issues(query: rapid_board.query).each do |issue|
+      @project.issues.append(issue)
+    end
+
+    @project.save
+
+    redirect_to(@project)
   end
 
   private

@@ -2,7 +2,7 @@ class CreateProjects < ActiveRecord::Migration
   def change
     create_table :projects do |t|
       t.string :domain
-      t.string :board_id
+      t.integer :board_id
       t.string :name
 
       t.timestamps null: false
