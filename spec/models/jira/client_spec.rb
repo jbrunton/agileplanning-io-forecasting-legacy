@@ -37,7 +37,7 @@ RSpec.describe Jira::Client do
 
   describe "#search_issues" do
     it "searches for issues with the given query" do
-      stub_request(:get, "https://#{username}:#{password}@www.example.com:80/rest/api/2/search?&jql=#{dummy_query}")
+      stub_request(:get, "https://#{username}:#{password}@www.example.com:80/rest/api/2/search?&jql=#{dummy_query}&maxResults=#{Jira::Client::MAX_RESULTS}")
           .to_return(body: issues_response)
 
       response = @client.search_issues(query: dummy_query)
@@ -46,20 +46,20 @@ RSpec.describe Jira::Client do
     end
 
     it "pages the results" do
-      stub_request(:get, "https://#{username}:#{password}@www.example.com:80/rest/api/2/search?&jql=#{dummy_query}")
+      stub_request(:get, "https://#{username}:#{password}@www.example.com:80/rest/api/2/search?&jql=#{dummy_query}&maxResults=1")
           .to_return(body: File.read('spec/fixtures/responses/issues/one_of_two.json'))
 
-      stub_request(:get, "https://#{username}:#{password}@www.example.com:80/rest/api/2/search?jql=#{dummy_query}&startAt=1")
+      stub_request(:get, "https://#{username}:#{password}@www.example.com:80/rest/api/2/search?jql=#{dummy_query}&startAt=1&maxResults=1")
           .to_return(body: File.read('spec/fixtures/responses/issues/two_of_two.json'))
 
-      response = @client.search_issues(query: dummy_query)
+      response = @client.search_issues(query: dummy_query, max_results: 1)
 
       expect(response[0]).to be_equivalent_to(Issue.new(key: 'DEMO-101', summary: 'Issue One'))
       expect(response[1]).to be_equivalent_to(Issue.new(key: 'DEMO-102', summary: 'Issue Two'))
     end
 
     it "expands the given fields" do
-      stub_request(:get, "https://#{username}:#{password}@www.example.com:80/rest/api/2/search?&expand=foo,bar")
+      stub_request(:get, "https://#{username}:#{password}@www.example.com:80/rest/api/2/search?&expand=foo,bar&maxResults=#{Jira::Client::MAX_RESULTS}")
           .to_return(body: issues_response)
       response = @client.search_issues(expand: ['foo', 'bar'])
     end
