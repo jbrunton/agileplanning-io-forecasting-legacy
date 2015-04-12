@@ -5,12 +5,12 @@ RSpec.describe "projects/index", type: :view do
     assign(:projects, [
       Project.create!(
         :domain => "Domain",
-        :board_id => "Board",
+        :board_id => 1,
         :name => "Name"
       ),
       Project.create!(
         :domain => "Domain",
-        :board_id => "Board",
+        :board_id => 1,
         :name => "Name"
       )
     ])
@@ -19,7 +19,7 @@ RSpec.describe "projects/index", type: :view do
   it "renders a list of projects" do
     render
     assert_select "tr>td", :text => "Domain".to_s, :count => 2
-    assert_select "tr>td", :text => "Board".to_s, :count => 2
+    assert_select "tr>td", :text => 1.to_s, :count => 2
     assert_select "tr>td", :text => "Name".to_s, :count => 2
   end
 end
