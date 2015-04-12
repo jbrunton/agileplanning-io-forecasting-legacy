@@ -12,13 +12,25 @@ class Jira::Client
   end
 
   def search_issues(opts)
-    url = "rest/api/2/search?maxResults=9999"
+    url = "rest/api/2/search?"
     url += "&expand=#{opts[:expand].join(',')}" if opts[:expand]
     url += "&jql=#{URI::escape(opts[:query])}" if opts[:query]
+    url += "&startAt=#{opts[:startAt]}" if opts[:startAt]
+
     response = request(:get, url)
-    response['issues'].map do |raw_issue|
+
+    issues = response['issues'].map do |raw_issue|
       Jira::IssueBuilder.new(raw_issue).build
     end
+
+    startAt = response['startAt'] || 0
+    maxResults = response['maxResults']
+    if startAt + maxResults < response['total']
+      startAt = startAt + maxResults
+      issues = issues + search_issues(opts.merge({:startAt => startAt}))
+    end
+
+    issues
   end
 
   def get_rapid_boards

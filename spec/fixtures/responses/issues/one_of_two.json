@@ -1,12 +1,12 @@
 {
   "startAt": 0,
-  "maxResults": 50,
-  "total": 1,
+  "maxResults": 1,
+  "total": 2,
   "issues": [
     {
       "key": "DEMO-101",
       "fields": {
-        "summary": "Some Issue"
+        "summary": "Issue One"
       }
     }
   ]
