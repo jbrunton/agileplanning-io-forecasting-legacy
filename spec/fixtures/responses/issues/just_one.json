@@ -1,0 +1,13 @@
+{
+  "startAt": 0,
+  "maxResults": 50,
+  "total": 15,
+  "issues": [
+    {
+      "key": "DEMO-101",
+      "fields": {
+        "summary": "Some Issue"
+      }
+    }
+  ]
+}

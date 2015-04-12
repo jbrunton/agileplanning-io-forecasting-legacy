@@ -1,5 +1,13 @@
 require 'rails_helper'
 
+RSpec::Matchers.define :be_equivalent_to do |expected|
+  match do |actual|
+    actual_attrs = actual.attributes.except(['id', 'created_at', 'updated_at'])
+    expected_attrs = expected.attributes.except(['id', 'created_at', 'updated_at'])
+    actual_attrs == expected_attrs
+  end
+end
+
 RSpec.describe Jira::Client do
   let(:domain) { 'http://www.example.com' }
   let(:username) { 'some_user' }
@@ -7,7 +15,7 @@ RSpec.describe Jira::Client do
   let(:params) { ActionController::Parameters.new(username: username, password: password) }
 
   let(:dummy_response) { '{"foo": "bar"}' }
-  let(:issues_response) { '{"issues": []}' }
+  let(:issues_response) { File.read('spec/fixtures/responses/issues/just_one.json') }
   let(:rapid_views_response) { '{"views": []}' }
 
   let(:dummy_query) { 'issuetype=Epic' }
@@ -34,7 +42,7 @@ RSpec.describe Jira::Client do
 
       response = @client.search_issues(query: dummy_query)
 
-      expect(response).to eq([])
+      expect(response[0]).to be_equivalent_to(Issue.new(key: 'DEMO-101', summary: 'Some Issue'))
     end
 
     it "expands the given fields" do

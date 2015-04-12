@@ -17,7 +17,7 @@ class Jira::Client
     url += "&jql=#{URI::escape(opts[:query])}" if opts[:query]
     response = request(:get, url)
     response['issues'].map do |raw_issue|
-      IssueBuilder.new(raw_issue).build
+      Jira::IssueBuilder.new(raw_issue).build
     end
   end
 
