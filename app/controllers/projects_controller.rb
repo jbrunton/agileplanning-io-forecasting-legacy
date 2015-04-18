@@ -76,7 +76,7 @@ class ProjectsController < ApplicationController
 
     @project.save
 
-    redirect_to(@project)
+    render nothing: true
   end
 
   private

@@ -1,3 +1,11 @@
+<script type="application/javascript">
+    $(function() {
+        $("form").on("ajax:success", function() {
+           window.location = '<%= project_issues_path(@project) %>';
+        });
+    });
+</script>
+
 <p id="notice"><%= notice %></p>
 
 <p>
@@ -15,7 +23,7 @@
   <%= @project.name %>
 </p>
 
-<%= form_tag(sync_project_path(@project), method: "post") do %>
+<%= form_tag(sync_project_path(@project), method: "post", remote: true) do %>
     <p>
       <%= label_tag(:username, "Username:") %>
       <input value="jbrunton" type="text" name="username" id="username">
