@@ -18,12 +18,14 @@ ActiveRecord::Schema.define(version: 2) do
     t.string   "summary"
     t.string   "issue_type"
     t.integer  "project_id"
+    t.string   "epic_key"
     t.datetime "started"
     t.datetime "completed"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
+  add_index "issues", ["epic_key"], name: "index_issues_on_epic_key"
   add_index "issues", ["project_id"], name: "index_issues_on_project_id"
 
   create_table "projects", force: :cascade do |t|
