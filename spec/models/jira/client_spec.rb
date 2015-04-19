@@ -42,7 +42,7 @@ RSpec.describe Jira::Client do
 
       response = @client.search_issues(query: dummy_query)
 
-      expect(response[0]).to be_equivalent_to(Issue.new(key: 'DEMO-101', summary: 'Some Issue'))
+      expect(response[0]).to be_equivalent_to(Issue.new(key: 'DEMO-101', summary: 'Some Issue', issue_type: 'Story'))
     end
 
     it "pages the results" do
@@ -54,8 +54,8 @@ RSpec.describe Jira::Client do
 
       response = @client.search_issues(query: dummy_query, max_results: 1)
 
-      expect(response[0]).to be_equivalent_to(Issue.new(key: 'DEMO-101', summary: 'Issue One'))
-      expect(response[1]).to be_equivalent_to(Issue.new(key: 'DEMO-102', summary: 'Issue Two'))
+      expect(response[0]).to be_equivalent_to(Issue.new(key: 'DEMO-101', summary: 'Issue One', issue_type: 'Story'))
+      expect(response[1]).to be_equivalent_to(Issue.new(key: 'DEMO-102', summary: 'Issue Two', issue_type: 'Story'))
     end
 
     it "expands the given fields" do

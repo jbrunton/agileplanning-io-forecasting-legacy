@@ -6,7 +6,8 @@ class Jira::IssueBuilder
   def build
     attrs = {
         :key => key,
-        :summary => summary
+        :summary => summary,
+        :issue_type => issue_type
     }
 
     Issue.new(attrs)
@@ -19,5 +20,9 @@ private
 
   def summary
     @json['fields']['summary']
+  end
+
+  def issue_type
+    @json['fields']['issuetype']['name']
   end
 end

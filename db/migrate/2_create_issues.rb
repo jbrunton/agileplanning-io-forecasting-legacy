@@ -3,6 +3,7 @@ class CreateIssues < ActiveRecord::Migration
     create_table :issues do |t|
       t.string :key
       t.string :summary
+      t.string :issue_type
       t.references :project, index: true, foreign_key: true
 
       t.timestamps null: false

@@ -7,7 +7,10 @@ RSpec.describe Jira::IssueBuilder do
       {
         "key": "DEMO-101",
         "fields": {
-          "summary": "Some Issue"
+          "summary": "Some Issue",
+          "issuetype": {
+            "name": "Story"
+          }
         }
       }
       END
@@ -21,6 +24,10 @@ RSpec.describe Jira::IssueBuilder do
 
     it "sets the summary" do
       expect(issue.summary).to eq('Some Issue')
+    end
+
+    it "sets the issue_type" do
+      expect(issue.issue_type).to eq('Story')
     end
   end
 end

@@ -6,7 +6,10 @@
     {
       "key": "DEMO-102",
       "fields": {
-        "summary": "Issue Two"
+        "summary": "Issue Two",
+        "issuetype": {
+          "name": "Story"
+        }
       }
     }
   ]
