@@ -1,3 +1,17 @@
+<script type="application/javascript">
+    var dispatcher = new WebSocketRails('localhost:3000/websocket');
+    var channel = dispatcher.subscribe('project:<%= @project.id %>');
+    channel.bind('update', function(data) {
+        $('#notice').text('progress: ' + data.progress + '%');
+    });
+
+    $(function() {
+        $("form").on("ajax:success", function() {
+           $('#notice').text('sync in progress');
+        });
+    });
+</script>
+
 <p id="notice"><%= notice %></p>
 
 <p>
@@ -15,7 +29,7 @@
   <%= @project.name %>
 </p>
 
-<%= form_tag(sync_project_path(@project), method: "post") do %>
+<%= form_tag(sync_project_path(@project), method: "post", remote: true) do %>
     <p>
       <%= label_tag(:username, "Username:") %>
       <input value="jbrunton" type="text" name="username" id="username">
