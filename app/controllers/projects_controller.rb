@@ -64,18 +64,8 @@ class ProjectsController < ApplicationController
   # POST /projects/1/sync
   # POST /projects/1/sync.json
   def sync
-    @project.issues.destroy_all
-
-    jira_client = Jira::Client.new(@project.domain, params.permit(:username, :password))
-
-    rapid_board = jira_client.get_rapid_board(@project.board_id)
-
-    jira_client.search_issues(query: rapid_board.query).each do |issue|
-      @project.issues.append(issue)
-    end
-
-    @project.save
-
+    job = SyncProjectJob.new
+    job.async.sync_project(@project, params)
     render nothing: true
   end
 

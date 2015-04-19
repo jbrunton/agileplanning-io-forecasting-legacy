@@ -1,7 +1,7 @@
 <script type="application/javascript">
     $(function() {
         $("form").on("ajax:success", function() {
-           window.location = '<%= project_issues_path(@project) %>';
+           $('#notice').text('sync in progress');
         });
     });
 </script>
