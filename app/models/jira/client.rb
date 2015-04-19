@@ -14,7 +14,7 @@ class Jira::Client
     JSON.parse(response.body)
   end
 
-  def search_issues(opts)
+  def search_issues(opts, &block)
     max_results = opts[:max_results] || MAX_RESULTS
     url = "rest/api/2/search?"
     url += "&expand=#{opts[:expand].join(',')}" if opts[:expand]
@@ -30,10 +30,10 @@ class Jira::Client
 
     startAt = response['startAt'] || 0
     progress = ((response['startAt'] + issues.length) * 100.0 / response['total']).to_i
-    WebsocketRails['progress'].trigger(:update, { progress: progress })
+    yield(progress) if block_given?
     if startAt + response['maxResults'] < response['total']
       startAt = startAt + response['maxResults']
-      issues = issues + search_issues(opts.merge({:startAt => startAt}))
+      issues = issues + search_issues(opts.merge({:startAt => startAt}), &block)
     end
 
     issues

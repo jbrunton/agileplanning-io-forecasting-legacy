@@ -6,7 +6,12 @@ class SyncProjectJob
 
     jira_client = Jira::Client.new(project.domain, params.permit(:username, :password))
     rapid_board = jira_client.get_rapid_board(project.board_id)
-    jira_client.search_issues(query: rapid_board.query).each do |issue|
+
+    issues = jira_client.search_issues(query: rapid_board.query) do |progress|
+      WebsocketRails["project:#{project.id}"].trigger(:update, { progress: progress })
+    end
+
+    issues.each do |issue|
       project.issues.append(issue)
     end
 
