@@ -1,4 +1,10 @@
 <script type="application/javascript">
+    var dispatcher = new WebSocketRails('localhost:3000/websocket');
+    var channel = dispatcher.subscribe('progress');
+    channel.bind('update', function(data) {
+        $('#notice').text('progress: ' + data.progress + '%');
+    });
+
     $(function() {
         $("form").on("ajax:success", function() {
            $('#notice').text('sync in progress');

@@ -29,6 +29,10 @@ class Jira::Client
     end
 
     startAt = response['startAt'] || 0
+    progress = ((response['startAt'] + issues.length) * 100.0 / response['total']).to_i
+    puts "*** startAt: #{response['startAt']}, maxResults: #{response['maxResults']}, total: #{response['total']}"
+    puts "*** progress: #{progress}"
+    WebsocketRails['progress'].trigger(:update, { progress: progress })
     if startAt + response['maxResults'] < response['total']
       startAt = startAt + response['maxResults']
       issues = issues + search_issues(opts.merge({:startAt => startAt}))
