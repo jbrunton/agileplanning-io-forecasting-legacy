@@ -2,44 +2,55 @@
     var dispatcher = new WebSocketRails('localhost:3000/websocket');
     var channel = dispatcher.subscribe('project:<%= @project.id %>');
     channel.bind('update', function(data) {
-        $('#notice').text('progress: ' + data.progress + '%');
+        $('#progress-bar').css('width', data.progress + '%');
+        if (data.progress >= 100) {
+            $('#progress-bar-container').hide();
+        }
     });
 
     $(function() {
         $("form").on("ajax:success", function() {
-           $('#notice').text('sync in progress');
+            $('#progress-bar-container').show();
+            $('#progress-bar').css('width', '1%');
         });
     });
 </script>
 
-<p id="notice"><%= notice %></p>
+<div class="row">
+  <div class="large-12 columns">
+    <div id="progress-bar-container" class="progress round hide">
+      <span id="progress-bar" class="meter" style="width: 0%"></span>
+    </div>
 
-<p>
-  <strong>Domain:</strong>
-  <%= @project.domain %>
-</p>
+    <h3><%= @project.name %></h5>
+  </div>
 
-<p>
-  <strong>Board:</strong>
-  <%= @project.board_id %>
-</p>
-
-<p>
-  <strong>Name:</strong>
-  <%= @project.name %>
-</p>
-
-<%= form_tag(sync_project_path(@project), method: "post", remote: true) do %>
+  <div class="large-6 columns">
     <p>
-      <%= label_tag(:username, "Username:") %>
-      <input value="jbrunton" type="text" name="username" id="username">
-
-      <%= label_tag(:password, "Password:") %>
-      <input type="text" name="password" id="password">
-
-      <%= submit_tag("Sync") %>
+      <strong>Domain:</strong>
+      <%= @project.domain %>
     </p>
-<% end %>
 
-<%= link_to 'Edit', edit_project_path(@project) %> |
-<%= link_to 'Back', projects_path %>
+    <p>
+      <strong>Board:</strong>
+      <%= @project.board_id %>
+    </p>
+  </div>
+
+  <div class="large-6 columns">
+    <div class="panel radius">
+      <h5>Sync Issues</h5>
+      <%= form_tag(sync_project_path(@project), method: "post", remote: true) do %>
+          <p>
+            <%= label_tag(:username, "Username:") %>
+            <input value="jbrunton" type="text" name="username" id="username">
+
+            <%= label_tag(:password, "Password:") %>
+            <input type="text" name="password" id="password">
+
+            <%= submit_tag("Sync", class: 'button') %>
+          </p>
+      <% end %>
+    </div>
+  </div>
+</div>

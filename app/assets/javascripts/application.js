@@ -12,7 +12,11 @@
 //
 //= require jquery
 //= require jquery_ujs
+// TODO: Why is this hack necessary for foundation js to be loaded?
+//= require foundation/foundation
 //= require turbolinks
 //= require_tree .
 //= require websocket_rails/main
 
+
+$(function(){ $(document).foundation(); });
