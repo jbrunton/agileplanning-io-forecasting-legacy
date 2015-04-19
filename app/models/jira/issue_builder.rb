@@ -10,6 +10,11 @@ class Jira::IssueBuilder
         :issue_type => issue_type
     }
 
+    unless attrs[:issue_type] == 'Epic'
+      attrs[:started] = compute_started_date
+      attrs[:completed] = compute_completed_date
+    end
+
     Issue.new(attrs)
   end
 
@@ -24,5 +29,44 @@ private
 
   def issue_type
     @json['fields']['issuetype']['name']
+  end
+
+  def compute_started_date
+    started_transitions = @json['changelog']['histories'].select do |entry|
+      entry['items'].any?{|item| is_started_transition(item)}
+    end
+
+    if started_transitions.any?
+      started_transitions.first['created']
+    else
+      nil
+    end
+  end
+
+  def compute_completed_date
+    last_transition = @json['changelog']['histories'].select do |entry|
+      entry['items'].any?{|item| is_status_transition(item)}
+    end.last
+
+    if !last_transition.nil? &&
+        last_transition['items'].any?{|item| is_completed_transition(item)}
+      last_transition['created']
+    else
+      nil
+    end
+  end
+
+  def is_status_transition(item)
+    item['field'] == "status"
+  end
+
+  def is_started_transition(item)
+    is_status_transition(item) &&
+        (item['toString'] == "In Progress" || item['toString'] == "Started")
+  end
+
+  def is_completed_transition(item)
+    is_status_transition(item) &&
+        (item['toString'] == "Done" || item['toString'] == "Closed")
   end
 end
