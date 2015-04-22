@@ -10,7 +10,8 @@ RSpec.describe Jira::IssueBuilder do
           "summary": "Some Issue",
           "issuetype": {
             "name": "Story"
-          }
+          },
+          "customfield_10008": "EPIC-KEY"
         },
         "changelog": {
           "histories": [
@@ -52,6 +53,10 @@ RSpec.describe Jira::IssueBuilder do
 
     it "sets the issue_type" do
       expect(issue.issue_type).to eq('Story')
+    end
+
+    it "sets the epic" do
+      expect(issue.epic_key).to eq('EPIC-KEY')
     end
 
     context "if the issue_type is 'epic'" do

@@ -16,5 +16,7 @@ class SyncProjectJob
     end
 
     project.save
+
+    project.compute_cycle_times!
   end
 end

@@ -13,12 +13,15 @@ class Jira::IssueBuilder
     unless attrs[:issue_type] == 'Epic'
       attrs[:started] = compute_started_date
       attrs[:completed] = compute_completed_date
+      attrs[:epic_key] = epic_key
     end
 
     Issue.new(attrs)
   end
 
 private
+  EPIC_LINK_FIELD = 10008
+
   def key
     @json['key']
   end
@@ -31,7 +34,13 @@ private
     @json['fields']['issuetype']['name']
   end
 
+  def epic_key
+    @json['fields']["customfield_#{EPIC_LINK_FIELD}"]
+  end
+
   def compute_started_date
+    return nil unless @json['changelog']
+
     started_transitions = @json['changelog']['histories'].select do |entry|
       entry['items'].any?{|item| is_started_transition(item)}
     end
@@ -44,6 +53,8 @@ private
   end
 
   def compute_completed_date
+    return nil unless @json['changelog']
+
     last_transition = @json['changelog']['histories'].select do |entry|
       entry['items'].any?{|item| is_status_transition(item)}
     end.last
