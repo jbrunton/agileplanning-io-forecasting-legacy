@@ -6,4 +6,8 @@ class Issue < ActiveRecord::Base
 
   validates :key, presence: true
   validates :summary, presence: true
+
+  def cycle_time
+    (completed - started) / 1.day unless completed.nil?
+  end
 end
