@@ -45,6 +45,16 @@ RSpec.describe ProjectsController, type: :controller do
     end
   end
 
+  describe "GET #epics" do
+    let!(:issue) { create(:issue, project: project) }
+    let!(:epic) { create(:issue, issue_type: 'Epic', project: project) }
+
+    it "assigns all the epics as @issues" do
+      get :epics, {:id => project.to_param, :format => :json}, valid_session
+      expect(assigns(:issues)).to eq([epic])
+    end
+  end
+
   describe "GET #show" do
     it "assigns the requested project as @project" do
       get :show, {:id => project.to_param}, valid_session

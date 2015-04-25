@@ -1,5 +1,5 @@
 class ProjectsController < ApplicationController
-  before_action :set_project, only: [:show, :edit, :update, :destroy, :sync]
+  before_action :set_project, only: [:show, :edit, :update, :destroy, :sync, :epics]
 
   # GET /projects
   # GET /projects.json
@@ -67,6 +67,13 @@ class ProjectsController < ApplicationController
     job = SyncProjectJob.new
     job.async.sync_project(@project, params)
     render nothing: true
+  end
+
+  # GET /projects/1/epics
+  # GET /projects/1/epics.json
+  def epics
+    @issues = @project.issues.where(issue_type: 'Epic')
+    render 'issues/index'
   end
 
   private
