@@ -7,9 +7,12 @@
     <tr>
       <th>Key</th>
       <th>Summary</th>
+      <th>Started</th>
+      <th>Completed</th>
       <th>Type</th>
       <th>Project</th>
-      <th colspan="3"></th>
+      <th>Cycle Time</th>
+      <th></th>
     </tr>
   </thead>
 
@@ -18,8 +21,15 @@
       <tr>
         <td><%= issue.key %></td>
         <td><%= issue.summary %></td>
+        <td><%= issue.started %></td>
+        <td><%= issue.completed %></td>
         <td><%= issue.issue_type %></td>
         <td><%= issue.project_id %></td>
+        <td>
+          <% unless issue.completed.nil? or issue.started.nil? %>
+              <%= distance_of_time_in_words(issue.started, issue.completed) %>
+          <% end %>
+        </td>
         <td><%= link_to 'Show', issue %></td>
       </tr>
     <% end %>
