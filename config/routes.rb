@@ -7,7 +7,14 @@ Rails.application.routes.draw do
     member do
       post 'sync'
     end
+
+    resources :reports do
+      collection do
+        get 'cycle_times'
+      end
+    end
   end
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
