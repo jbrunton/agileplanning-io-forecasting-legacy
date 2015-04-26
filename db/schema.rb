@@ -17,6 +17,7 @@ ActiveRecord::Schema.define(version: 3) do
     t.string   "key"
     t.string   "summary"
     t.string   "issue_type"
+    t.string   "size"
     t.integer  "project_id"
     t.string   "epic_key"
     t.datetime "started"
