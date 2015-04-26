@@ -15,8 +15,11 @@
                       + '</a></b>';
           }
 
-          $.when($.get('<%= project_path(@project) %>/cycle_times.json')).done(function(epics) {
-              var epicData = epics
+          $.when(
+                  $.get('<%= project_path(@project) %>/cycle_times.json'),
+                  $.get('<%= project_path(@project) %>/wip.json')
+          ).done(function(epics, wip) {
+              var epicData = epics[0]
                       .filter(function(epic) {
                           return epic.completed != null;
                       })
@@ -28,6 +31,14 @@
                               summary: epic.summary
                           };
                       });
+              var wipData = Object.keys(wip[0]).map(function(date) {
+                  var histories = wip[0][date];
+                  return {
+                      x: Date.parse(date),
+                      y: histories.length,
+                      histories: histories
+                  };
+              });
               $('#container').highcharts({
                   chart: {
                       type: 'spline'
@@ -78,9 +89,9 @@
                               + ' days';
                           } else {
                               html += '<b>WIP: ' + this.y;
-                              _(this.point.histories).each(function(history) {
+                              this.point.histories.forEach(function(history) {
                                   html += '<br/>' + formatIssueLink(history.issue);
-                              }).value();
+                              });
                           }
                           return html;
                       }
@@ -90,6 +101,14 @@
                       yAxis: 0,
                       color: '#F66',
                       data: epicData
+                  }, {
+                      name: 'WIP',
+                      yAxis: 1,
+                      color: '#66F',
+                      marker: {
+                          enabled: false
+                      },
+                      data: wipData
                   }]
               });
           });
