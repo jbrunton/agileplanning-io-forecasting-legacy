@@ -1,5 +1,5 @@
 class ProjectsController < ApplicationController
-  before_action :set_project, only: [:show, :edit, :update, :destroy, :sync, :epics]
+  before_action :set_project, only: [:show, :edit, :update, :destroy, :sync, :cycle_times, :wip]
 
   # GET /projects
   # GET /projects.json
@@ -69,13 +69,25 @@ class ProjectsController < ApplicationController
     render nothing: true
   end
 
-  # GET /projects/1/epics
-  # GET /projects/1/epics.json
-  def epics
-    @issues = @project.issues.
+  def cycle_times
+    epics = @project.issues.
         where(issue_type: 'Epic').
-        sort{ |a, b| a.completed && b.completed ? a.completed <=> b.completed : (a.completed ? -1 : 1) }
-    render 'issues/index'
+        select{ |epic| !epic.completed.nil? }.
+        sort_by{ |epic| epic.completed }
+
+    respond_to do |format|
+      format.json { render json: epics.to_json(:methods => [:cycle_time]) }
+    end
+  end
+
+  # GET /projects/1/wip_histories
+  # GET /projects/1/wip_histories.json
+  def wip
+    wip_histories = @project.wip_histories.group_by{ |history| history.date }
+
+    respond_to do |format|
+      format.json { render json: wip_histories.to_json(:include => :issue) }
+    end
   end
 
   private

@@ -15,7 +15,7 @@
                       + '</a></b>';
           }
 
-          $.when($.get('<%= project_path(@project) %>/epics.json')).done(function(epics) {
+          $.when($.get('<%= project_path(@project) %>/cycle_times.json')).done(function(epics) {
               var epicData = epics
                       .filter(function(epic) {
                           return epic.completed != null;
