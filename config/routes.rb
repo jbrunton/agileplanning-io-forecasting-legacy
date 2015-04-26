@@ -6,7 +6,8 @@ Rails.application.routes.draw do
 
     member do
       post 'sync'
-      get 'epics'
+      get 'cycle_times'
+      get 'wip'
     end
 
     get 'reports/cycle_times', to: 'reports#cycle_times'

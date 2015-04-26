@@ -45,16 +45,26 @@ RSpec.describe ProjectsController, type: :controller do
     end
   end
 
-  describe "GET #epics" do
-    let!(:issue) { create(:issue, project: project) }
-    let!(:second_epic) { create(:issue, :completed, issue_type: 'Epic', project: project) }
-    let!(:first_epic) { create(:issue, issue_type: 'Epic', project: project, completed: second_epic.completed - 1.day) }
-
-    it "assigns all the epics as @issues and orders them by completion date" do
-      get :epics, {:id => project.to_param, :format => :json}, valid_session
-      expect(assigns(:issues)).to eq([first_epic, second_epic])
-    end
-  end
+  # describe "GET #epics" do
+  #   let!(:issue) { create(:issue, project: project) }
+  #   let!(:second_epic) { create(:issue, :completed, issue_type: 'Epic', project: project) }
+  #   let!(:first_epic) { create(:issue, issue_type: 'Epic', project: project, completed: second_epic.completed - 1.day) }
+  #
+  #   it "assigns all the epics as @issues and orders them by completion date" do
+  #     get :epics, {:id => project.to_param, :format => :json}, valid_session
+  #     expect(assigns(:issues)).to eq([first_epic, second_epic])
+  #   end
+  # end
+  #
+  # describe "GET #wip_histories" do
+  #   let!(:issue) { create(:issue, :started, project: project) }
+  #   let!(:wip_history) { WipHistory.create(date: issue.started, issue: issue) }
+  #
+  #   it "assigns the history to @wip_histories" do
+  #     get :wip_histories, {:id => project.to_param, :format => :json}, valid_session
+  #     expect(assigns(:wip_histories)).to eq([wip_history])
+  #   end
+  # end
 
   describe "GET #show" do
     it "assigns the requested project as @project" do

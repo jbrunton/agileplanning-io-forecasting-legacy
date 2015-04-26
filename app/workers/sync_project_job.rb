@@ -2,6 +2,7 @@ class SyncProjectJob
   include Celluloid
 
   def sync_project(project, params)
+    project.issues.each { |issue| issue.wip_histories.destroy_all }
     project.issues.destroy_all
 
     jira_client = Jira::Client.new(project.domain, params.permit(:username, :password))
@@ -18,5 +19,6 @@ class SyncProjectJob
     project.save
 
     project.compute_cycle_times!
+    WipHistory.compute_history_for!(project)
   end
 end
