@@ -9,11 +9,7 @@ Rails.application.routes.draw do
       get 'epics'
     end
 
-    resources :reports do
-      collection do
-        get 'cycle_times'
-      end
-    end
+    get 'reports/cycle_times', to: 'reports#cycle_times'
   end
 
   # The priority is based upon order of creation: first created -> highest priority.
