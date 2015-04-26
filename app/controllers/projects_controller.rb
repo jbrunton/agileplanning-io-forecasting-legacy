@@ -72,7 +72,9 @@ class ProjectsController < ApplicationController
   # GET /projects/1/epics
   # GET /projects/1/epics.json
   def epics
-    @issues = @project.issues.where(issue_type: 'Epic')
+    @issues = @project.issues.
+        where(issue_type: 'Epic').
+        sort{ |a, b| a.completed && b.completed ? a.completed <=> b.completed : (a.completed ? -1 : 1) }
     render 'issues/index'
   end
 

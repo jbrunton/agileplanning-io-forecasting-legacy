@@ -1,35 +1,101 @@
 <div class="row">
   <div class="large-12 columns">
-    <h1>WIP</h1>
+  <h1>Epic Cycle Times</h1>
 
-    <script>
+  <script>
       $(function () {
-          $('#container').highcharts({
-              chart: {
-                  type: 'bar'
-              },
-              title: {
-                  text: 'Fruit Consumption'
-              },
-              xAxis: {
-                  categories: ['Apples', 'Bananas', 'Oranges']
-              },
-              yAxis: {
+
+          function formatIssueLink(issue) {
+              return '<b><a href="#'
+                      + issue.key
+                      + '">'
+                      + issue.key
+                      + ' '
+                      + issue.summary
+                      + '</a></b>';
+          }
+
+          $.when($.get('<%= project_path(@project) %>/epics.json')).done(function(epics) {
+              var epicData = epics
+                      .filter(function(epic) {
+                          return epic.completed != null;
+                      })
+                      .map(function(epic) {
+                          return {
+                              x: Date.parse(epic.completed),
+                              y: epic.cycle_time,
+                              key: epic.key,
+                              summary: epic.summary
+                          };
+                      });
+              $('#container').highcharts({
+                  chart: {
+                      type: 'spline'
+                  },
                   title: {
-                      text: 'Fruit eaten'
-                  }
-              },
-              series: [{
-                  name: 'Jane',
-                  data: [1, 0, 4]
-              }, {
-                  name: 'John',
-                  data: [5, 7, 3]
-              }]
+                      text: 'Epic Cycle Time'
+                  },
+                  subtitle: {
+                      text: 'Historical Cycle Time and WIP values'
+                  },
+                  xAxis: {
+                      type: 'datetime',
+                      dateTimeLabelFormats: { // don't display the dummy year
+                          month: '%e. %b',
+                          year: '%b'
+                      },
+                      title: {
+                          text: 'Date'
+                      }
+                  },
+                  yAxis: [{
+                      title: {
+                          text: 'Cycle Time'
+                      },
+                      min: 0
+                  }, {
+                      title: {
+                          text: 'WIP'
+                      },
+                      opposite: true,
+                      min: 0
+                  }],
+                  plotOptions: {
+                      spline: {
+                          marker: {
+                              enabled: true
+                          }
+                      }
+                  },
+                  tooltip: {
+                      useHTML: true,
+                      formatter: function () {
+                          var html = "";
+                          if (this.series.name == 'Cycle Time') {
+                              html += formatIssueLink(this.point)
+                              + '<br />CT: '
+                              + this.y.toFixed(1)
+                              + ' days';
+                          } else {
+                              html += '<b>WIP: ' + this.y;
+                              _(this.point.histories).each(function(history) {
+                                  html += '<br/>' + formatIssueLink(history.issue);
+                              }).value();
+                          }
+                          return html;
+                      }
+                  },
+                  series: [{
+                      name: 'Cycle Time',
+                      yAxis: 0,
+                      color: '#F66',
+                      data: epicData
+                  }]
+              });
           });
       });
-    </script>
+  </script>
 
-    <div id="container" style="width:100%; height:400px;"></div>
+  <div id="container" style="width: 100%; height: 600px;"></div>
   </div>
 </div>

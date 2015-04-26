@@ -47,11 +47,12 @@ RSpec.describe ProjectsController, type: :controller do
 
   describe "GET #epics" do
     let!(:issue) { create(:issue, project: project) }
-    let!(:epic) { create(:issue, issue_type: 'Epic', project: project) }
+    let!(:second_epic) { create(:issue, :completed, issue_type: 'Epic', project: project) }
+    let!(:first_epic) { create(:issue, issue_type: 'Epic', project: project, completed: second_epic.completed - 1.day) }
 
-    it "assigns all the epics as @issues" do
+    it "assigns all the epics as @issues and orders them by completion date" do
       get :epics, {:id => project.to_param, :format => :json}, valid_session
-      expect(assigns(:issues)).to eq([epic])
+      expect(assigns(:issues)).to eq([first_epic, second_epic])
     end
   end
 
