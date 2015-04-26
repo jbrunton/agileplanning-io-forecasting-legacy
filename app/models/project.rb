@@ -1,5 +1,6 @@
 class Project < ActiveRecord::Base
   has_many :issues
+  has_many :wip_histories, through: :issues
 
   validates :domain, presence: true
   validates :board_id, presence: true
