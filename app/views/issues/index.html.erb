@@ -10,6 +10,7 @@
       <th>Started</th>
       <th>Completed</th>
       <th>Type</th>
+      <th>Size</th>
       <th>Project</th>
       <th>Cycle Time</th>
       <th></th>
@@ -24,6 +25,7 @@
         <td><%= issue.started %></td>
         <td><%= issue.completed %></td>
         <td><%= issue.issue_type %></td>
+        <td><%= issue.size %></td>
         <td><%= issue.project_id %></td>
         <td>
           <% unless issue.completed.nil? or issue.started.nil? %>
