@@ -6,13 +6,13 @@
       $(function () {
 
           function formatIssueLink(issue) {
-              return '<b><a href="#'
-                      + issue.key
-                      + '">'
-                      + issue.key
-                      + ' '
+              return '<a href="/issues/' + issue.id + '">'
                       + issue.summary
-                      + '</a></b>';
+                      + '</a>';
+          }
+
+          function formatJiraLink(issue) {
+              return '<a href="<%= "#{@project.domain}/browse/" %>' + issue.key + '">[JIRA]</a>';
           }
 
           $.when(
@@ -27,6 +27,7 @@
                           return {
                               x: Date.parse(epic.completed),
                               y: epic.cycle_time,
+                              id: epic.id,
                               key: epic.key,
                               summary: epic.summary
                           };
@@ -83,14 +84,13 @@
                       formatter: function () {
                           var html = "";
                           if (this.series.name == 'Cycle Time') {
-                              html += formatIssueLink(this.point)
-                              + '<br />CT: '
-                              + this.y.toFixed(1)
-                              + ' days';
+                              html += '<b>CT: ' + this.y.toFixed(1) + ' days</b>'
+                                + '<br />' + formatIssueLink(this.point);
                           } else {
-                              html += '<b>WIP: ' + this.y;
+                              html += '<b>WIP: ' + this.y + '</b>';
                               this.point.histories.forEach(function(history) {
-                                  html += '<br/>' + formatIssueLink(history.issue);
+                                  html += '<br/>' + formatIssueLink(history.issue)
+                                    + ' ' + formatJiraLink(history.issue);
                               });
                           }
                           return html;
