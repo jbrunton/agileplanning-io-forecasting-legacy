@@ -30,7 +30,7 @@ RSpec.describe MonteCarloSimulator do
       stub_rand_and_return([1, 0, 1, 0, 1])
       result = simulator.play_once('S' => 2, 'M' => 3)
       expect(result).to eq({
-                  actual_time: 14 # 2 + 1 + 4 + 3 + 4
+                  actual_time: 14 # 2 x 'S' (2 + 1) + 3 x 'M' (4 + 3 + 4)
               })
     end
   end
