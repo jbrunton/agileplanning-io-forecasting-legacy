@@ -11,6 +11,8 @@ Rails.application.routes.draw do
     end
 
     get 'reports/cycle_times', to: 'reports#cycle_times'
+    get 'reports/forecast', to: 'reports#forecast'
+    post 'reports/forecast', to: 'reports#forecast'
   end
 
   # The priority is based upon order of creation: first created -> highest priority.
