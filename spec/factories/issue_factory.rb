@@ -23,6 +23,15 @@ FactoryGirl.define do
 
     transient do
       cycle_time false
+      small false
+      medium false
+      large false
+    end
+
+    after(:build) do |issue, evaluator|
+      issue.size = 'S' if evaluator.small
+      issue.size = 'M' if evaluator.medium
+      issue.size = 'L' if evaluator.large
     end
   end
 end
