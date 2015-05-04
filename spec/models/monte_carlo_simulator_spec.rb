@@ -1,6 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe MonteCarloSimulator do
+  before(:each) do
+    MonteCarloSimulator.send(:public, *MonteCarloSimulator.protected_instance_methods)
+  end
+
   let (:epics) {
     [
         build(:epic, :completed, cycle_time: 1, small: true),
@@ -25,12 +29,20 @@ RSpec.describe MonteCarloSimulator do
     end
   end
 
+  describe "#pick_cycle_time_values" do
+    it "returns randomly selected cycle time values for the epic sizes given" do
+      stub_rand_and_return([1, 0, 1, 0, 1])
+      result = simulator.pick_cycle_time_values('S' => 2, 'M' => 3)
+      expect(result).to eq([2, 1, 4, 3, 4])
+    end
+  end
+
   describe "#play_once" do
-    it "returns randomly selected values for the epic sizes given" do
+    it "executes a single run of the Monte Carlo simulator" do
       stub_rand_and_return([1, 0, 1, 0, 1])
       result = simulator.play_once('S' => 2, 'M' => 3)
       expect(result).to eq({
-                  actual_time: 14 # 2 x 'S' (2 + 1) + 3 x 'M' (4 + 3 + 4)
+                  total_time: 14 # 2 x 'S' (2 + 1) + 3 x 'M' (4 + 3 + 4)
               })
     end
   end

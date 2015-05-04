@@ -8,6 +8,7 @@ class MonteCarloSimulator
     @epics = epics
   end
 
+protected
   def pick_values(values, count)
     result = []
     count.times do
@@ -16,13 +17,18 @@ class MonteCarloSimulator
     result
   end
 
-  def play_once(opts)
-    total_time = 0
+  def pick_cycle_time_values(opts)
+    values = []
     opts.each do |size, count|
       epics = @epics.select{ |epic| epic.size == size }
-      total_time += pick_values(epics.map{ |epic| epic.cycle_time }, count).inject(:+)
+      values.concat(pick_values(epics.map{ |epic| epic.cycle_time }, count))
     end
-    { actual_time: total_time }
+    values
+  end
+
+  def play_once(opts)
+    cycle_time_values = pick_cycle_time_values(opts)
+    { total_time: cycle_time_values.reduce(:+) }
   end
 
   def play(opts)
