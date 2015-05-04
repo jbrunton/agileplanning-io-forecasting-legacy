@@ -1,5 +1,5 @@
 class Jira::Client
-  MAX_RESULTS = 5
+  MAX_RESULTS = 50
 
   def initialize(domain, params)
     @domain = domain
