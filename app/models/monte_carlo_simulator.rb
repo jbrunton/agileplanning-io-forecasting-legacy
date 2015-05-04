@@ -38,7 +38,12 @@ protected
 
   def play_once(opts)
     cycle_time_values = pick_cycle_time_values(opts)
-    { total_time: cycle_time_values.reduce(:+) }
+    wip_values = pick_wip_values(10)
+
+    total_time = cycle_time_values.reduce(:+)
+    average_wip = wip_values.reduce(:+) / wip_values.length
+
+    { total_time: total_time, average_wip: average_wip, actual_time: total_time / average_wip }
   end
 
   def play(opts)

@@ -66,10 +66,15 @@ RSpec.describe MonteCarloSimulator do
 
   describe "#play_once" do
     it "executes a single run of the Monte Carlo simulator" do
-      stub_rand_and_return([1, 0, 1, 0, 1])
+      allow(simulator).to receive(:pick_cycle_time_values).and_return([1, 2, 3, 4, 2])
+      allow(simulator).to receive(:pick_wip_values).and_return([1, 2, 3])
+
       result = simulator.play_once('S' => 2, 'M' => 3)
+
       expect(result).to eq({
-                  total_time: 14 # 2 x 'S' (2 + 1) + 3 x 'M' (4 + 3 + 4)
+                  total_time: 12,
+                  average_wip: 2,
+                  actual_time: 6
               })
     end
   end
