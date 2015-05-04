@@ -1,6 +1,7 @@
 class Jira::IssueBuilder
-  def initialize(json)
+  def initialize(json, epic_link_id)
     @json = json
+    @epic_link_id = epic_link_id
   end
 
   def build
@@ -20,8 +21,6 @@ class Jira::IssueBuilder
   end
 
 private
-  EPIC_LINK_FIELD = 10008
-
   def key
     @json['key']
   end
@@ -35,7 +34,7 @@ private
   end
 
   def epic_key
-    @json['fields']["customfield_#{EPIC_LINK_FIELD}"]
+    @json['fields'][@epic_link_id]
   end
 
   def compute_started_date

@@ -21,6 +21,8 @@ RSpec.describe Jira::Client do
   let(:dummy_query) { 'issuetype=Epic' }
 
   before(:each) do
+    stub_request(:get, "https://#{username}:#{password}@www.example.com:80/rest/api/2/field")
+        .to_return(body: File.read('spec/fixtures/responses/fields/with_epic_link.json'))
     @client = Jira::Client.new(domain, params)
   end
 
@@ -73,6 +75,20 @@ RSpec.describe Jira::Client do
       response = @client.get_rapid_boards
 
       expect(response).to eq([])
+    end
+  end
+
+  describe "#get_fields" do
+    it "fetches the fields for the domain" do
+      stub_request(:get, "https://#{username}:#{password}@www.example.com:80/rest/api/2/field")
+          .to_return(body: File.read('spec/fixtures/responses/fields/with_epic_link.json'))
+
+      response = @client.get_fields
+
+      expect(response).to eq([
+                  { 'id' => 'customfield_54321', 'name' => 'Some Field' },
+                  { 'id' => 'customfield_12345', 'name' => 'Epic Link' }
+              ])
     end
   end
 end
