@@ -5,16 +5,17 @@ RSpec.describe MonteCarloSimulator do
     MonteCarloSimulator.send(:public, *MonteCarloSimulator.protected_instance_methods)
   end
 
-  let (:epics) {
-    [
+  let (:project) {
+    epics = [
         build(:epic, :completed, cycle_time: 1, small: true),
         build(:epic, :completed, cycle_time: 2, small: true),
         build(:epic, :completed, cycle_time: 3, medium: true),
         build(:epic, :completed, cycle_time: 4, medium: true)
     ]
+    create(:project, issues: epics)
   }
 
-  let (:simulator) { MonteCarloSimulator.new(epics) }
+  let (:simulator) { MonteCarloSimulator.new(project) }
 
   describe "#epic_values" do
     it "returns the sets of epic values grouped by size" do

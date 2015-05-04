@@ -4,9 +4,9 @@ class MonteCarloSimulator
 
   PLAY_COUNT = 100
 
-  def initialize(epics)
+  def initialize(project)
     @random = Random.new(0)
-    @epic_values = epics.
+    @epic_values = project.epics.
         group_by{ |epic| epic.size }.
         map{ |size, epics| [size, epics.map{ |epic| epic.cycle_time }] }.to_h
   end
