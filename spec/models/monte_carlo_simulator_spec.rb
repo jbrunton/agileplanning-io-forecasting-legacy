@@ -1,16 +1,39 @@
 require 'rails_helper'
 
 RSpec.describe MonteCarloSimulator do
-  let (:epics) {
-    [
-        build(:epic, :completed, cycle_time: 1, small: true),
-        build(:epic, :completed, cycle_time: 2, small: true),
-        build(:epic, :completed, cycle_time: 3, medium: true),
-        build(:epic, :completed, cycle_time: 4, medium: true)
+  before(:each) do
+    MonteCarloSimulator.send(:public, *MonteCarloSimulator.protected_instance_methods)
+  end
+
+  let (:project) {
+    start_date = DateTime.new(2001, 1, 1)
+    epics = [
+        build(:epic, :completed, started: start_date, cycle_time: 1, small: true),
+        build(:epic, :completed, started: start_date, cycle_time: 2, small: true),
+        build(:epic, :completed, started: start_date, cycle_time: 3, medium: true),
+        build(:epic, :completed, started: start_date, cycle_time: 4, medium: true)
     ]
+    project = create(:project, issues: epics)
+    WipHistory.compute_history_for!(project)
+    project
   }
 
-  let (:simulator) { MonteCarloSimulator.new(epics) }
+  let (:simulator) { MonteCarloSimulator.new(project) }
+
+  describe "#epic_values" do
+    it "returns the sets of epic values grouped by size" do
+      expect(simulator.epic_values).to eq({
+                  'S' => [1.0, 2.0],
+                  'M' => [3.0, 4.0]
+              })
+    end
+  end
+
+  describe "#wip_values" do
+    it "returns the set of wip values for the project" do
+      expect(simulator.wip_values).to eq([4, 3, 2, 1])
+    end
+  end
 
   describe "#pick_values" do
     it "returns the empty array when asked to pick 0 values" do
@@ -25,12 +48,33 @@ RSpec.describe MonteCarloSimulator do
     end
   end
 
-  describe "#play_once" do
-    it "returns randomly selected values for the epic sizes given" do
+  describe "#pick_cycle_time_values" do
+    it "returns randomly selected cycle time values for the epic sizes given" do
       stub_rand_and_return([1, 0, 1, 0, 1])
+      result = simulator.pick_cycle_time_values('S' => 2, 'M' => 3)
+      expect(result).to eq([2, 1, 4, 3, 4])
+    end
+  end
+
+  describe "#pick_wip_values" do
+    it "returns k randomly selected wip values" do
+      stub_rand_and_return([0, 1, 2, 3, 0])
+      result = simulator.pick_wip_values(5)
+      expect(result).to eq([4, 3, 2, 1, 4])
+    end
+  end
+
+  describe "#play_once" do
+    it "executes a single run of the Monte Carlo simulator" do
+      allow(simulator).to receive(:pick_cycle_time_values).and_return([1, 2, 3, 4, 2])
+      allow(simulator).to receive(:pick_wip_values).and_return([1, 2, 3])
+
       result = simulator.play_once('S' => 2, 'M' => 3)
+
       expect(result).to eq({
-                  actual_time: 14 # 2 + 1 + 4 + 3 + 4
+                  total_time: 12, # sum of cycle time values
+                  average_wip: 2, # mean of wip values
+                  actual_time: 6  # total_time / average_wip
               })
     end
   end
