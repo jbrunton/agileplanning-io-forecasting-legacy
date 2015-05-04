@@ -1,11 +1,14 @@
 class MonteCarloSimulator
   attr_reader :random
+  attr_reader :epic_values
 
   PLAY_COUNT = 100
 
   def initialize(epics)
     @random = Random.new(0)
-    @epics = epics
+    @epic_values = epics.
+        group_by{ |epic| epic.size }.
+        map{ |size, epics| [size, epics.map{ |epic| epic.cycle_time }] }.to_h
   end
 
 protected
@@ -20,8 +23,7 @@ protected
   def pick_cycle_time_values(opts)
     values = []
     opts.each do |size, count|
-      epics = @epics.select{ |epic| epic.size == size }
-      values.concat(pick_values(epics.map{ |epic| epic.cycle_time }, count))
+      values.concat(pick_values(@epic_values[size], count))
     end
     values
   end

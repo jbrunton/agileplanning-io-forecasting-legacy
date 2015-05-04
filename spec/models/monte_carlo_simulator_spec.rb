@@ -16,6 +16,15 @@ RSpec.describe MonteCarloSimulator do
 
   let (:simulator) { MonteCarloSimulator.new(epics) }
 
+  describe "#epic_values" do
+    it "returns the sets of epic values grouped by size" do
+      expect(simulator.epic_values).to eq({
+                  'S' => [1.0, 2.0],
+                  'M' => [3.0, 4.0]
+              })
+    end
+  end
+
   describe "#pick_values" do
     it "returns the empty array when asked to pick 0 values" do
       values = simulator.pick_values([1, 2, 3], 0)
