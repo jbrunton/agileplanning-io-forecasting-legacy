@@ -32,6 +32,10 @@ protected
     values
   end
 
+  def pick_wip_values(count)
+    pick_values(@wip_values, count)
+  end
+
   def play_once(opts)
     cycle_time_values = pick_cycle_time_values(opts)
     { total_time: cycle_time_values.reduce(:+) }

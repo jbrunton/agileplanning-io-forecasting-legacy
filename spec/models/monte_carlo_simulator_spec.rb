@@ -56,6 +56,14 @@ RSpec.describe MonteCarloSimulator do
     end
   end
 
+  describe "#pick_wip_values" do
+    it "returns k randomly selected wip values" do
+      stub_rand_and_return([0, 1, 2, 3, 0])
+      result = simulator.pick_wip_values(5)
+      expect(result).to eq([4, 3, 2, 1, 4])
+    end
+  end
+
   describe "#play_once" do
     it "executes a single run of the Monte Carlo simulator" do
       stub_rand_and_return([1, 0, 1, 0, 1])
