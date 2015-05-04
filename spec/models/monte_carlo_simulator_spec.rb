@@ -72,9 +72,9 @@ RSpec.describe MonteCarloSimulator do
       result = simulator.play_once('S' => 2, 'M' => 3)
 
       expect(result).to eq({
-                  total_time: 12,
-                  average_wip: 2,
-                  actual_time: 6
+                  total_time: 12, # sum of cycle time values
+                  average_wip: 2, # mean of wip values
+                  actual_time: 6  # total_time / average_wip
               })
     end
   end
