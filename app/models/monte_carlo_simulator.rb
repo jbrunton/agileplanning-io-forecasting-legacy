@@ -1,6 +1,7 @@
 class MonteCarloSimulator
   attr_reader :random
   attr_reader :epic_values
+  attr_reader :wip_values
 
   PLAY_COUNT = 100
 
@@ -9,6 +10,9 @@ class MonteCarloSimulator
     @epic_values = project.epics.
         group_by{ |epic| epic.size }.
         map{ |size, epics| [size, epics.map{ |epic| epic.cycle_time }] }.to_h
+    @wip_values = project.wip_histories.
+        group_by{ |h| h.date }.
+        values.map{ |histories| histories.length }
   end
 
 protected

@@ -6,13 +6,16 @@ RSpec.describe MonteCarloSimulator do
   end
 
   let (:project) {
+    start_date = DateTime.new(2001, 1, 1)
     epics = [
-        build(:epic, :completed, cycle_time: 1, small: true),
-        build(:epic, :completed, cycle_time: 2, small: true),
-        build(:epic, :completed, cycle_time: 3, medium: true),
-        build(:epic, :completed, cycle_time: 4, medium: true)
+        build(:epic, :completed, started: start_date, cycle_time: 1, small: true),
+        build(:epic, :completed, started: start_date, cycle_time: 2, small: true),
+        build(:epic, :completed, started: start_date, cycle_time: 3, medium: true),
+        build(:epic, :completed, started: start_date, cycle_time: 4, medium: true)
     ]
-    create(:project, issues: epics)
+    project = create(:project, issues: epics)
+    WipHistory.compute_history_for!(project)
+    project
   }
 
   let (:simulator) { MonteCarloSimulator.new(project) }
@@ -23,6 +26,12 @@ RSpec.describe MonteCarloSimulator do
                   'S' => [1.0, 2.0],
                   'M' => [3.0, 4.0]
               })
+    end
+  end
+
+  describe "#wip_values" do
+    it "returns the set of wip values for the project" do
+      expect(simulator.wip_values).to eq([4, 3, 2, 1])
     end
   end
 
