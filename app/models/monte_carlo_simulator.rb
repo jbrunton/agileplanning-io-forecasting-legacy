@@ -8,11 +8,25 @@ class MonteCarloSimulator
   def initialize(project)
     @random = Random.new(0)
     @epic_values = project.epics.
+        select{ |epic| epic.cycle_time }.
         group_by{ |epic| epic.size }.
         map{ |size, epics| [size, epics.map{ |epic| epic.cycle_time }] }.to_h
     @wip_values = project.wip_histories.
         group_by{ |h| h.date }.
         values.map{ |histories| histories.length }
+  end
+
+  def play(opts)
+    results = []
+    PLAY_COUNT.times do
+      results << play_once(opts)
+    end
+    results.sort_by!{ |result| result[:actual_time] }
+    [
+        { likelihood: 50, actual_time: results[PLAY_COUNT * 0.5 - 1][:actual_time] },
+        { likelihood: 80, actual_time: results[PLAY_COUNT * 0.8 - 1][:actual_time] },
+        { likelihood: 90, actual_time: results[PLAY_COUNT * 0.9 - 1][:actual_time] }
+    ]
   end
 
 protected
@@ -44,18 +58,5 @@ protected
     average_wip = wip_values.reduce(:+) / wip_values.length
 
     { total_time: total_time, average_wip: average_wip, actual_time: total_time / average_wip }
-  end
-
-  def play(opts)
-    results = []
-    PLAY_COUNT.times do
-      results << play_once(opts)
-    end
-    results.sort_by!{ |result| result[:actual_time] }
-    [
-        { likelihood: 50, actual_time: results[PLAY_COUNT * 0.5 - 1][:actual_time] },
-        { likelihood: 80, actual_time: results[PLAY_COUNT * 0.8 - 1][:actual_time] },
-        { likelihood: 90, actual_time: results[PLAY_COUNT * 0.9 - 1][:actual_time] }
-    ]
   end
 end
