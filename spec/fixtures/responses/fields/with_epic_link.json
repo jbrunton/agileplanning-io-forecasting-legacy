@@ -1,0 +1,38 @@
+[
+  {
+    "id": "customfield_54321",
+    "name": "Some Field",
+    "custom": true,
+    "orderable": true,
+    "navigable": true,
+    "searchable": true,
+    "clauseNames": [
+      "cf[54321]",
+      "Some Field"
+    ],
+    "schema": {
+      "type": "array",
+      "items": "string",
+      "custom": "com.pyxis.greenhopper.jira:gh-some-field",
+      "customId": 54321
+    }
+  },
+  {
+    "id": "customfield_12345",
+    "name": "Epic Link",
+    "custom": true,
+    "orderable": true,
+    "navigable": true,
+    "searchable": true,
+    "clauseNames": [
+      "cf[12345]",
+      "Epic Link"
+    ],
+    "schema": {
+      "type": "array",
+      "items": "string",
+      "custom": "com.pyxis.greenhopper.jira:gh-epic-link",
+      "customId": 12345
+    }
+  }
+]

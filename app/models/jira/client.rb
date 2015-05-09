@@ -4,6 +4,8 @@ class Jira::Client
   def initialize(domain, params)
     @domain = domain
     @credentials = params.slice(:username, :password)
+    @epic_link_id = get_field('Epic Link')['id']
+    puts "*** @epic_link_id: #{@epic_link_id}"
   end
 
   def request(method, relative_url)
@@ -25,7 +27,7 @@ class Jira::Client
     response = request(:get, url)
 
     issues = response['issues'].map do |raw_issue|
-      Jira::IssueBuilder.new(raw_issue).build
+      Jira::IssueBuilder.new(raw_issue, @epic_link_id).build
     end
 
     startAt = response['startAt'] || 0
@@ -49,6 +51,18 @@ class Jira::Client
 
   def get_rapid_board(id)
     get_rapid_boards.find{ |board| board.id == id }
+  end
+
+  def get_fields
+    url = "/rest/api/2/field"
+    response = request(:get, url)
+    response.map do |field|
+      field.slice('id', 'name')
+    end
+  end
+
+  def get_field(name)
+    get_fields.find{ |field| field['name'] == name }
   end
 
   private
