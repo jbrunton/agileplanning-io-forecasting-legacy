@@ -1,120 +1,36 @@
+<!-- Load c3.css -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/c3/0.4.10/c3.css" rel="stylesheet" type="text/css">
+
+<!-- Load d3.js and c3.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/c3/0.4.10/c3.js"></script>
+
 <div class="row">
   <div class="large-12 columns">
   <h1>Epic Cycle Times</h1>
 
-  <script>
-      $(function () {
 
-          function formatIssueLink(issue) {
-              return '<a href="/issues/' + issue.id + '">'
-                      + issue.summary
-                      + '</a>';
-          }
-
-          function formatJiraLink(issue) {
-              return '<a href="<%= "#{@project.domain}/browse/" %>' + issue.key + '">[JIRA]</a>';
-          }
-
-          $.when(
-                  $.get('<%= project_path(@project) %>/cycle_times.json'),
-                  $.get('<%= project_path(@project) %>/wip.json')
-          ).done(function(epics, wip) {
-              var epicData = epics[0]
-                      .filter(function(epic) {
-                          return epic.completed != null;
-                      })
-                      .map(function(epic) {
-                          return {
-                              x: Date.parse(epic.completed),
-                              y: epic.cycle_time,
-                              id: epic.id,
-                              key: epic.key,
-                              summary: epic.summary
-                          };
-                      });
-              var wipData = Object.keys(wip[0]).map(function(date) {
-                  var histories = wip[0][date];
-                  return {
-                      x: Date.parse(date),
-                      y: histories.length,
-                      histories: histories
-                  };
-              });
-              $('#container').highcharts({
-                  chart: {
-                      type: 'spline'
-                  },
-                  title: {
-                      text: 'Epic Cycle Time'
-                  },
-                  subtitle: {
-                      text: 'Historical Cycle Time and WIP values'
-                  },
-                  xAxis: {
-                      type: 'datetime',
-                      dateTimeLabelFormats: { // don't display the dummy year
-                          month: '%e. %b',
-                          year: '%b'
-                      },
-                      title: {
-                          text: 'Date'
-                      }
-                  },
-                  yAxis: [{
-                      title: {
-                          text: 'Cycle Time'
-                      },
-                      min: 0
-                  }, {
-                      title: {
-                          text: 'WIP'
-                      },
-                      opposite: true,
-                      min: 0
-                  }],
-                  plotOptions: {
-                      spline: {
-                          marker: {
-                              enabled: true
-                          }
-                      }
-                  },
-                  tooltip: {
-                      useHTML: true,
-                      formatter: function () {
-                          var html = "";
-                          if (this.series.name == 'Cycle Time') {
-                              html += '<b>CT: ' + this.y.toFixed(1) + ' days</b>'
-                                + '<br />' + formatIssueLink(this.point);
-                          } else {
-                              html += '<b>WIP: ' + this.y + '</b>';
-                              this.point.histories.forEach(function(history) {
-                                  html += '<br/>' + formatIssueLink(history.issue)
-                                    + ' ' + formatJiraLink(history.issue);
-                              });
-                          }
-                          return html;
-                      }
-                  },
-                  series: [{
-                      name: 'Cycle Time',
-                      yAxis: 0,
-                      color: '#F66',
-                      data: epicData
-                  }, {
-                      name: 'WIP',
-                      yAxis: 1,
-                      color: '#66F',
-                      marker: {
-                          enabled: false
-                      },
-                      data: wipData
-                  }]
-              });
-          });
-      });
-  </script>
-
-  <div id="container" style="width: 100%; height: 600px;"></div>
+    <div id="chart"></div>
+    <script>
+        var chart = c3.generate({
+            bindto: '#chart',
+            data: {
+                xs: {
+                    'data1': 'x1',
+                    'data2': 'x2'
+                },
+                columns: [
+                    ['x1', 10, 30, 45, 50, 70, 100],
+                    ['x2', 30, 50, 75, 100, 120],
+                    ['data1', 30, 200, 100, 400, 150, 250],
+                    ['data2', 20, 180, 240, 100, 190]
+                ],
+                types: {
+                    data1: 'spline',
+                    data2: 'scatter'
+                }
+            }
+        });
+    </script>
   </div>
 </div>
