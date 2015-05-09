@@ -12,38 +12,73 @@
 
     <div id="chart"></div>
     <script>
-        chart = c3.generate({
-            data: {
-                x: 'date',
-                xFormat: '%Y-%m-%d %H:%M:%S',
-                json: [{
-                    "date": "2014-06-03 12:00:00",
-                    "data1": "3000",
-                    "data2": "500"
-                }, {
-                    "date": "2014-06-04 15:00:00",
-                    "data1": "1000"
-                }, {
-                    "date": "2014-06-05 1:00:00",
-                    "data1": "5000",
-                    "data2": "1000"
-                }],
-                keys: {
-                    x: 'date',
-                    value: [ "data1", "data2" ]
-                },
-                type: 'scatter',
-                colors: {
-                    data1: '#0000FF',
-                    data2: '#FF0000'
-                }
-            },
-            axis: {
-                x: {
-                    type: "timeseries"
-                }
-            }
-        });
+      $(function() {
+          $.when(
+                  $.get('<%= project_path(@project) %>/cycle_times.json'),
+                  $.get('<%= project_path(@project) %>/wip.json')
+          ).done(function (epics, wip) {
+              var epicData = epics[0]
+                      .filter(function (epic) {
+                          return epic.completed != null;
+                      })
+                      .map(function (epic) {
+                          return {
+                              date: Date.parse(epic.completed),
+                              data2: epic.cycle_time,
+                              id: epic.id,
+                              key: epic.key,
+                              summary: epic.summary
+                          };
+                      });
+              var wipData = Object.keys(wip[0]).map(function (date) {
+                  var histories = wip[0][date];
+                  return {
+                      date: date,
+                      data1: histories.length
+                  };
+              });
+              chart = c3.generate({
+                  data: {
+                      x: 'date',
+                      xFormat: '%Y-%m-%d %H:%M:%S',
+                      json: wipData.concat(epicData).sort(function(a, b) {
+                          if (a.date > b.date) {
+                              return 1;
+                          }
+                          if (a.date < b.date) {
+                              return -1;
+                          }
+                          // a must be equal to b
+                          return 0;
+                      }),
+                      keys: {
+                          x: 'date',
+                          value: [ "data1", "data2" ]
+                      },
+                      types: {
+                          data1: 'step',
+                          data2: 'scatter'
+                      },
+                      colors: {
+                          data1: '#0000FF',
+                          data2: '#FF0000'
+                      },
+                      axes: {
+                          data1: 'y',
+                          data2: 'y2'
+                      }
+                  },
+                  axis: {
+                      x: {
+                          type: "timeseries"
+                      },
+                      y2: {
+                          show: true
+                      }
+                  }
+              });
+          });
+      });
     </script>
   </div>
 </div>

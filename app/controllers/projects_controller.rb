@@ -73,17 +73,18 @@ class ProjectsController < ApplicationController
     epics = @project.issues.
         where(issue_type: 'Epic').
         select{ |epic| epic.cycle_time }.
-        sort_by{ |epic| epic.completed }
+        sort_by{ |epic| epic.completed }.
+        map{ |epic| { completed: epic.completed.strftime('%F %T'), cycle_time: epic.cycle_time } }
 
     respond_to do |format|
-      format.json { render json: epics.to_json(:methods => [:cycle_time]) }
+      format.json { render json: epics.to_json }
     end
   end
 
   # GET /projects/1/wip_histories
   # GET /projects/1/wip_histories.json
   def wip
-    wip_histories = @project.wip_histories.group_by{ |history| history.date }.sort.to_h
+    wip_histories = @project.wip_histories.group_by{ |history| history.date.strftime('%F %T') }.sort.to_h
 
     respond_to do |format|
       format.json { render json: wip_histories.to_json(:include => :issue) }
