@@ -12,7 +12,7 @@
           padding: 12px;
           background: rgba(200, 200, 200, 0.8);
           border-radius: 2px;
-          pointer-events: none;
+          pointer-events: none !important;
       }
 
       /* Creates a small triangle extender for the tooltip */
@@ -107,6 +107,11 @@
           stroke: none;
           pointer-events: all;
       }
+
+      #focusCircle {
+          fill: white;
+          cursor: pointer;
+      }
   </style>
 
   <script>
@@ -177,11 +182,6 @@
                       .append("g")
                       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-              var focus = chart.append('g').style('display', 'none');
-              focus.append('circle')
-                      .attr('id', 'focusCircle')
-                      .attr('r', 5);
-
               var cycleTimeLine = d3.svg.line()
                       .interpolate("bundle")
                       .x(function(d) { return xScale(d.date); })
@@ -206,7 +206,7 @@
 
               var tip = d3.tip().attr('class', 'd3-tip')
                       .direction('e')
-                      .offset([0, 0])
+                      .offset([0, 10])
                       .html(function(d) {
                           if (d.cycleTime) {
                               return "Cycle Time: <b>" + d.cycleTime + "</b><br />"
@@ -262,10 +262,18 @@
 
               var bisectDate = d3.bisector(function(d) { return d.date; }).left;
 
-              chart.append('rect')
+              var overlay = chart.append('rect')
                       .attr('class', 'overlay')
                       .attr('width', width)
-                      .attr('height', height)
+                      .attr('height', height);
+
+              var focus = chart.append('g').style('display', 'none');
+              focus.append('circle')
+                      .attr('id', 'focusCircle')
+                      .attr('r', 5);
+
+              var focusActive = false;
+              overlay.on('click', function() { focusActive = false; tip.hide(); focus.style('display', 'none'); })
                       .on('mousemove', function() {
                           function getMouseXY(self) {
                               var mouse = d3.mouse(self);
@@ -316,13 +324,20 @@
                           var pCycleTime = getClosestCycleTimeXY(mouse);
                           var pWip = getClosestWipXY(mouse);
 
+                          if (focusActive) {
+                              return;
+                          }
                           if (pCycleTime.dist > pWip.dist) {
-                              if (pWip.dist < 400) {
+                              if (pWip.dist < 2500) {
                                   focus.select('#focusCircle')
                                           .attr('cx', pWip.x)
                                           .attr('cy', pWip.y)
                                           .attr('class', 'wip')
-                                  var target = d3.selectAll("circle.wip").filter(function(d) { return d == pWip.data; })[0][0]
+                                          .on('click', function() {
+                                              focusActive = true;
+                                          });
+
+                                  var target = d3.selectAll("circle.wip").filter(function(d) { return d == pWip.data; })[0][0];
                                   tip.show(pWip.data, target);
                                   focus.style('display', null);
                               } else {
@@ -330,12 +345,15 @@
                                   focus.style('display', 'none');
                               }
                           } else {
-                              if (pCycleTime.dist < 400) {
+                              if (pCycleTime.dist < 2500) {
                                   focus.select('#focusCircle')
                                           .attr('cx', pCycleTime.x)
                                           .attr('cy', pCycleTime.y)
                                           .attr('class', 'cycle_time')
-                                  var target = d3.selectAll("circle.cycle_time").filter(function(d) { return d == pCycleTime.data; })[0][0]
+                                          .on('click', function() {
+                                              focusActive = true;
+                                          });
+                                  var target = d3.selectAll("circle.cycle_time").filter(function(d) { return d == pCycleTime.data; })[0][0];
                                   tip.show(pCycleTime.data, target);
                                   focus.style('display', null);
                               } else {
