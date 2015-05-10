@@ -125,6 +125,36 @@
               return '<a href="<%= "#{@project.domain}/browse/" %>' + issue.key + '">[JIRA]</a>';
           }
 
+          function pickSample(cycleTimeData, index) {
+              // Uses the same computation as in Jira. See:
+              // https://confluence.atlassian.com/display/AGILE/Viewing+the+Control+Chart
+
+              // Pick a sample of 20% of the data set, and a minimum of 5
+              var sampleSize = Math.round(Math.max(5, cycleTimeData.length * 0.2));
+              // ensure an odd size, so that the sample is taken equally from around the index
+              if (sampleSize % 2 == 0) sampleSize += 1;
+
+              var startIndex = Math.max(0, index - Math.floor(sampleSize / 2));
+              var endIndex = Math.min(startIndex + sampleSize, cycleTimeData.length);
+
+              // if we're at the end of the array, reduce startIndex until we meet our sample size
+              while (endIndex - startIndex < sampleSize && startIndex > 0) {
+                  --startIndex;
+              }
+
+              var sample = cycleTimeData.slice(startIndex, endIndex);
+
+              return sample;
+          }
+
+          function computeRollingAverage(cycleTimeData) {
+              cycleTimeData.forEach(function(d, index) {
+                  var sample = pickSample(cycleTimeData, index);
+                  var sampleTimes = sample.map(function(d) { return d.cycleTime; });
+                  d.avg = d3.mean(sampleTimes);
+              });
+          }
+
           function drawChart(epics, wip) {
               var parseDate = d3.time.format("%Y-%m-%d").parse;
               var parseTime = d3.time.format("%Y-%m-%dT%H:%M:%S.%LZ").parse;
@@ -142,6 +172,8 @@
                               summary: epic.summary
                           };
                       });
+
+              computeRollingAverage(cycleTimeData);
 
               var wipData = Object.keys(wip[0]).map(function(date) {
                   var histories = wip[0][date];
@@ -186,7 +218,7 @@
               var cycleTimeLine = d3.svg.line()
                       .interpolate("bundle")
                       .x(function(d) { return xScale(d.date); })
-                      .y(function(d) { return yCycleTimeScale(d.cycleTime); });
+                      .y(function(d) { return yCycleTimeScale(d.avg); });
 
               chart.append("path")
                       .datum(cycleTimeData)
