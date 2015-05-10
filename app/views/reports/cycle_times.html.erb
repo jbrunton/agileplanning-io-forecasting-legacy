@@ -98,6 +98,12 @@
 
       .chart .line.cycle_time {
           stroke: indianred;
+          stroke-width: 2px;
+      }
+
+      .chart .area.cycle_time {
+          fill: indianred;
+          opacity: 0.15;
       }
 
       .chart .overlay {
@@ -151,6 +157,7 @@
               cycleTimeData.forEach(function(d, index) {
                   var sample = pickSample(cycleTimeData, index);
                   d.avg = d3.mean(sample, function(d) { return d.cycleTime; });
+                  d.sd = d3.deviation(sample, function(d) { return d.cycleTime; });
               });
           }
 
@@ -215,15 +222,25 @@
                       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
               var cycleTimeLine = d3.svg.line()
-                      .interpolate("bundle")
                       .x(function(d) { return xScale(d.date); })
                       .y(function(d) { return yCycleTimeScale(d.avg); });
+
+              var cycleTimeArea = d3.svg.area()
+                      .x(function(d) { return xScale(d.date); })
+                      .y0(function(d) { return yCycleTimeScale(d.avg - d.sd); })
+                      .y1(function(d) { return yCycleTimeScale(d.avg + d.sd); });
 
               chart.append("path")
                       .datum(cycleTimeData)
                       .attr("class", "line")
                       .attr("d", cycleTimeLine)
-                      .classed("cycle_time", true);;
+                      .classed("cycle_time", true);
+
+              chart.append("path")
+                      .datum(cycleTimeData)
+                      .attr("class", "area")
+                      .attr("d", cycleTimeArea)
+                      .classed("cycle_time", true);
 
               var wipLine = d3.svg.line()
                       .interpolate("monotone")
