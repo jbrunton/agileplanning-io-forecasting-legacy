@@ -150,8 +150,7 @@
           function computeRollingAverage(cycleTimeData) {
               cycleTimeData.forEach(function(d, index) {
                   var sample = pickSample(cycleTimeData, index);
-                  var sampleTimes = sample.map(function(d) { return d.cycleTime; });
-                  d.avg = d3.mean(sampleTimes);
+                  d.avg = d3.mean(sample, function(d) { return d.cycleTime; });
               });
           }
 
