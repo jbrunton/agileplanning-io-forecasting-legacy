@@ -236,7 +236,7 @@
 
               var xAxis = d3.svg.axis()
                       .scale(xScale)
-                      .ticks(8)
+                      .ticks(5)
                       .orient("bottom");
 
               chart.append("g")
@@ -395,7 +395,7 @@
       <div class="row">
         <div class="large-4 columns">
           <label>Date Filter</label>
-          <input id="filter" type="text" />
+          <input id="filter" type="text" value="<%= "#{(Date.today - 1.year).strftime('%d %b %Y')} - #{Date.today.strftime('%d %b %Y')}"  %>" />
         </div>
       </div>
     </form>
