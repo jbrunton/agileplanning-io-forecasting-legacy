@@ -116,6 +116,10 @@
           fill: white;
           cursor: pointer;
       }
+
+      #container {
+          width: 100%;
+      }
   </style>
 
   <script>
@@ -193,8 +197,8 @@
               var allDates = cycleTimeData.map(function(d) { return d.date; })
                       .concat(wipData.map(function(d) { return d.date; }));
 
-              var chartWidth = 600,
-                      chartHeight = 350;
+              var chartWidth = $('#container').width(),
+                      chartHeight = chartWidth / 2;
 
               var margin = {top: 20, right: 30, bottom: 30, left: 40},
                       width = chartWidth - margin.left - margin.right,
@@ -431,6 +435,7 @@
           drawReport();
 
           $('#filter').on('change', drawReport);
+          $(window).resize(drawReport);
       });
 
   </script>
