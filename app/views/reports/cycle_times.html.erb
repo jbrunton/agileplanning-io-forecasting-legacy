@@ -1,6 +1,6 @@
 <div class="row">
   <div class="large-12 columns">
-  <h1>Epic Cycle Times</h1>
+    <h1>Epic Cycle Times</h1>
 
   <style>
       #container, .d3-tip {
@@ -174,6 +174,9 @@
                       .domain([0, d3.max(wipData, function(d) { return d.wip; })])
                       .range([height, 0]);
 
+              $('#container').empty();
+              $('.d3-tip').remove();
+
               var chart = d3.select("#container")
                       .attr("width", width + margin.left + margin.right)
                       .attr("height", height + margin.top + margin.bottom)
@@ -233,6 +236,7 @@
 
               var xAxis = d3.svg.axis()
                       .scale(xScale)
+                      .ticks(5)
                       .orient("bottom");
 
               chart.append("g")
@@ -279,11 +283,17 @@
                           }
 
                           function getCycleTimeXY(index) {
+                              if (index < 0 || index >= cycleTimeData.length) {
+                                  return { x: -999999, y: -999999, data: d };
+                              }
                               var d = cycleTimeData[index];
                               return { x: xScale(d.date), y: yCycleTimeScale(d.cycleTime), data: d };
                           }
 
                           function getWipXY(index) {
+                              if (index < 0 || index >= wipData.length) {
+                                  return { x: -999999, y: -999999, data: d };
+                              }
                               var d = wipData[index];
                               return { x: xScale(d.date), y: yWipScale(d.wip), data: d };
                           }
@@ -362,13 +372,32 @@
                       });
           }
 
-          $.when(
-                  $.get('<%= project_path(@project) %>/cycle_times.json'),
-                  $.get('<%= project_path(@project) %>/wip.json')
-          ).done(drawChart);
+          function drawReport() {
+              var filter = $('#filter').val();
+              $.when(
+                      $.get('<%= project_path(@project) %>/cycle_times.json?filter=' + filter),
+                      $.get('<%= project_path(@project) %>/wip.json?filter=' + filter)
+              ).done(drawChart);
+          }
+
+          drawReport();
+
+          $('#filter').on('change', drawReport);
       });
+
   </script>
 
-  <svg id="container" class="chart" style="width: 100%; height: 600px;"></div>
+
+
+    <svg id="container" class="chart"></svg>
+
+    <form>
+      <div class="row">
+        <div class="large-4 columns">
+          <label>Date Filter</label>
+          <input id="filter" type="text" value="<%= "#{(Date.today - 1.year).strftime('%d %b %Y')} - #{Date.today.strftime('%d %b %Y')}"  %>" />
+        </div>
+      </div>
+    </form>
   </div>
 </div>

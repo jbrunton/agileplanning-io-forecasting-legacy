@@ -1,5 +1,6 @@
 class ProjectsController < ApplicationController
   before_action :set_project, only: [:show, :edit, :update, :destroy, :sync, :cycle_times, :wip]
+  before_action :set_filter, only: [:cycle_times, :wip]
 
   # GET /projects
   # GET /projects.json
@@ -72,7 +73,7 @@ class ProjectsController < ApplicationController
   def cycle_times
     epics = @project.issues.
         where(issue_type: 'Epic').
-        select{ |epic| epic.cycle_time }.
+        select{ |epic| epic.cycle_time && @filter.allow_issue(epic) }.
         sort_by{ |epic| epic.completed }
 
     respond_to do |format|
@@ -83,7 +84,9 @@ class ProjectsController < ApplicationController
   # GET /projects/1/wip_histories
   # GET /projects/1/wip_histories.json
   def wip
-    wip_histories = @project.wip_histories.group_by{ |history| history.date }.sort.to_h
+    wip_histories = @project.wip_histories.
+        select{ |history| @filter.allow_date(history.date) }.
+        group_by{ |history| history.date }.sort.to_h
 
     respond_to do |format|
       format.json { render json: wip_histories.to_json(:include => :issue) }
@@ -100,4 +103,8 @@ class ProjectsController < ApplicationController
     def project_params
       params.require(:project).permit(:domain, :board_id, :name)
     end
+
+  def set_filter
+    @filter = DateFilter.new(params[:filter] || "")
+  end
 end
