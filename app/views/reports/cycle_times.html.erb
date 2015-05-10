@@ -2,6 +2,113 @@
   <div class="large-12 columns">
   <h1>Epic Cycle Times</h1>
 
+  <style>
+      .d3-tip {
+          line-height: 1;
+          font-family: "Lato","Helvetica Neue",Helvetica,Arial,sans-serif;
+          color: #525263;
+          font-size: 14px;
+          font-weight: 300;
+          padding: 12px;
+          background: rgba(200, 200, 200, 0.8);
+          border-radius: 2px;
+          pointer-events: none;
+      }
+
+      /* Creates a small triangle extender for the tooltip */
+      .d3-tip:after {
+          box-sizing: border-box;
+          display: inline;
+          font-size: 10px;
+          width: 100%;
+          line-height: 1;
+          color: rgba(200, 200, 200, 0.8);
+          position: absolute;
+          pointer-events: none;
+      }
+
+      /* Northward tooltips */
+      .d3-tip.n:after {
+          content: "\25BC";
+          margin: -1px 0 0 0;
+          top: 100%;
+          left: 0;
+          text-align: center;
+      }
+
+      /* Eastward tooltips */
+      .d3-tip.e:after {
+          content: "\25C0";
+          margin: -4px 0 0 0;
+          top: 50%;
+          left: -8px;
+      }
+
+      /* Southward tooltips */
+      .d3-tip.s:after {
+          content: "\25B2";
+          margin: 0 0 1px 0;
+          top: -8px;
+          left: 0;
+          text-align: center;
+      }
+
+      /* Westward tooltips */
+      .d3-tip.w:after {
+          content: "\25B6";
+          margin: -4px 0 0 -1px;
+          top: 50%;
+          left: 100%;
+      }
+
+      .axis text {
+          font: 10px sans-serif;
+          fill: black;
+      }
+
+      .axis path,
+      .axis line {
+          fill: none;
+          stroke: grey;
+          shape-rendering: crispEdges;
+      }
+
+      .chart circle {
+          fill: white;
+      }
+
+      .chart circle.cycle_time {
+          stroke: indianred;
+          stroke-width: 1.5px;
+      }
+
+
+      .chart circle.wip {
+          stroke: steelblue;
+          stroke-width: 1.5px;
+      }
+
+      .chart .line {
+          fill: none;
+          stroke-width: 1.5px;
+          stroke-opacity: 0.6;
+      }
+
+      .chart .line.wip {
+          stroke: steelblue;
+      }
+
+      .chart .line.cycle_time {
+          stroke: indianred;
+      }
+
+      .chart .overlay {
+          fill: none;
+          stroke: none;
+          pointer-events: all;
+      }
+  </style>
+
   <script>
       $(function () {
 
@@ -15,106 +122,237 @@
               return '<a href="<%= "#{@project.domain}/browse/" %>' + issue.key + '">[JIRA]</a>';
           }
 
-          $.when(
-                  $.get('<%= project_path(@project) %>/cycle_times.json'),
-                  $.get('<%= project_path(@project) %>/wip.json')
-          ).done(function(epics, wip) {
-              var epicData = epics[0]
+          function drawChart(epics, wip) {
+              var parseDate = d3.time.format("%Y-%m-%d").parse;
+              var parseTime = d3.time.format("%Y-%m-%dT%H:%M:%S.%LZ").parse;
+
+              var cycleTimeData = epics[0]
                       .filter(function(epic) {
                           return epic.completed != null;
                       })
                       .map(function(epic) {
                           return {
-                              x: Date.parse(epic.completed),
-                              y: epic.cycle_time,
+                              date: parseTime(epic.completed),
+                              cycleTime: epic.cycle_time,
                               id: epic.id,
                               key: epic.key,
                               summary: epic.summary
                           };
                       });
+
               var wipData = Object.keys(wip[0]).map(function(date) {
                   var histories = wip[0][date];
                   return {
-                      x: Date.parse(date),
-                      y: histories.length,
+                      date: parseDate(date),
+                      wip: histories.length,
                       histories: histories
                   };
               });
-              $('#container').highcharts({
-                  chart: {
-                      type: 'spline'
-                  },
-                  title: {
-                      text: 'Epic Cycle Time'
-                  },
-                  subtitle: {
-                      text: 'Historical Cycle Time and WIP values'
-                  },
-                  xAxis: {
-                      type: 'datetime',
-                      dateTimeLabelFormats: { // don't display the dummy year
-                          month: '%e. %b',
-                          year: '%b'
-                      },
-                      title: {
-                          text: 'Date'
-                      }
-                  },
-                  yAxis: [{
-                      title: {
-                          text: 'Cycle Time'
-                      },
-                      min: 0
-                  }, {
-                      title: {
-                          text: 'WIP'
-                      },
-                      opposite: true,
-                      min: 0
-                  }],
-                  plotOptions: {
-                      spline: {
-                          marker: {
-                              enabled: true
-                          }
-                      }
-                  },
-                  tooltip: {
-                      useHTML: true,
-                      formatter: function () {
-                          var html = "";
-                          if (this.series.name == 'Cycle Time') {
-                              html += '<b>CT: ' + this.y.toFixed(1) + ' days</b>'
-                                + '<br />' + formatIssueLink(this.point);
+
+              var allDates = cycleTimeData.map(function(d) { return d.date; })
+                      .concat(wipData.map(function(d) { return d.date; }));
+
+              var chartWidth = 600,
+                      chartHeight = 350;
+
+              var margin = {top: 20, right: 30, bottom: 30, left: 40},
+                      width = chartWidth - margin.left - margin.right,
+                      height = chartHeight - margin.top - margin.bottom;
+
+              var xScale = d3.time.scale()
+                      .domain([d3.min(allDates), d3.max(allDates)])
+                      .range([0, width], .1);
+
+              var yCycleTimeScale = d3.scale.linear()
+                      .domain([0, d3.max(cycleTimeData, function(d) { return d.cycleTime; })])
+                      .range([height, 0]);
+
+              var yWipScale = d3.scale.linear()
+                      .domain([0, d3.max(wipData, function(d) { return d.wip; })])
+                      .range([height, 0]);
+
+              var chart = d3.select("#container")
+                      .attr("width", width + margin.left + margin.right)
+                      .attr("height", height + margin.top + margin.bottom)
+                      .append("g")
+                      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+              var focus = chart.append('g').style('display', 'none');
+              focus.append('circle')
+                      .attr('id', 'focusCircle')
+                      .attr('r', 5);
+
+              var cycleTimeLine = d3.svg.line()
+                      .interpolate("bundle")
+                      .x(function(d) { return xScale(d.date); })
+                      .y(function(d) { return yCycleTimeScale(d.cycleTime); });
+
+              chart.append("path")
+                      .datum(cycleTimeData)
+                      .attr("class", "line")
+                      .attr("d", cycleTimeLine)
+                      .classed("cycle_time", true);;
+
+              var wipLine = d3.svg.line()
+                      .interpolate("monotone")
+                      .x(function(d) { return xScale(d.date); })
+                      .y(function(d) { return yWipScale(d.wip); });
+
+              chart.append("path")
+                      .datum(wipData)
+                      .attr("class", "line")
+                      .attr("d", wipLine)
+                      .classed("wip", true);
+
+              var tip = d3.tip().attr('class', 'd3-tip')
+                      .direction('e')
+                      .offset([0, 0])
+                      .html(function(d) {
+                          if (d.cycleTime) {
+                              return "Cycle Time: <b>" + d.cycleTime + "</b><br />"
+                                      + "<a href='#'>" + d.key + "</a>";
                           } else {
-                              html += '<b>WIP: ' + this.y + '</b>';
-                              this.point.histories.forEach(function(history) {
-                                  html += '<br/>' + formatIssueLink(history.issue)
-                                    + ' ' + formatJiraLink(history.issue);
-                              });
+                              return "WIP: <b>" + d.wip + "</b>";
                           }
-                          return html;
-                      }
-                  },
-                  series: [{
-                      name: 'Cycle Time',
-                      yAxis: 0,
-                      color: '#F66',
-                      data: epicData
-                  }, {
-                      name: 'WIP',
-                      yAxis: 1,
-                      color: '#66F',
-                      marker: {
-                          enabled: false
-                      },
-                      data: wipData
-                  }]
-              });
-          });
+                      });
+              chart.call(tip);
+
+              var cycleTimeCircle = chart.selectAll("circle.cycle_time")
+                      .data(cycleTimeData)
+                      .enter().append("circle")
+                      .attr("cx", function(d) { return xScale(d.date); })
+                      .attr("cy", function(d) { return yCycleTimeScale(d.cycleTime); })
+                      .attr("r", 3)
+                      .classed("cycle_time", true);
+
+              var wipCircle = chart.selectAll("circle.wip")
+                      .data(wipData)
+                      .enter().append("circle")
+                      .attr("cx", function(d) { return xScale(d.date); })
+                      .attr("cy", function(d) { return yWipScale(d.wip); })
+                      .attr("r", 1.5)
+                      .classed("wip", true);
+
+              var xAxis = d3.svg.axis()
+                      .scale(xScale)
+                      .orient("bottom");
+
+              chart.append("g")
+                      .attr("class", "x axis")
+                      .attr("transform", "translate(0," + height + ")")
+                      .call(xAxis);
+
+              var yCycleTimeAxis = d3.svg.axis()
+                      .scale(yCycleTimeScale)
+                      .orient("left");
+
+              chart.append("g")
+                      .attr("class", "y axis")
+                      .call(yCycleTimeAxis);
+
+              var yWipAxis = d3.svg.axis()
+                      .scale(yWipScale)
+                      .tickFormat(d3.format("d"))
+                      .orient("right");
+
+              chart.append("g")
+                      .attr("class", "y axis")
+                      .attr("transform", "translate(" + width + ",0)")
+                      .call(yWipAxis);
+
+              var bisectDate = d3.bisector(function(d) { return d.date; }).left;
+
+              chart.append('rect')
+                      .attr('class', 'overlay')
+                      .attr('width', width)
+                      .attr('height', height)
+                      .on('mousemove', function() {
+                          function getMouseXY(self) {
+                              var mouse = d3.mouse(self);
+                              return { x: mouse[0], y: mouse[1] };
+                          }
+
+                          function getCycleTimeXY(index) {
+                              var d = cycleTimeData[index];
+                              return { x: xScale(d.date), y: yCycleTimeScale(d.cycleTime), data: d };
+                          }
+
+                          function getWipXY(index) {
+                              var d = wipData[index];
+                              return { x: xScale(d.date), y: yWipScale(d.wip), data: d };
+                          }
+
+                          function distanceSq(p0, p1) {
+                              return Math.pow(p1.x - p0.x, 2) + Math.pow(p1.y - p0.y, 2);
+                          }
+
+                          function getClosestCycleTimeXY(p) {
+                              var mouseDate = xScale.invert(mouse.x);
+                              var i = bisectDate(cycleTimeData, mouseDate); // returns the index to the current data item
+                              var p0 = getCycleTimeXY(i - 1);
+                              var p1 = getCycleTimeXY(i);
+
+                              p0.dist = distanceSq(p0, mouse);
+                              p1.dist = distanceSq(p1, mouse);
+
+                              // work out which date value is closest to the mouse
+                              return p0.dist > p1.dist ? p1 : p0;
+                          }
+
+                          function getClosestWipXY(p) {
+                              var mouseDate = xScale.invert(mouse.x);
+                              var i = bisectDate(wipData, mouseDate); // returns the index to the current data item
+                              var p0 = getWipXY(i - 1);
+                              var p1 = getWipXY(i);
+
+                              p0.dist = distanceSq(p0, mouse);
+                              p1.dist = distanceSq(p1, mouse);
+
+                              // work out which date value is closest to the mouse
+                              return p0.dist > p1.dist ? p1 : p0;
+                          }
+
+                          var mouse = getMouseXY(this);
+                          var pCycleTime = getClosestCycleTimeXY(mouse);
+                          var pWip = getClosestWipXY(mouse);
+
+                          if (pCycleTime.dist > pWip.dist) {
+                              if (pWip.dist < 400) {
+                                  focus.select('#focusCircle')
+                                          .attr('cx', pWip.x)
+                                          .attr('cy', pWip.y)
+                                          .attr('class', 'wip')
+                                  var target = d3.selectAll("circle.wip").filter(function(d) { return d == pWip.data; })[0][0]
+                                  tip.show(pWip.data, target);
+                                  focus.style('display', null);
+                              } else {
+                                  tip.hide();
+                                  focus.style('display', 'none');
+                              }
+                          } else {
+                              if (pCycleTime.dist < 400) {
+                                  focus.select('#focusCircle')
+                                          .attr('cx', pCycleTime.x)
+                                          .attr('cy', pCycleTime.y)
+                                          .attr('class', 'cycle_time')
+                                  var target = d3.selectAll("circle.cycle_time").filter(function(d) { return d == pCycleTime.data; })[0][0]
+                                  tip.show(pCycleTime.data, target);
+                                  focus.style('display', null);
+                              } else {
+                                  tip.hide();
+                                  focus.style('display', 'none');
+                              }
+                          }
+                      });
+          }
+
+          $.when(
+                  $.get('<%= project_path(@project) %>/cycle_times.json'),
+                  $.get('<%= project_path(@project) %>/wip.json')
+          ).done(drawChart);
       });
   </script>
 
-  <div id="container" style="width: 100%; height: 600px;"></div>
+  <svg id="container" class="chart" style="width: 100%; height: 600px;"></div>
   </div>
 </div>

@@ -16,7 +16,8 @@
 //= require foundation/foundation
 //= require turbolinks
 //= require websocket_rails/main
-//= require highcharts
+//= require d3
+//= require d3-tip
 //= require_tree .
 
 
