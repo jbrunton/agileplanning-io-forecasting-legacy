@@ -3,12 +3,15 @@
   <h1>Epic Cycle Times</h1>
 
   <style>
-      .d3-tip {
-          line-height: 1;
+      #container, .d3-tip {
           font-family: "Lato","Helvetica Neue",Helvetica,Arial,sans-serif;
           color: #525263;
-          font-size: 14px;
+          font-size: 12px;
           font-weight: 300;
+      }
+
+      .d3-tip {
+          line-height: 1;
           padding: 12px;
           background: rgba(200, 200, 200, 0.8);
           border-radius: 2px;
@@ -59,11 +62,6 @@
           margin: -4px 0 0 -1px;
           top: 50%;
           left: 100%;
-      }
-
-      .axis text {
-          font: 10px sans-serif;
-          fill: black;
       }
 
       .axis path,
