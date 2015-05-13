@@ -165,6 +165,16 @@
               });
           }
 
+          function cycleTimeTip(d) {
+              return "Cycle Time: <b>"
+                      + d.cycleTime.toFixed(1) + "</b><br />"
+                      + d.summary;
+          }
+
+          function wipTip(d) {
+              return "WIP: <b>" + d.wip + "</b>";
+          }
+
           function drawChart(epics, wip) {
               var parseDate = d3.time.format("%Y-%m-%d").parse;
               var parseTime = d3.time.format("%Y-%m-%dT%H:%M:%S.%LZ").parse;
@@ -262,10 +272,9 @@
                       .offset([0, 10])
                       .html(function(d) {
                           if (d.cycleTime) {
-                              return "Cycle Time: <b>" + d.cycleTime + "</b><br />"
-                                      + "<a href='#'>" + d.key + "</a>";
+                              return cycleTimeTip(d);
                           } else {
-                              return "WIP: <b>" + d.wip + "</b>";
+                              return wipTip(d);
                           }
                       });
               chart.call(tip);
