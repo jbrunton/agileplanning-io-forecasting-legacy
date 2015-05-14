@@ -73,7 +73,7 @@ class Project < ActiveRecord::Base
       end
     end
 
-    history
+    history.sort.to_h
   end
 
 end

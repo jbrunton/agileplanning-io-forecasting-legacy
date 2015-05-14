@@ -84,12 +84,11 @@ class ProjectsController < ApplicationController
   # GET /projects/1/wip_histories
   # GET /projects/1/wip_histories.json
   def wip
-    wip_histories = @project.wip_histories.
-        select{ |history| @filter.allow_date(history.date) }.
-        group_by{ |history| history.date }.sort.to_h
+    history = @project.complete_wip_history.
+        select{ |date, _| @filter.allow_date(date) }
 
     respond_to do |format|
-      format.json { render json: wip_histories.to_json(:include => :issue) }
+      format.json { render json: history.to_json }
     end
   end
 
