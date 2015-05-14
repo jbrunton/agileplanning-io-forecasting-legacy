@@ -13,8 +13,8 @@
       .d3-tip {
           line-height: 1;
           padding: 12px;
-          background: rgba(200, 200, 200, 0.8);
-          border-radius: 2px;
+          border: solid 1px rgba(200, 200, 200, 0.8);
+          background: rgba(250, 250, 250, 0.8);
           pointer-events: none !important;
       }
 
@@ -254,22 +254,6 @@
                       });
               chart.call(tip);
 
-              var cycleTimeCircle = chart.selectAll("circle.cycle_time")
-                      .data(cycleTimeData)
-                      .enter().append("circle")
-                      .attr("cx", function(d) { return xScale(d.date); })
-                      .attr("cy", function(d) { return yCycleTimeScale(d.cycleTime); })
-                      .attr("r", 3)
-                      .classed("cycle_time", true);
-
-              var wipCircle = chart.selectAll("circle.wip")
-                      .data(wipData)
-                      .enter().append("circle")
-                      .attr("cx", function(d) { return xScale(d.date); })
-                      .attr("cy", function(d) { return yWipScale(d.wip); })
-                      .attr("r", 1.5)
-                      .classed("wip", true);
-
               var xAxis = d3.svg.axis()
                       .scale(xScale)
                       .ticks(5)
@@ -297,6 +281,22 @@
                       .attr("class", "y axis")
                       .attr("transform", "translate(" + width + ",0)")
                       .call(yWipAxis);
+
+              var cycleTimeCircle = chart.selectAll("circle.cycle_time")
+                      .data(cycleTimeData)
+                      .enter().append("circle")
+                      .attr("cx", function(d) { return xScale(d.date); })
+                      .attr("cy", function(d) { return yCycleTimeScale(d.cycleTime); })
+                      .attr("r", 3)
+                      .classed("cycle_time", true);
+
+              var wipCircle = chart.selectAll("circle.wip")
+                      .data(wipData)
+                      .enter().append("circle")
+                      .attr("cx", function(d) { return xScale(d.date); })
+                      .attr("cy", function(d) { return yWipScale(d.wip); })
+                      .attr("r", 1.5)
+                      .classed("wip", true);
 
               var bisectDate = d3.bisector(function(d) { return d.date; }).left;
 
@@ -370,41 +370,32 @@
                           if (focusActive) {
                               return;
                           }
-                          if (pCycleTime.dist > pWip.dist) {
-                              if (pWip.dist < 2500) {
-                                  focus.select('#focusCircle')
-                                          .attr('cx', pWip.x)
-                                          .attr('cy', pWip.y)
-                                          .attr('class', 'wip')
-                                          .on('click', function() {
-                                              focusActive = true;
-                                              tip.show(pWip.data, target);
-                                          });
 
-                                  var target = d3.selectAll("circle.wip").filter(function(d) { return d == pWip.data; })[0][0];
-                                  tip.show(pWip.data, target);
-                                  focus.style('display', null);
-                              } else {
-                                  tip.hide();
-                                  focus.style('display', 'none');
-                              }
+                          if (pCycleTime.dist < pWip.dist && pCycleTime.dist < 2500) {
+                              focus.select('#focusCircle')
+                                      .attr('cx', pCycleTime.x)
+                                      .attr('cy', pCycleTime.y)
+                                      .attr('class', 'cycle_time')
+                                      .on('click', function() {
+                                          focusActive = true;
+                                          tip.show(pCycleTime.data, target);
+                                      });
+                              var target = d3.selectAll("circle.cycle_time").filter(function(d) { return d == pCycleTime.data; })[0][0];
+                              tip.show(pCycleTime.data, target);
+                              focus.style('display', null);
                           } else {
-                              if (pCycleTime.dist < 2500) {
-                                  focus.select('#focusCircle')
-                                          .attr('cx', pCycleTime.x)
-                                          .attr('cy', pCycleTime.y)
-                                          .attr('class', 'cycle_time')
-                                          .on('click', function() {
-                                              focusActive = true;
-                                              tip.show(pCycleTime.data, target);
-                                          });
-                                  var target = d3.selectAll("circle.cycle_time").filter(function(d) { return d == pCycleTime.data; })[0][0];
-                                  tip.show(pCycleTime.data, target);
-                                  focus.style('display', null);
-                              } else {
-                                  tip.hide();
-                                  focus.style('display', 'none');
-                              }
+                              focus.select('#focusCircle')
+                                      .attr('cx', pWip.x)
+                                      .attr('cy', pWip.y)
+                                      .attr('class', 'wip')
+                                      .on('click', function() {
+                                          focusActive = true;
+                                          tip.show(pWip.data, target);
+                                      });
+
+                              var target = d3.selectAll("circle.wip").filter(function(d) { return d == pWip.data; })[0][0];
+                              tip.show(pWip.data, target);
+                              focus.style('display', null);
                           }
                       });
           }
