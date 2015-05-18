@@ -57,23 +57,4 @@ class Project < ActiveRecord::Base
     end
   end
 
-  def complete_wip_history
-    history_array = wip_histories.
-        group_by{ |history| history.date }.
-        map{ |date, histories| [date, histories.map{ |history| history.issue }] }.
-        sort
-
-    history = history_array.to_h
-
-    DateRange.new(history_array.first[0], DateTime.now.to_date).to_a.each do |date|
-      if history[date].nil?
-        history[date] = date > history_array.last[0] ?
-            history_array.last[1] :
-            []
-      end
-    end
-
-    history.sort.to_h
-  end
-
 end
