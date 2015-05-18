@@ -5,7 +5,6 @@ class Jira::Client
     @domain = domain
     @credentials = params.slice(:username, :password)
     @epic_link_id = get_field('Epic Link')['id']
-    puts "*** @epic_link_id: #{@epic_link_id}"
   end
 
   def request(method, relative_url)
