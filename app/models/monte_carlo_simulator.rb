@@ -5,13 +5,14 @@ class MonteCarloSimulator
 
   PLAY_COUNT = 100
 
-  def initialize(project)
+  def initialize(project, filter)
     @random = Random.new(0)
     @epic_values = project.epics.
-        select{ |epic| epic.cycle_time }.
+        select{ |epic| epic.cycle_time && filter.allow_issue(epic) }.
         group_by{ |epic| epic.size }.
         map{ |size, epics| [size, epics.map{ |epic| epic.cycle_time }] }.to_h
     @wip_values = project.wip_histories.
+        select{ |h| filter.allow_date(h.date) }.
         group_by{ |h| h.date }.
         values.map{ |histories| histories.length }
   end

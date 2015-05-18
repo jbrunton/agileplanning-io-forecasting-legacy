@@ -5,23 +5,26 @@ RSpec.describe MonteCarloSimulator do
     MonteCarloSimulator.send(:public, *MonteCarloSimulator.protected_instance_methods)
   end
 
+  let (:start_date) { DateTime.new(2001, 1, 1) }
+  let (:filter) { DateFilter.new("1 Jan 2001-5 Jan 2001")}
+
   let (:project) {
-    start_date = DateTime.new(2001, 1, 1)
     epics = [
         build(:epic, :completed, started: start_date, cycle_time: 1, small: true),
         build(:epic, :completed, started: start_date, cycle_time: 2, small: true),
         build(:epic, :completed, started: start_date, cycle_time: 3, medium: true),
-        build(:epic, :completed, started: start_date, cycle_time: 4, medium: true)
+        build(:epic, :completed, started: start_date, cycle_time: 4, medium: true),
+        build(:epic, :completed, started: start_date + 10.days, cycle_time: 1, small: true)
     ]
     project = create(:project, issues: epics)
     WipHistory.compute_history_for!(project)
     project
   }
 
-  let (:simulator) { MonteCarloSimulator.new(project) }
+  let (:simulator) { MonteCarloSimulator.new(project, filter) }
 
   describe "#epic_values" do
-    it "returns the sets of epic values grouped by size" do
+    it "returns the sets of filtered epic values grouped by size" do
       expect(simulator.epic_values).to eq({
                   'S' => [1.0, 2.0],
                   'M' => [3.0, 4.0]
@@ -30,7 +33,7 @@ RSpec.describe MonteCarloSimulator do
   end
 
   describe "#wip_values" do
-    it "returns the set of wip values for the project" do
+    it "returns the set of filtered wip values for the project" do
       expect(simulator.wip_values).to eq([4, 3, 2, 1])
     end
   end

@@ -10,7 +10,7 @@ class ReportsController < ApplicationController
       opts.merge!({'S' => params[:small_count].to_i}) if params[:small_count].to_i > 0
       opts.merge!({'M' => params[:medium_count].to_i}) if params[:medium_count].to_i > 0
       opts.merge!({'L' => params[:large_count].to_i}) if params[:large_count].to_i > 0
-      @forecast = MonteCarloSimulator.new(@project).play(opts)
+      @forecast = MonteCarloSimulator.new(@project, @filter).play(opts)
     end
   end
 
