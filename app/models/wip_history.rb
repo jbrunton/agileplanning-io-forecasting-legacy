@@ -11,7 +11,7 @@ class WipHistory < ActiveRecord::Base
     to_date = events.last.time.to_date + 1.day
 
     epics = []
-    dates = date_range(from_date, to_date)
+    dates = DateRange.new(from_date, to_date).to_a
     dates.each do |date|
       events_for_day = events.select{ |e| date <= e.time && e.time < date + 1.day }
       started_events = events_for_day.select{ |e| e.event_type == 'started' }
@@ -22,14 +22,5 @@ class WipHistory < ActiveRecord::Base
 
       epics.each{ |epic| WipHistory.create(date: date, issue: epic) }
     end
-  end
-
-private
-  def self.date_range(start_date, end_date)
-    dates = [start_date]
-    while dates.last < end_date - 1.day
-      dates << (dates.last + 1.day)
-    end
-    dates
   end
 end

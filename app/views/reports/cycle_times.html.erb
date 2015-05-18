@@ -135,8 +135,8 @@
           function wipTip(d, active) {
               var html = "WIP: <b>" + d.wip + "</b>";
               if (active) {
-                  d.histories.forEach(function(h) {
-                     html += "<br />" + h.issue.summary;
+                  d.issues.forEach(function(issue) {
+                     html += "<br />" + issue.summary;
                   });
               }
               return html;
@@ -161,11 +161,11 @@
               computeRollingAverage(cycleTimeData);
 
               var wipData = Object.keys(wip[0]).map(function(date) {
-                  var histories = wip[0][date];
+                  var issues = wip[0][date];
                   return {
                       date: parseDate(date),
-                      wip: histories.length,
-                      histories: histories
+                      wip: issues.length,
+                      issues: issues
                   };
               });
 
