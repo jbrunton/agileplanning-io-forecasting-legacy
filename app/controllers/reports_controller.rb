@@ -6,14 +6,19 @@ class ReportsController < ApplicationController
 
   def forecast
     @backlog = @project.epics.select{ |epic| epic.epic_status == 'To Do' }
+    @upcoming = @backlog.select{ |epic| !epic.started }
+    @in_progress = @backlog.select{ |epic| epic.started }
 
     if request.request_method == 'POST'
-      opts = {}
-      opts.merge!({'S' => params[:small_count].to_i}) if params[:small_count].to_i > 0
-      opts.merge!({'M' => params[:medium_count].to_i}) if params[:medium_count].to_i > 0
-      opts.merge!({'L' => params[:large_count].to_i}) if params[:large_count].to_i > 0
-      opts.merge!({'?' => params[:unsized_count].to_i}) if params[:unsized_count].to_i > 0
-      @forecast = MonteCarloSimulator.new(@project, @filter).play(opts)
+      opts = { 'S' => 0, 'M' => 0, 'L' => 0, '?' => 0 }
+      @forecasts = @upcoming.map do |epic|
+        if (epic.size)
+          opts[epic.size] = opts[epic.size] + 1
+        else
+          opts['?'] = opts['?'] + 1
+        end
+        { epic: epic, opts: opts.clone, forecast: MonteCarloSimulator.new(@project, @filter).play(opts) }
+      end
       @start_date = params[:start_date].empty? ? DateTime.now.to_date : DateTime.parse(params[:start_date]).to_date
     end
   end

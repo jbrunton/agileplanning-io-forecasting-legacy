@@ -9,34 +9,11 @@
 
   <div class="large-4 columns">
 
-    <%= form_tag do  %>
-        <div class="row">
-          <div class="large-3 columns">
-            <label>Small
-              <input name='small_count' type="text" value="<%= params[:small_count] ? params[:small_count] : nil %>" />
-            </label>
-          </div>
-          <div class="large-3 columns">
-            <label>Medium
-              <input name='medium_count' type="text" value="<%= params[:medium_count] ? params[:medium_count] : nil %>" />
-            </label>
-          </div>
-          <div class="large-3 columns">
-            <label>Large
-              <input name='large_count' type="text" value="<%= params[:large_count] ? params[:large_count] : nil %>" />
-            </label>
-          </div>
-          <div class="large-3 columns">
-            <label>Unsized
-              <input name='unsized_count' type="text" value="<%= params[:unsized_count] ? params[:unsized_count] : nil %>" />
-            </label>
-          </div>
-        </div>
-
+    <%= form_tag do %>
         <div class="row">
           <div class="larger-12 columns">
             <label>Start date
-              <input type="text" name="start_date" id="start_date" value="<%= @start_date ? @start_date.to_s : nil %>" />
+              <input type="text" name="start_date" id="start_date" value="<%= @start_date ? @start_date.to_s : nil %>"/>
             </label>
           </div>
         </div>
@@ -44,7 +21,7 @@
         <div class="row">
           <div class="larger-12 columns">
             <label>Filter
-              <input type="text" name="filter" id="filter" value="<%= params[:filter] ? params[:filter] : nil %>" />
+              <input type="text" name="filter" id="filter" value="<%= params[:filter] ? params[:filter] : nil %>"/>
             </label>
           </div>
         </div>
@@ -56,28 +33,47 @@
         </div>
     <% end %>
 
-    <h4>Backlog</h4>
-    <% @backlog.each do |epic| %>
+    <h4>In Progress</h4>
+    <% @in_progress.each do |epic| %>
+        <div class="panel"><%= epic.summary %></div>
+    <% end %>
+
+    <h4>Upcoming</h4>
+    <% @upcoming.each do |epic| %>
         <div class="panel"><%= epic.summary %></div>
     <% end %>
 
   </div>
   <div class="large-8 columns">
 
-      <% if @forecast %>
-          <table style="width: 100%">
-            <tr>
-              <th>Likelihood</th>
-              <th>Time</th>
-            </tr>
-            <% @forecast.each do |forecast| %>
-                <tr>
-                  <td><%= "#{forecast[:likelihood]} %" %></td>
-                  <td><%= "#{sprintf('%.1f', forecast[:actual_time])} days" %></td>
-                  <td><%= format_datetime(@start_date + forecast[:actual_time].days) %></td>
-                </tr>
-            <% end %>
-          </table>
-      <% end %>
+    <% if @forecasts %>
+        <table style="width: 100%">
+          <tr>
+            <th width="30%">Likelihood</th>
+            <th width="30%">Time</th>
+            <th width="40%">Date</th>
+          </tr>
+        </table>
+          <% @forecasts.each do |record| %>
+            <table style="width: 100%">
+              <tr class="panel callout">
+                <th colspan="4"><%= record[:epic].summary %></th>
+              </tr>
+
+              <tr>
+                <% record[:forecast].each do |interval| %>
+                  <tr>
+                    <td width="30%"><%= "#{interval[:likelihood]} %" %></td>
+                    <td width="30%"><%= "#{sprintf('%.1f', interval[:actual_time])} days" %></td>
+                    <td width="40%"><%= format_datetime(@start_date + interval[:actual_time].days) %></td>
+                  </tr>
+              <% end %>
+
+              </tr>
+            </table>
+
+          <% end %>
+
+    <% end %>
   </div>
 </div>
