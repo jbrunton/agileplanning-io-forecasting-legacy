@@ -58,6 +58,12 @@ RSpec.describe MonteCarloSimulator do
       result = simulator.pick_cycle_time_values('S' => 2, 'M' => 3)
       expect(result).to eq([2, 1, 4, 3, 4])
     end
+
+    it "falls back to the unsized category if no data exists for the given category" do
+      allow(simulator).to receive(:epic_values).and_return('S' => [1], '?' => [2])
+      result = simulator.pick_cycle_time_values('S' => 1, 'M' => 1)
+      expect(result).to eq([1, 2])
+    end
   end
 
   describe "#pick_wip_values" do

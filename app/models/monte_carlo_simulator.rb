@@ -45,7 +45,9 @@ protected
   def pick_cycle_time_values(opts)
     values = []
     opts.each do |size, count|
-      values.concat(pick_values(@epic_values[size], count))
+      values_for_size = epic_values[size]
+      values_for_size = epic_values['?'] if values_for_size.nil?
+      values.concat(pick_values(values_for_size, count))
     end
     values
   end
