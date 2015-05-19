@@ -5,7 +5,7 @@ class ReportsController < ApplicationController
   end
 
   def forecast
-    @backlog = @project.epics.select{ |epic| epic.epic_status == 'To Do' }
+    @backlog = @project.epics.select{ |epic| epic.epic_status != 'Done' }
     @upcoming = @backlog.select{ |epic| !epic.started }
     @in_progress = @backlog.select{ |epic| epic.started }
 
