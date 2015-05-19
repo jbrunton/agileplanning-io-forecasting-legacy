@@ -18,9 +18,11 @@ class Project < ActiveRecord::Base
       epic.started = started_dates.min
     end
 
-    completed_dates = epic.issues.map{|issue| issue.completed}.compact
-    unless completed_dates.length < epic.issues.length # i.e. no issues are incomplete
-      epic.completed = completed_dates.max
+    if epic.epic_status == 'Done'
+      completed_dates = epic.issues.map{|issue| issue.completed}.compact
+      unless completed_dates.length < epic.issues.length # i.e. no issues are incomplete
+        epic.completed = completed_dates.max
+      end
     end
   end
 

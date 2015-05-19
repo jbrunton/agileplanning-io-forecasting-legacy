@@ -87,7 +87,8 @@ RSpec.describe Jira::Client do
 
       expect(response).to eq([
                   { 'id' => 'customfield_54321', 'name' => 'Some Field' },
-                  { 'id' => 'customfield_12345', 'name' => 'Epic Link' }
+                  { 'id' => 'customfield_12345', 'name' => 'Epic Link' },
+                  { 'id' => 'customfield_98765', 'name' => 'Epic Status' }
               ])
     end
   end
