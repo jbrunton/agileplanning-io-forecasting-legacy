@@ -6,10 +6,12 @@ class ReportsController < ApplicationController
 
   def forecast
     @backlog = @project.epics.select{ |epic| epic.epic_status == 'To Do' }
+    @upcoming = @backlog.select{ |epic| !epic.started }
+    @in_progress = @backlog.select{ |epic| epic.started }
 
     if request.request_method == 'POST'
       opts = { 'S' => 0, 'M' => 0, 'L' => 0, '?' => 0 }
-      @forecasts = @backlog.map do |epic|
+      @forecasts = @upcoming.map do |epic|
         if (epic.size)
           opts[epic.size] = opts[epic.size] + 1
         else

@@ -33,8 +33,13 @@
         </div>
     <% end %>
 
-    <h4>Backlog</h4>
-    <% @backlog.each do |epic| %>
+    <h4>In Progress</h4>
+    <% @in_progress.each do |epic| %>
+        <div class="panel"><%= epic.summary %></div>
+    <% end %>
+
+    <h4>Upcoming</h4>
+    <% @upcoming.each do |epic| %>
         <div class="panel"><%= epic.summary %></div>
     <% end %>
 
