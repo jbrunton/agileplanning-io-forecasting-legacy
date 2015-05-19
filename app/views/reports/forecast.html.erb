@@ -30,6 +30,14 @@
 
         <div class="row">
           <div class="larger-12 columns">
+            <label>Start date
+              <input type="text" name="start_date" id="start_date" value="<%= @start_date ? @start_date.to_s : nil %>" />
+            </label>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="larger-12 columns">
             <label>Filter
               <input type="text" name="filter" id="filter" value="<%= params[:filter] ? params[:filter] : nil %>" />
             </label>
@@ -60,7 +68,9 @@
             <% @forecast.each do |forecast| %>
                 <tr>
                   <td><%= "#{forecast[:likelihood]} %" %></td>
-                  <td><%= "#{forecast[:actual_time]} days" %></td>
+                  <td><%= "#{sprintf('%.1f', forecast[:actual_time])} days" %></td>
+                  <td><%= format_datetime(@start_date + forecast[:actual_time].days) %></td>
+                </tr>
             <% end %>
           </table>
       <% end %>

@@ -13,6 +13,7 @@ class ReportsController < ApplicationController
       opts.merge!({'M' => params[:medium_count].to_i}) if params[:medium_count].to_i > 0
       opts.merge!({'L' => params[:large_count].to_i}) if params[:large_count].to_i > 0
       @forecast = MonteCarloSimulator.new(@project, @filter).play(opts)
+      @start_date = params[:start_date].empty? ? DateTime.now.to_date : DateTime.parse(params[:start_date]).to_date
     end
   end
 
