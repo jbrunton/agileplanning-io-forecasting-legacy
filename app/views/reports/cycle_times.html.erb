@@ -50,6 +50,11 @@
           stroke: steelblue;
       }
 
+      .chart .area.wip {
+          fill: steelblue;
+          opacity: 0.15;
+      }
+
       .chart .line.cycle_time {
           stroke: indianred;
           stroke-width: 2px;
@@ -91,33 +96,33 @@
               return '<a href="<%= "#{@project.domain}/browse/" %>' + issue.key + '">[JIRA]</a>';
           }
 
-          function pickSample(cycleTimeData, index) {
+          function pickSample(data, index) {
               // Uses the same computation as in Jira. See:
               // https://confluence.atlassian.com/display/AGILE/Viewing+the+Control+Chart
 
               // Pick a sample of 20% of the data set, and a minimum of 5
-              var sampleSize = Math.round(Math.max(5, cycleTimeData.length * 0.2));
+              var sampleSize = Math.round(Math.max(5, data.length * 0.2));
               // ensure an odd size, so that the sample is taken equally from around the index
               if (sampleSize % 2 == 0) sampleSize += 1;
 
               var startIndex = Math.max(0, index - Math.floor(sampleSize / 2));
-              var endIndex = Math.min(startIndex + sampleSize, cycleTimeData.length);
+              var endIndex = Math.min(startIndex + sampleSize, data.length);
 
               // if we're at the end of the array, reduce startIndex until we meet our sample size
               while (endIndex - startIndex < sampleSize && startIndex > 0) {
                   --startIndex;
               }
 
-              var sample = cycleTimeData.slice(startIndex, endIndex);
+              var sample = data.slice(startIndex, endIndex);
 
               return sample;
           }
 
-          function computeRollingAverage(cycleTimeData) {
-              cycleTimeData.forEach(function(d, index) {
-                  var sample = pickSample(cycleTimeData, index);
-                  d.avg = d3.mean(sample, function(d) { return d.cycleTime; });
-                  d.sd = d3.deviation(sample, function(d) { return d.cycleTime; });
+          function computeRollingAverage(data) {
+              data.forEach(function(d, index) {
+                  var sample = pickSample(data, index);
+                  d.avg = d3.mean(sample, function(d) { return d.cycleTime ? d.cycleTime : d.wip; });
+                  d.sd = d3.deviation(sample, function(d) { return d.cycleTime ? d.cycleTime : d.wip; });
               });
           }
 
@@ -158,8 +163,6 @@
                           };
                       });
 
-              computeRollingAverage(cycleTimeData);
-
               var wipData = Object.keys(wip[0]).map(function(date) {
                   var issues = wip[0][date];
                   return {
@@ -168,6 +171,9 @@
                       issues: issues
                   };
               });
+
+              computeRollingAverage(cycleTimeData);
+              computeRollingAverage(wipData);
 
               var allDates = cycleTimeData.map(function(d) { return d.date; })
                       .concat(wipData.map(function(d) { return d.date; }));
@@ -224,12 +230,23 @@
               var wipLine = d3.svg.line()
                       .interpolate("monotone")
                       .x(function(d) { return xScale(d.date); })
-                      .y(function(d) { return yWipScale(d.wip); });
+                      .y(function(d) { return yWipScale(d.avg); });
+
+              var wipArea = d3.svg.area()
+                      .x(function(d) { return xScale(d.date); })
+                      .y0(function(d) { return yWipScale(d.avg - d.sd); })
+                      .y1(function(d) { return yWipScale(d.avg + d.sd); });
 
               chart.append("path")
                       .datum(wipData)
                       .attr("class", "line")
                       .attr("d", wipLine)
+                      .classed("wip", true);
+
+              chart.append("path")
+                      .datum(wipData)
+                      .attr("class", "area")
+                      .attr("d", wipArea)
                       .classed("wip", true);
 
               var focusActive = false;
