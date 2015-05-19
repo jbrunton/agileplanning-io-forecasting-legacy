@@ -1,50 +1,56 @@
 <div class="row">
-  <div class="large-12 columns">
-
-    <h1>Forecast</h1>
-
-  </div>
-</div>
-<div class="row">
 
   <div class="large-4 columns">
+    <h3>Backlog</h3>
 
-    <%= form_tag do %>
-        <div class="row">
-          <div class="larger-12 columns">
-            <label>Start date
-              <input type="text" name="start_date" id="start_date" value="<%= @start_date ? @start_date.to_s : nil %>"/>
-            </label>
-          </div>
-        </div>
+    <table style="width: 100%">
+      <tr class="panel callout">
+        <th>In Progress</th>
+      </tr>
+      <% @in_progress.each do |epic| %>
+          <tr>
+            <td><%= epic.summary %></td>
+          </tr>
+      <% end %>
+    </table>
 
-        <div class="row">
-          <div class="larger-12 columns">
-            <label>Filter
-              <input type="text" name="filter" id="filter" value="<%= params[:filter] ? params[:filter] : nil %>"/>
-            </label>
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="large-12 columns">
-            <%= submit_tag 'Forecast' %>
-          </div>
-        </div>
-    <% end %>
-
-    <h4>In Progress</h4>
-    <% @in_progress.each do |epic| %>
-        <div class="panel"><%= epic.summary %></div>
-    <% end %>
-
-    <h4>Upcoming</h4>
-    <% @upcoming.each do |epic| %>
-        <div class="panel"><%= epic.summary %></div>
-    <% end %>
+    <table style="width: 100%">
+      <tr class="panel callout">
+        <th>Upcoming</th>
+      </tr>
+      <% @upcoming.each do |epic| %>
+          <tr>
+            <td><%= epic.summary %></td>
+          </tr>
+      <% end %>
+    </table>
 
   </div>
   <div class="large-8 columns">
+
+    <h3>Forecast</h3>
+
+    <div class="panel">
+      <%= form_tag do %>
+          <div class="row">
+            <div class="large-5 columns">
+              <label>Start date
+                <input type="text" name="start_date" id="start_date" value="<%= @start_date ? @start_date.to_s : nil %>"/>
+              </label>
+            </div>
+            <div class="large-7 columns">
+              <label>Filter
+                <input type="text" name="filter" id="filter" value="<%= params[:filter] ? params[:filter] : nil %>"/>
+              </label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="large-2 columns">
+              <%= submit_tag 'Forecast', :class => 'button' %>
+            </div>
+          </div>
+      <% end %>
+    </div>
 
     <% if @forecasts %>
         <table style="width: 100%">
@@ -54,7 +60,7 @@
             <th width="40%">Date</th>
           </tr>
         </table>
-          <% @forecasts.each do |record| %>
+        <% @forecasts.each do |record| %>
             <table style="width: 100%">
               <tr class="panel callout">
                 <th colspan="4"><%= record[:epic].summary %></th>
@@ -72,7 +78,7 @@
               </tr>
             </table>
 
-          <% end %>
+        <% end %>
 
     <% end %>
   </div>
