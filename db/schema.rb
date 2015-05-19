@@ -20,10 +20,11 @@ ActiveRecord::Schema.define(version: 3) do
     t.string   "size"
     t.integer  "project_id"
     t.string   "epic_key"
+    t.string   "epic_status"
     t.datetime "started"
     t.datetime "completed"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
   end
 
   add_index "issues", ["epic_key"], name: "index_issues_on_epic_key"

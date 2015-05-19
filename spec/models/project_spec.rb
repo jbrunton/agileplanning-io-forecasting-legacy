@@ -18,7 +18,7 @@ RSpec.describe Project, type: :model do
     end
 
     it "computes the started and completed dates" do
-      epic = create(:issue, issue_type: 'Epic')
+      epic = create(:epic, epic_status: 'Done')
       epic.issues = [issue = create(:issue, :completed)]
 
       Project.compute_cycle_times_for(epic)
@@ -27,7 +27,7 @@ RSpec.describe Project, type: :model do
       expect(epic.completed).to eq(issue.completed)
     end
 
-    it "only sets the completed date if all issues are completed" do
+    it "only sets the completed date if all issues are completed and the status is 'Done'" do
       epic = create(:issue, issue_type: 'Epic')
       epic.issues = [create(:issue, :started)]
 
@@ -35,6 +35,11 @@ RSpec.describe Project, type: :model do
 
       expect(epic.completed).to be_nil
     end
+
+    it "leaves the completed date unset if the issues are completed but the status is 'To Do'"
+
+    it "leaves the completed date unset if the status is 'Done' but the stories aren't completed"
+
   end
 
   describe "#complete_wip_history" do

@@ -5,6 +5,8 @@ class ReportsController < ApplicationController
   end
 
   def forecast
+    @backlog = @project.epics.select{ |epic| epic.epic_status == 'To Do' }
+
     if request.request_method == 'POST'
       opts = {}
       opts.merge!({'S' => params[:small_count].to_i}) if params[:small_count].to_i > 0

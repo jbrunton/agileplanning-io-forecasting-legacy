@@ -43,6 +43,11 @@
         </div>
     <% end %>
 
+    <h4>Backlog</h4>
+    <% @backlog.each do |epic| %>
+        <div class="panel"><%= epic.summary %></div>
+    <% end %>
+
   </div>
   <div class="large-8 columns">
 

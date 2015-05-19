@@ -34,5 +34,23 @@
       "custom": "com.pyxis.greenhopper.jira:gh-epic-link",
       "customId": 12345
     }
+  },
+  {
+    "id": "customfield_98765",
+    "name": "Epic Status",
+    "custom": true,
+    "orderable": true,
+    "navigable": true,
+    "searchable": true,
+    "clauseNames": [
+      "cf[98765]",
+      "Epic Status"
+    ],
+    "schema": {
+      "type": "array",
+      "items": "string",
+      "custom": "com.pyxis.greenhopper.jira:gh-epic-status",
+      "customId": 98765
+    }
   }
 ]
