@@ -7,10 +7,13 @@ class MonteCarloSimulator
 
   def initialize(project, filter)
     @random = Random.new(0)
-    @epic_values = project.epics.
+
+    epic_values = project.epics.
         select{ |epic| epic.cycle_time && filter.allow_issue(epic) }.
         group_by{ |epic| epic.size }.
         map{ |size, epics| [size, epics.map{ |epic| epic.cycle_time }] }.to_h
+    @epic_values = epic_values.merge({'?' => epic_values.values.flatten})
+
     @wip_values = project.wip_histories.
         select{ |h| filter.allow_date(h.date) }.
         group_by{ |h| h.date }.

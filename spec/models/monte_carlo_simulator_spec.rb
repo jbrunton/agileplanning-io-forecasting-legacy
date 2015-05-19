@@ -27,7 +27,8 @@ RSpec.describe MonteCarloSimulator do
     it "returns the sets of filtered epic values grouped by size" do
       expect(simulator.epic_values).to eq({
                   'S' => [1.0, 2.0],
-                  'M' => [3.0, 4.0]
+                  'M' => [3.0, 4.0],
+                  '?' => [1.0, 2.0, 3.0, 4.0]
               })
     end
   end

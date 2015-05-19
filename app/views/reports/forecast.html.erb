@@ -11,19 +11,24 @@
 
     <%= form_tag do  %>
         <div class="row">
-          <div class="large-4 columns">
+          <div class="large-3 columns">
             <label>Small
               <input name='small_count' type="text" value="<%= params[:small_count] ? params[:small_count] : nil %>" />
             </label>
           </div>
-          <div class="large-4 columns">
+          <div class="large-3 columns">
             <label>Medium
               <input name='medium_count' type="text" value="<%= params[:medium_count] ? params[:medium_count] : nil %>" />
             </label>
           </div>
-          <div class="large-4 columns">
+          <div class="large-3 columns">
             <label>Large
               <input name='large_count' type="text" value="<%= params[:large_count] ? params[:large_count] : nil %>" />
+            </label>
+          </div>
+          <div class="large-3 columns">
+            <label>Unsized
+              <input name='unsized_count' type="text" value="<%= params[:unsized_count] ? params[:unsized_count] : nil %>" />
             </label>
           </div>
         </div>
