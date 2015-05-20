@@ -3,7 +3,7 @@
     <h1>Epic Cycle Times</h1>
 
   <style>
-      #container, .d3-tip {
+      #container, .d3-tip, .d3-tip ul {
           font-family: "Lato","Helvetica Neue",Helvetica,Arial,sans-serif;
           color: #525263;
           font-size: 12px;
@@ -128,11 +128,14 @@
 
           function cycleTimeTip(d, active) {
               var html = "Cycle Time: <b>" +
-                      d.cycleTime.toFixed(1) + "</b><br />" +
+                      d.cycleTime.toFixed(1) + " days</b><br />" +
                       d.summary;
               if (active) {
-                  html += "<br />started: " + parseTime(d.epic.started).toLocaleString();
-                  html += "<br />completed: " + parseTime(d.epic.completed).toLocaleString();
+                  html += "<ul>";
+                  d.epic.issues.forEach(function(issue) {
+                      html += "<li>" + issue.summary + "</li>";
+                  });
+                  html += "</ul>";
               }
               return html;
           }

@@ -71,13 +71,13 @@ class ProjectsController < ApplicationController
   end
 
   def cycle_times
-    epics = @project.issues.
+    epics = @project.issues.includes(:issues).
         where(issue_type: 'Epic').
         select{ |epic| epic.cycle_time && @filter.allow_issue(epic) }.
         sort_by{ |epic| epic.completed }
 
     respond_to do |format|
-      format.json { render json: epics.to_json(:methods => [:cycle_time]) }
+      format.json { render json: epics.to_json(:methods => [:cycle_time, :issues]) }
     end
   end
 
