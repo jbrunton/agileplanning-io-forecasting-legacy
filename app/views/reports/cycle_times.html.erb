@@ -15,18 +15,33 @@
       }
 
       .d3-tip {
-          line-height: 1;
-          padding: 12px;
           pointer-events: none !important;
+          box-shadow: 1px 1px 6px rgba(127, 127, 127, 0.6);
       }
 
-      .d3-tip.wip {
-          border: solid 1px rgba(200, 200, 250, 0.8);
+      .d3-tip .header {
+          padding: 6px;
+      }
+
+      .d3-tip.wip .header {
+          background: rgba(240, 240, 255, 0.8);
+          border-bottom: solid 1px rgba(200, 200, 250, 0.8);
+      }
+
+      .d3-tip.cycle_time .header {
+          background: rgba(250, 240, 240, 0.8);
+          border-bottom: solid 1px rgba(250, 200, 200, 0.8);
+      }
+
+      .d3-tip .content {
+          padding: 6px;
+      }
+
+      .d3-tip.wip .content {
           background: rgba(250, 250, 255, 0.8);
       }
 
-      .d3-tip.cycle_time {
-          border: solid 1px rgba(250, 200, 200, 0.8);
+      .d3-tip.cycle_time .content {
           background: rgba(255, 250, 250, 0.8);
       }
 
@@ -97,6 +112,7 @@
       $(function () {
           var parseDate = d3.time.format("%Y-%m-%d").parse;
           var parseTime = d3.time.format("%Y-%m-%dT%H:%M:%S.%LZ").parse;
+          var formatDate = d3.time.format("%a %d %b");
           var bisectDate = d3.bisector(function(d) { return d.date; }).left;
 
           function formatIssueLink(issue) {
@@ -140,9 +156,8 @@
           }
 
           function cycleTimeTip(d, active) {
-              var html = "Cycle Time: <b>" +
-                      d.cycleTime.toFixed(1) + " days</b><br />" +
-                      d.summary;
+              var html = "<div class='header'>Epic: <strong>" + d.summary + "</strong></div>" +
+                      "<div class='content'>Cycle Time: <strong>" + d.cycleTime.toFixed(1) + " days</strong>";
               if (active) {
                   html += "<ul>";
                   d.epic.issues.forEach(function(issue) {
@@ -150,20 +165,24 @@
                   });
                   html += "</ul>";
               }
+              html += "</div>";
               return html;
           }
 
           function wipTip(d, active) {
-              var html = d.date.toLocaleDateString() + ", WIP: <b>" + d.wip + "</b>";
+              var html = "<div class='header'><strong>" + formatDate(d.date) + "</strong></div>" +
+                      "<div class='content'>" +
+                      "WIP: <strong>" + d.wip + "</strong>";
+              html += "<ul>";
               if (active) {
                   d.issues.forEach(function(issue) {
-                     html += "<br />" + issue.summary;
+                     html += "<li>" + issue.summary + "</li>";
                   });
               } else {
-                  html += "<ul>";
-                  html += "<li>Avg WIP: " + d.avg.toFixed(1) + ", sd: " + d.sd.toFixed(1) + "</li>";
-                  html += "</ul>";
+                  html += "<li>Avg WIP: " + d.avg.toFixed(1) + ", std dev: " + d.sd.toFixed(1) + "</li>";
               }
+              html += "</ul>";
+              html += "</div>";
               return html;
           }
 
