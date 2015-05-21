@@ -113,7 +113,7 @@
           var parseDate = d3.time.format("%Y-%m-%d").parse;
           var parseTime = d3.time.format("%Y-%m-%dT%H:%M:%S.%LZ").parse;
           var formatDate = d3.time.format("%a %d %b");
-          var bisectDate = d3.bisector(function(d) { return d.date; }).left;
+          var bisectDate = d3.bisector(function(d) { return d.completed ? d.completed : d.date; }).left;
 
           function pickSample(data, index) {
               // Uses the same computation as in Jira. See:
@@ -146,7 +146,7 @@
           }
 
           function cycleTimeTip(d, active) {
-              var html = "<div class='header'>Epic: <strong>" + d.summary + "</strong></div>" +
+              var html = "<div class='header'>Epic: <strong>" + d.epic.summary + "</strong></div>" +
                       "<div class='content'>Cycle Time: <strong>" + d.cycleTime.toFixed(1) + " days</strong>";
               if (active) {
                   html += "<ul>";
@@ -183,11 +183,8 @@
                       })
                       .map(function(epic) {
                           return {
-                              date: parseTime(epic.completed),
+                              completed: parseTime(epic.completed),
                               cycleTime: epic.cycle_time,
-                              id: epic.id,
-                              key: epic.key,
-                              summary: epic.summary,
                               epic: epic
                           };
                       });
@@ -204,7 +201,7 @@
               computeRollingAverage(cycleTimeData);
               computeRollingAverage(wipData);
 
-              var allDates = cycleTimeData.map(function(d) { return d.date; })
+              var allDates = cycleTimeData.map(function(d) { return d.completed; })
                       .concat(wipData.map(function(d) { return d.date; }));
 
               var chartWidth = $('#container').width(),
@@ -236,11 +233,11 @@
                       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
               var cycleTimeLine = d3.svg.line()
-                      .x(function(d) { return xScale(d.date); })
+                      .x(function(d) { return xScale(d.completed); })
                       .y(function(d) { return yCycleTimeScale(d.avg); });
 
               var cycleTimeArea = d3.svg.area()
-                      .x(function(d) { return xScale(d.date); })
+                      .x(function(d) { return xScale(d.completed); })
                       .y0(function(d) { return yCycleTimeScale(d.avg - d.sd); })
                       .y1(function(d) { return yCycleTimeScale(d.avg + d.sd); });
 
@@ -331,7 +328,7 @@
               var cycleTimeCircle = chart.selectAll("circle.cycle_time")
                       .data(cycleTimeData)
                       .enter().append("circle")
-                      .attr("cx", function(d) { return xScale(d.date); })
+                      .attr("cx", function(d) { return xScale(d.completed); })
                       .attr("cy", function(d) { return yCycleTimeScale(d.cycleTime); })
                       .attr("r", 3)
                       .classed("cycle_time", true);
@@ -366,7 +363,7 @@
                                   return { x: -999999, y: -999999, data: d };
                               }
                               var d = cycleTimeData[index];
-                              return { x: xScale(d.date), y: yCycleTimeScale(d.cycleTime), data: d };
+                              return { x: xScale(d.completed), y: yCycleTimeScale(d.cycleTime), data: d };
                           }
 
                           function getWipXY(index) {
