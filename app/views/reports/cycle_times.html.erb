@@ -146,34 +146,13 @@
           }
 
           function cycleTimeTip(d, active) {
-              var html = "<div class='header'>Epic: <strong>" + d.epic.summary + "</strong></div>" +
-                      "<div class='content'>Cycle Time: <strong>" + d.cycleTime.toFixed(1) + " days</strong>";
-              if (active) {
-                  html += "<ul>";
-                  d.epic.issues.forEach(function(issue) {
-                      html += "<li>" + issue.summary + "</li>";
-                  });
-                  html += "</ul>";
-              }
-              html += "</div>";
-              return html;
+              var context = { d: d, active: active };
+              return HandlebarsTemplates['epic_tooltip'](context);
           }
 
           function wipTip(d, active) {
-              var html = "<div class='header'><strong>" + formatDate(d.date) + "</strong></div>" +
-                      "<div class='content'>" +
-                      "WIP: <strong>" + d.wip + "</strong>";
-              html += "<ul>";
-              if (active) {
-                  d.issues.forEach(function(issue) {
-                     html += "<li>" + issue.summary + "</li>";
-                  });
-              } else {
-                  html += "<li>Avg WIP: " + d.avg.toFixed(1) + ", std dev: " + d.sd.toFixed(1) + "</li>";
-              }
-              html += "</ul>";
-              html += "</div>";
-              return html;
+              var context = { d: d, active: active };
+              return HandlebarsTemplates['wip_tooltip'](context);
           }
 
           function drawChart(epics, wip) {

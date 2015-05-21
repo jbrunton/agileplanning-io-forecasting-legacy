@@ -76,6 +76,11 @@ GEM
       sass (>= 3.3.0, < 3.5)
     globalid (0.3.5)
       activesupport (>= 4.1.0)
+    handlebars_assets (0.20.2)
+      execjs (~> 2.0)
+      multi_json (~> 1.0)
+      sprockets (>= 2.0.0, < 4.0)
+      tilt (~> 1.2)
     hike (1.2.3)
     hiredis (0.6.0)
     hitimes (1.2.2)
@@ -217,6 +222,7 @@ DEPENDENCIES
   coffee-rails (~> 4.1.0)
   factory_girl_rails
   foundation-rails
+  handlebars_assets
   jbuilder (~> 2.0)
   jquery-rails
   rails (= 4.2.1)
