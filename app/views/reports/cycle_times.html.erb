@@ -115,16 +115,6 @@
           var formatDate = d3.time.format("%a %d %b");
           var bisectDate = d3.bisector(function(d) { return d.date; }).left;
 
-          function formatIssueLink(issue) {
-              return '<a href="/issues/' + issue.id + '">'
-                      + issue.summary
-                      + '</a>';
-          }
-
-          function formatJiraLink(issue) {
-              return '<a href="<%= "#{@project.domain}/browse/" %>' + issue.key + '">[JIRA]</a>';
-          }
-
           function pickSample(data, index) {
               // Uses the same computation as in Jira. See:
               // https://confluence.atlassian.com/display/AGILE/Viewing+the+Control+Chart
