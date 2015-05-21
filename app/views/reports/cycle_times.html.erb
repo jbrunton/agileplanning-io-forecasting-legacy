@@ -459,8 +459,8 @@
           function drawReport() {
               var filter = $('#filter').val();
               $.when(
-                      $.get('<%= project_path(@project) %>/cycle_times.json?filter=' + filter),
-                      $.get('<%= project_path(@project) %>/wip.json?filter=' + filter)
+                      $.get('<%= project_path(@project) %>/data/cycle_times.json?filter=' + filter),
+                      $.get('<%= project_path(@project) %>/data/wip.json?filter=' + filter)
               ).done(drawChart);
           }
 

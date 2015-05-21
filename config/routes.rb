@@ -6,8 +6,11 @@ Rails.application.routes.draw do
 
     member do
       post 'sync'
-      get 'cycle_times'
-      get 'wip'
+    end
+
+    member do
+      get 'data/cycle_times', to: 'data#cycle_times'
+      get 'data/wip', to: 'data#wip'
     end
 
     get 'reports/cycle_times', to: 'reports#cycle_times'
