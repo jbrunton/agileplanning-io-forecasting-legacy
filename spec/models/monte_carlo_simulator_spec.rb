@@ -85,12 +85,28 @@ RSpec.describe MonteCarloSimulator do
       allow(simulator).to receive(:pick_cycle_time_values).and_return([1, 2, 3, 4, 2])
       allow(simulator).to receive(:pick_wip_values).and_return([1, 2, 3])
 
-      result = simulator.play_once('S' => 2, 'M' => 3)
+      result = simulator.play_once(:sizes => { 'S' => 2, 'M' => 3 })
 
       expect(result).to eq({
                   total_time: 12, # sum of cycle time values
                   average_wip: 2, # mean of wip values
                   actual_time: 6  # total_time / average_wip
+              })
+    end
+
+    it "scales the WIP values by 'wip_scale_factor' if given as an option" do
+      allow(simulator).to receive(:pick_cycle_time_values).and_return([1, 2, 3, 4, 2])
+      allow(simulator).to receive(:pick_wip_values).and_return([1, 2, 3])
+
+      result = simulator.play_once({
+              :sizes => { 'S' => 2, 'M' => 3 },
+              :wip_scale_factor => 1.5
+          })
+
+      expect(result).to eq({
+                  total_time: 12, # sum of cycle time values
+                  average_wip: 3, # mean of wip values * wip_scale_factor
+                  actual_time: 4  # total_time / average_wip
               })
     end
   end

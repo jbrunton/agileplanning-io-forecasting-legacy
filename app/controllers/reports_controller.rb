@@ -10,12 +10,13 @@ class ReportsController < ApplicationController
     @in_progress = @backlog.select{ |epic| epic.started }
 
     if request.request_method == 'POST'
-      opts = { 'S' => 0, 'M' => 0, 'L' => 0, '?' => 0 }
+      opts = { :sizes => { 'S' => 0, 'M' => 0, 'L' => 0, '?' => 0 } }
+      opts[:wip_scale_factor] = params[:wip_scale_factor].to_i unless params[:wip_scale_factor].empty?
       @forecasts = @upcoming.map do |epic|
         if (epic.size)
-          opts[epic.size] = opts[epic.size] + 1
+          opts[:sizes][epic.size] = opts[:sizes][epic.size] + 1
         else
-          opts['?'] = opts['?'] + 1
+          opts[:sizes]['?'] = opts[:sizes]['?'] + 1
         end
         { epic: epic, opts: opts.clone, forecast: MonteCarloSimulator.new(@project, @filter).play(opts) }
       end
