@@ -115,36 +115,6 @@
           var formatDate = d3.time.format("%a %d %b");
           var bisectDate = d3.bisector(function(d) { return d.completed ? d.completed : d.date; }).left;
 
-          function pickSample(data, index) {
-              // Uses the same computation as in Jira. See:
-              // https://confluence.atlassian.com/display/AGILE/Viewing+the+Control+Chart
-
-              // Pick a sample of 20% of the data set, and a minimum of 5
-              var sampleSize = Math.round(Math.max(5, data.length * 0.2));
-              // ensure an odd size, so that the sample is taken equally from around the index
-              if (sampleSize % 2 == 0) sampleSize += 1;
-
-              var startIndex = Math.max(0, index - Math.floor(sampleSize / 2));
-              var endIndex = Math.min(startIndex + sampleSize, data.length);
-
-              // if we're at the end of the array, reduce startIndex until we meet our sample size
-              while (endIndex - startIndex < sampleSize && startIndex > 0) {
-                  --startIndex;
-              }
-
-              var sample = data.slice(startIndex, endIndex);
-
-              return sample;
-          }
-
-          function computeRollingAverage(data) {
-              data.forEach(function(d, index) {
-                  var sample = pickSample(data, index);
-                  d.avg = d3.mean(sample, function(d) { return d.cycleTime ? d.cycleTime : d.wip; });
-                  d.sd = d3.deviation(sample, function(d) { return d.cycleTime ? d.cycleTime : d.wip; });
-              });
-          }
-
           function cycleTimeTip(d, active) {
               var context = { d: d, active: active };
               return HandlebarsTemplates['epic_tooltip'](context);
@@ -179,9 +149,6 @@
                       sd: wip[0][date].stddev
                   };
               });
-
-              // computeRollingAverage(cycleTimeData);
-              // computeRollingAverage(wipData);
 
               var allDates = cycleTimeData.map(function(d) { return d.completed; })
                       .concat(wipData.map(function(d) { return d.date; }));
