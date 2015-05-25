@@ -27,8 +27,16 @@ class DataController < ApplicationController
     history = @project.complete_wip_history.
         select{ |date, _| @filter.allow_date(date) }
 
+    trend_builder = Stats::TrendBuilder.new.
+        pluck{ |item| item[1].length }.
+        map do |item, mean, stddev|
+          [item[0], { wip: item[1].length, epics: item[1], mean: mean, stddev: stddev }]
+        end
+
+    trend = trend_builder.analyze(history.to_a)
+
     respond_to do |format|
-      format.json { render json: history.to_json }
+      format.json { render json: trend.to_h.to_json }
     end
   end
 

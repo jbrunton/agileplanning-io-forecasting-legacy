@@ -171,16 +171,17 @@
                       });
 
               var wipData = Object.keys(wip[0]).map(function(date) {
-                  var issues = wip[0][date];
                   return {
                       date: parseDate(date),
-                      wip: issues.length,
-                      issues: issues
+                      wip: wip[0][date].wip,
+                      issues: wip[0][date].epics,
+                      avg: wip[0][date].mean,
+                      sd: wip[0][date].stddev
                   };
               });
 
               // computeRollingAverage(cycleTimeData);
-              computeRollingAverage(wipData);
+              // computeRollingAverage(wipData);
 
               var allDates = cycleTimeData.map(function(d) { return d.completed; })
                       .concat(wipData.map(function(d) { return d.date; }));
