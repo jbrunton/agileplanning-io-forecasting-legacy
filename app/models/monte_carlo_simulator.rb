@@ -42,9 +42,9 @@ protected
     result
   end
 
-  def pick_cycle_time_values(opts)
+  def pick_cycle_time_values(sizes)
     values = []
-    opts.each do |size, count|
+    sizes.each do |size, count|
       values_for_size = epic_values[size]
       values_for_size = epic_values['?'] if values_for_size.nil?
       values.concat(pick_values(values_for_size, count))
@@ -57,11 +57,12 @@ protected
   end
 
   def play_once(opts)
-    cycle_time_values = pick_cycle_time_values(opts)
+    cycle_time_values = pick_cycle_time_values(opts[:sizes])
     wip_values = pick_wip_values(10)
 
     total_time = cycle_time_values.reduce(:+)
     average_wip = wip_values.reduce(:+) / wip_values.length
+    average_wip = average_wip * opts[:wip_scale_factor] if opts[:wip_scale_factor]
 
     { total_time: total_time, average_wip: average_wip, actual_time: total_time / average_wip }
   end
