@@ -21,7 +21,13 @@ RSpec.describe MonteCarloSimulator do
     project
   }
 
-  let (:simulator) { MonteCarloSimulator.new(project, filter) }
+  let (:now) { start_date + 5.5.days }
+
+  let (:simulator) {
+    Timecop.freeze(now) do
+      MonteCarloSimulator.new(project, filter)
+    end
+  }
 
   describe "#epic_values" do
     it "returns the sets of filtered epic values grouped by size" do
@@ -35,7 +41,7 @@ RSpec.describe MonteCarloSimulator do
 
   describe "#wip_values" do
     it "returns the set of filtered wip values for the project" do
-      expect(simulator.wip_values).to eq([4, 3, 2, 1])
+      expect(simulator.wip_values).to eq([4, 3, 2, 1, 0])
     end
   end
 

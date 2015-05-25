@@ -14,10 +14,10 @@ class MonteCarloSimulator
         map{ |size, epics| [size, epics.map{ |epic| epic.cycle_time }] }.to_h
     @epic_values = epic_values.merge({'?' => epic_values.values.flatten})
 
-    @wip_values = project.wip_histories.
-        select{ |h| filter.allow_date(h.date) }.
-        group_by{ |h| h.date }.
-        values.map{ |histories| histories.length }
+    @wip_values = project.complete_wip_history.
+        select{ |date, issues| filter.allow_date(date) }.
+        values.
+        map{ |issues| issues.length }
   end
 
   def play(opts)
