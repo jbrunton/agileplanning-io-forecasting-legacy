@@ -57,13 +57,23 @@ protected
   end
 
   def play_once(opts)
-    cycle_time_values = pick_cycle_time_values(opts[:sizes])
     wip_values = pick_wip_values(10)
-
-    total_time = cycle_time_values.reduce(:+)
     average_wip = wip_values.reduce(:+) / wip_values.length
     average_wip = average_wip * opts[:wip_scale_factor] if opts[:wip_scale_factor]
 
-    { total_time: total_time, average_wip: average_wip, actual_time: total_time / average_wip }
+    if opts[:rank] >= average_wip
+      sizes = opts[:sizes]
+    else
+      sizes = { opts[:size] => 1 }
+    end
+
+    cycle_time_values = pick_cycle_time_values(sizes)
+    total_time = cycle_time_values.reduce(:+)
+
+
+    actual_time = total_time
+    actual_time = total_time / average_wip if opts[:rank] >= average_wip
+
+    { total_time: total_time, average_wip: average_wip, actual_time: actual_time }
   end
 end
