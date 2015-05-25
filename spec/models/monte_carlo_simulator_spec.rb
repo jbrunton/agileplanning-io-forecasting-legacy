@@ -21,7 +21,13 @@ RSpec.describe MonteCarloSimulator do
     project
   }
 
-  let (:simulator) { MonteCarloSimulator.new(project, filter) }
+  let (:now) { start_date + 5.5.days }
+
+  let (:simulator) {
+    Timecop.freeze(now) do
+      MonteCarloSimulator.new(project, filter)
+    end
+  }
 
   describe "#epic_values" do
     it "returns the sets of filtered epic values grouped by size" do
@@ -35,7 +41,7 @@ RSpec.describe MonteCarloSimulator do
 
   describe "#wip_values" do
     it "returns the set of filtered wip values for the project" do
-      expect(simulator.wip_values).to eq([4, 3, 2, 1])
+      expect(simulator.wip_values).to eq([4, 3, 2, 1, 0])
     end
   end
 
@@ -76,15 +82,55 @@ RSpec.describe MonteCarloSimulator do
 
   describe "#play_once" do
     it "executes a single run of the Monte Carlo simulator" do
-      allow(simulator).to receive(:pick_cycle_time_values).and_return([1, 2, 3, 4, 2])
+      sizes = { 'S' => 2, 'M' => 3 }
+      allow(simulator).to receive(:pick_cycle_time_values).with(sizes).and_return([1, 2, 3, 4, 2])
       allow(simulator).to receive(:pick_wip_values).and_return([1, 2, 3])
 
-      result = simulator.play_once('S' => 2, 'M' => 3)
+      result = simulator.play_once({
+              :sizes => sizes,
+              :rank => 100
+          })
 
       expect(result).to eq({
                   total_time: 12, # sum of cycle time values
                   average_wip: 2, # mean of wip values
                   actual_time: 6  # total_time / average_wip
+              })
+    end
+
+    it "scales the WIP values by 'wip_scale_factor' if given as an option" do
+      sizes = { 'S' => 2, 'M' => 3 }
+      allow(simulator).to receive(:pick_cycle_time_values).with(sizes).and_return([1, 2, 3, 4, 2])
+      allow(simulator).to receive(:pick_wip_values).and_return([1, 2, 3])
+
+      result = simulator.play_once({
+              :sizes => sizes,
+              :wip_scale_factor => 1.5,
+              :rank => 100
+          })
+
+      expect(result).to eq({
+                  total_time: 12, # sum of cycle time values
+                  average_wip: 3, # mean of wip values * wip_scale_factor
+                  actual_time: 4  # total_time / average_wip
+              })
+    end
+
+    it "forecasts only the given size without scaling by throughput if rank < wip" do
+      allow(simulator).to receive(:pick_cycle_time_values).with('S' => 1).and_return([2])
+      allow(simulator).to receive(:pick_wip_values).and_return([1, 2, 3])
+
+      result = simulator.play_once({
+              :sizes => { 'S' => 2, 'M' => 3 },
+              :size => 'S',
+              :wip_scale_factor => 1.5,
+              :rank => 2
+          })
+
+      expect(result).to eq({
+                  total_time: 2, # cycle time for the epic
+                  average_wip: 3, # mean of wip values * wip_scale_factor
+                  actual_time: 2  # total_time, since :rank < :average_wip
               })
     end
   end

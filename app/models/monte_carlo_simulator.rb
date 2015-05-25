@@ -14,10 +14,10 @@ class MonteCarloSimulator
         map{ |size, epics| [size, epics.map{ |epic| epic.cycle_time }] }.to_h
     @epic_values = epic_values.merge({'?' => epic_values.values.flatten})
 
-    @wip_values = project.wip_histories.
-        select{ |h| filter.allow_date(h.date) }.
-        group_by{ |h| h.date }.
-        values.map{ |histories| histories.length }
+    @wip_values = project.complete_wip_history.
+        select{ |date, issues| filter.allow_date(date) }.
+        values.
+        map{ |issues| issues.length }
   end
 
   def play(opts)
@@ -42,9 +42,9 @@ protected
     result
   end
 
-  def pick_cycle_time_values(opts)
+  def pick_cycle_time_values(sizes)
     values = []
-    opts.each do |size, count|
+    sizes.each do |size, count|
       values_for_size = epic_values[size]
       values_for_size = epic_values['?'] if values_for_size.nil?
       values.concat(pick_values(values_for_size, count))
@@ -57,12 +57,23 @@ protected
   end
 
   def play_once(opts)
-    cycle_time_values = pick_cycle_time_values(opts)
     wip_values = pick_wip_values(10)
-
-    total_time = cycle_time_values.reduce(:+)
     average_wip = wip_values.reduce(:+) / wip_values.length
+    average_wip = average_wip * opts[:wip_scale_factor] if opts[:wip_scale_factor]
 
-    { total_time: total_time, average_wip: average_wip, actual_time: total_time / average_wip }
+    if opts[:rank] >= average_wip
+      sizes = opts[:sizes]
+    else
+      sizes = { opts[:size] => 1 }
+    end
+
+    cycle_time_values = pick_cycle_time_values(sizes)
+    total_time = cycle_time_values.reduce(:+)
+
+
+    actual_time = total_time
+    actual_time = total_time / average_wip if opts[:rank] >= average_wip
+
+    { total_time: total_time, average_wip: average_wip, actual_time: actual_time }
   end
 end

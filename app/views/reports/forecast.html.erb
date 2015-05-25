@@ -33,12 +33,17 @@
     <div class="panel">
       <%= form_tag do %>
           <div class="row">
-            <div class="large-5 columns">
+            <div class="large-3 columns">
               <label>Start date
                 <input type="text" name="start_date" id="start_date" value="<%= @start_date ? @start_date.to_s : nil %>"/>
               </label>
             </div>
-            <div class="large-7 columns">
+            <div class="large-3 columns">
+              <label>Wip scale factor
+                <input type="text" name="wip_scale_factor" id="wip_scale_factor" value="<%= @wip_scale_factor ? @wip_scale_factor : nil %>"/>
+              </label>
+            </div>
+            <div class="large-6 columns">
               <label>Filter
                 <input type="text" name="filter" id="filter" value="<%= params[:filter] ? params[:filter] : nil %>"/>
               </label>
