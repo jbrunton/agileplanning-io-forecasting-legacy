@@ -12,7 +12,6 @@ class Stats::TrendBuilder
   def analyze(series)
     values = series.map{ |item| @pluck_block.call(item) }
     series.each_with_index.map do |item, index|
-      value = values[index]
       sample = Stats::TrendBuilder.pick_sample(values, index)
       @map_block.call(item, sample.mean, sample.standard_deviation)
     end

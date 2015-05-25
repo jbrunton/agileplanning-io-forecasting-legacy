@@ -157,14 +157,16 @@
 
           function drawChart(epics, wip) {
               var cycleTimeData = epics[0]
-                      .filter(function(epic) {
-                          return epic.completed != null;
+                      .filter(function(item) {
+                          return item.epic.completed != null;
                       })
-                      .map(function(epic) {
+                      .map(function(item) {
                           return {
-                              completed: parseTime(epic.completed),
-                              cycleTime: epic.cycle_time,
-                              epic: epic
+                              completed: parseTime(item.epic.completed),
+                              cycleTime: item.cycle_time,
+                              avg: item.mean,
+                              sd: item.stddev,
+                              epic: item.epic
                           };
                       });
 
@@ -177,7 +179,7 @@
                   };
               });
 
-              computeRollingAverage(cycleTimeData);
+              // computeRollingAverage(cycleTimeData);
               computeRollingAverage(wipData);
 
               var allDates = cycleTimeData.map(function(d) { return d.completed; })
