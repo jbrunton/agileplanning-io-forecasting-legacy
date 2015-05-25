@@ -34,7 +34,19 @@ RSpec.describe Stats::TrendBuilder do
       ]}
 
       it "calculates the rolling mean and stddev" do
-        
+        trend = builder.
+            pluck{ |item| item[:x] }.
+            map{ |item, mean, stddev| { value: item[:x], mean: mean, stddev: stddev } }.
+            analyze(series)
+
+        expect(trend).to eq [
+                    { value: 2, mean: 2.0, stddev: 0.0 },
+                    { value: 2, mean: 2.0, stddev: 0.0 },
+                    { value: 2, mean: 2.0, stddev: 0.0 },
+                    { value: 2, mean: 2.0, stddev: 0.0 },
+                    { value: 2, mean: 2.4, stddev: 0.8 },
+                    { value: 4, mean: 2.4, stddev: 0.8 }
+                ]
       end
     end
   end

@@ -10,9 +10,11 @@ class Stats::TrendBuilder
   end
 
   def analyze(series)
-    series.map do |item|
-      value = @pluck_block.call(item)
-      @map_block.call(item, value, 0)
+    values = series.map{ |item| @pluck_block.call(item) }
+    series.each_with_index.map do |item, index|
+      value = values[index]
+      sample = Stats::TrendBuilder.pick_sample(values, index)
+      @map_block.call(item, sample.mean, sample.standard_deviation)
     end
   end
 
@@ -22,16 +24,16 @@ class Stats::TrendBuilder
     [sample_size, 5].max
   end
 
-  def self.pick_sample(series, index)
-    sample_size = self.sample_size(series.length)
+  def self.pick_sample(values, index)
+    sample_size = self.sample_size(values.length)
     start_index = [0, index - sample_size / 2 - 1].max
     end_index = start_index + sample_size
 
-    while end_index > series.length
+    while end_index > values.length
       start_index = start_index - 1 if start_index > 0
       end_index = end_index - 1
     end
 
-    series[start_index..end_index - 1]
+    values[start_index..end_index - 1]
   end
 end
