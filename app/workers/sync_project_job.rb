@@ -19,7 +19,6 @@ class SyncProjectJob
     project.save
 
     project.compute_cycle_times!
-    project.compute_sizes!
     WipHistory.compute_history_for!(project)
   end
 end
