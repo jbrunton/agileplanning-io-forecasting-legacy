@@ -29,9 +29,9 @@ FactoryGirl.define do
     end
 
     after(:build) do |issue, evaluator|
-      issue.size = 'S' if evaluator.small
-      issue.size = 'M' if evaluator.medium
-      issue.size = 'L' if evaluator.large
+      issue.summary = "{issue.summary} [S]" if issue.size.nil? && evaluator.small
+      issue.summary = "{issue.summary} [M]" if issue.size.nil? && evaluator.medium
+      issue.summary = "{issue.summary} [L]" if issue.size.nil? && evaluator.large
     end
   end
 end
