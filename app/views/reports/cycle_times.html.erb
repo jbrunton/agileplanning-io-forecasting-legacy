@@ -153,33 +153,28 @@
               var allDates = cycleTimeData.map(function(d) { return d.completed; })
                       .concat(wipData.map(function(d) { return d.date; }));
 
-              var chartWidth = $('#container').width(),
-                      chartHeight = chartWidth / 2;
+              var chart = new CycleTimeChart({
+                  container: '#container',
+                  aspectRatio: 2.0,
+                  margin: {top: 20, right: 30, bottom: 30, left: 40}
+              });
 
-              var margin = {top: 20, right: 30, bottom: 30, left: 40},
-                      width = chartWidth - margin.left - margin.right,
-                      height = chartHeight - margin.top - margin.bottom;
+              chart.bind();
 
               var xScale = d3.time.scale()
                       .domain([d3.min(allDates), d3.max(allDates)])
-                      .range([0, width], .1);
+                      .range([0, chart.getClientWidth()], .1);
 
               var yCycleTimeScale = d3.scale.linear()
                       .domain([0, d3.max(cycleTimeData, function(d) { return d.cycleTime; })])
-                      .range([height, 0]);
+                      .range([chart.getClientHeight(), 0]);
 
               var yWipScale = d3.scale.linear()
                       .domain([0, d3.max(wipData, function(d) { return d.wip; })])
-                      .range([height, 0]);
+                      .range([chart.getClientHeight(), 0]);
 
-              $('#container').empty();
+              // $('#container').empty();
               $('.d3-tip').remove();
-
-              var chart = d3.select("#container")
-                      .attr("width", width + margin.left + margin.right)
-                      .attr("height", height + margin.top + margin.bottom)
-                      .append("g")
-                      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
               var cycleTimeLine = d3.svg.line()
                       .x(function(d) { return xScale(d.completed); })
@@ -190,13 +185,13 @@
                       .y0(function(d) { return yCycleTimeScale(d.avg - d.sd); })
                       .y1(function(d) { return yCycleTimeScale(d.avg + d.sd); });
 
-              chart.append("path")
+              chart.svg.append("path")
                       .datum(cycleTimeData)
                       .attr("class", "line")
                       .attr("d", cycleTimeLine)
                       .classed("cycle_time", true);
 
-              chart.append("path")
+              chart.svg.append("path")
                       .datum(cycleTimeData)
                       .attr("class", "area")
                       .attr("d", cycleTimeArea)
@@ -212,13 +207,13 @@
                       .y0(function(d) { return yWipScale(d.avg - d.sd); })
                       .y1(function(d) { return yWipScale(d.avg + d.sd); });
 
-              chart.append("path")
+              chart.svg.append("path")
                       .datum(wipData)
                       .attr("class", "line")
                       .attr("d", wipLine)
                       .classed("wip", true);
 
-              chart.append("path")
+              chart.svg.append("path")
                       .datum(wipData)
                       .attr("class", "area")
                       .attr("d", wipArea)
@@ -229,11 +224,11 @@
               var tip = d3.tip().attr('class', 'd3-tip')
                       .direction(function(d) {
                           var y = d.cycleTime ? yCycleTimeScale(d.cycleTime) : yWipScale(d.wip);
-                          return y > height / 2 ? 'n' : 's';
+                          return y > chart.getClientHeight() / 2 ? 'n' : 's';
                       })
                       .offset(function(d) {
                           var y = d.cycleTime ? yCycleTimeScale(d.cycleTime) : yWipScale(d.wip);
-                          return y > height / 2 ? [-10, 0] : [10, 0];
+                          return y > chart.getClientHeight() / 2 ? [-10, 0] : [10, 0];
                       })
                       .html(function(d) {
                           var html = "";
@@ -244,23 +239,23 @@
                           }
                           return html;
                       });
-              chart.call(tip);
+              chart.svg.call(tip);
 
               var xAxis = d3.svg.axis()
                       .scale(xScale)
                       .ticks(5)
                       .orient("bottom");
 
-              chart.append("g")
+              chart.svg.append("g")
                       .attr("class", "x axis")
-                      .attr("transform", "translate(0," + height + ")")
+                      .attr("transform", "translate(0," + chart.getClientHeight() + ")")
                       .call(xAxis);
 
               var yCycleTimeAxis = d3.svg.axis()
                       .scale(yCycleTimeScale)
                       .orient("left");
 
-              chart.append("g")
+              chart.svg.append("g")
                       .attr("class", "y axis")
                       .call(yCycleTimeAxis);
 
@@ -269,12 +264,12 @@
                       .tickFormat(d3.format("d"))
                       .orient("right");
 
-              chart.append("g")
+              chart.svg.append("g")
                       .attr("class", "y axis")
-                      .attr("transform", "translate(" + width + ",0)")
+                      .attr("transform", "translate(" + chart.getClientWidth() + ",0)")
                       .call(yWipAxis);
 
-              var cycleTimeCircle = chart.selectAll("circle.cycle_time")
+              var cycleTimeCircle = chart.svg.selectAll("circle.cycle_time")
                       .data(cycleTimeData)
                       .enter().append("circle")
                       .attr("cx", function(d) { return xScale(d.completed); })
@@ -282,7 +277,7 @@
                       .attr("r", 3)
                       .classed("cycle_time", true);
 
-              var wipCircle = chart.selectAll("circle.wip")
+              var wipCircle = chart.svg.selectAll("circle.wip")
                       .data(wipData)
                       .enter().append("circle")
                       .attr("cx", function(d) { return xScale(d.date); })
@@ -290,12 +285,12 @@
                       .attr("r", 1.5)
                       .classed("wip", true);
 
-              var overlay = chart.append('rect')
+              var overlay = chart.svg.append('rect')
                       .attr('class', 'overlay')
-                      .attr('width', width)
-                      .attr('height', height);
+                      .attr('width', chart.getClientWidth())
+                      .attr('height', chart.getClientHeight());
 
-              var focus = chart.append('g').style('display', 'none');
+              var focus = chart.svg.append('g').style('display', 'none');
               focus.append('circle')
                       .attr('id', 'focusCircle')
                       .attr('r', 5);
