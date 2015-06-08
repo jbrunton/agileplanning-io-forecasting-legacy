@@ -24,6 +24,7 @@ CycleTimeChart.prototype.getClientHeight = function() {
 
 CycleTimeChart.prototype.bind = function() {
   $(this.container).height($(this.container).width() / this.aspectRatio);
+  $(this.container).empty();
   this.svg = d3.select(this.container)
       .attr("width", this.getWidth())
       .attr("height", this.getHeight())

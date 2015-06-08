@@ -60,5 +60,11 @@ describe('CycleTimeChart', function () {
       expect(chart.getClientWidth()).toBe(120);
       expect(chart.getClientHeight()).toBe(60);
     });
+
+    it('clears the container', function() {
+      container.html('<span>whatevs</span>');
+      chart.bind();
+      expect(container).not.toContainText('whatevs');
+    });
   });
 });

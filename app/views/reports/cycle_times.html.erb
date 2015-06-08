@@ -173,7 +173,6 @@
                       .domain([0, d3.max(wipData, function(d) { return d.wip; })])
                       .range([chart.getClientHeight(), 0]);
 
-              // $('#container').empty();
               $('.d3-tip').remove();
 
               var cycleTimeLine = d3.svg.line()
