@@ -84,7 +84,7 @@ describe('CycleTimeChart', function () {
       expect(chart.wipSeries).toBe(wipSeries);
     });
 
-    it('sets _xScale', function() {
+    it('sets the _xScale', function() {
       var firstDate = datetime.parseDate('2001-01-01'),
           anotherDate = datetime.parseDate('2001-02-01'),
           lastDate = datetime.parseDate('2001-03-01');
@@ -95,6 +95,30 @@ describe('CycleTimeChart', function () {
 
       expect(chart._xScale(firstDate)).toBe(0);
       expect(chart._xScale(lastDate)).toBe(chart.getClientWidth());
+    });
+
+    it('sets the _yCycleTimeScale', function() {
+      var longestTime = 5.5,
+          anotherTime = 3.5;
+      var cycleTimeSeries = [{ cycleTime: longestTime }, { cycleTime: anotherTime }],
+          wipSeries = [];
+
+      chart.setSeries(cycleTimeSeries, wipSeries);
+
+      expect(chart._yCycleTimeScale(0)).toBe(chart.getClientHeight());
+      expect(chart._yCycleTimeScale(longestTime)).toBe(0);
+    });
+
+    it('sets the _yWipScale', function() {
+      var highestWip = 4,
+          anotherWip = 2;
+      var cycleTimeSeries = [],
+          wipSeries = [{ wip: highestWip }, { wip: anotherWip }];
+
+      chart.setSeries(cycleTimeSeries, wipSeries);
+
+      expect(chart._yWipScale(0)).toBe(chart.getClientHeight());
+      expect(chart._yWipScale(highestWip)).toBe(0);
     });
   });
 });

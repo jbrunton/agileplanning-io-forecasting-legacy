@@ -42,4 +42,12 @@ CycleTimeChart.prototype.setSeries = function(cycleTimeSeries, wipSeries) {
   this._xScale = d3.time.scale()
       .domain([d3.min(allDates), d3.max(allDates)])
       .range([0, this.getClientWidth()], .1);
+
+  this._yCycleTimeScale = d3.scale.linear()
+      .domain([0, d3.max(cycleTimeSeries, function(d) { return d.cycleTime; })])
+      .range([this.getClientHeight(), 0]);
+
+  this._yWipScale = d3.scale.linear()
+      .domain([0, d3.max(wipSeries, function(d) { return d.wip; })])
+      .range([this.getClientHeight(), 0]);
 };

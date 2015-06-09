@@ -147,9 +147,6 @@
                   };
               });
 
-              var allDates = cycleTimeData.map(function(d) { return d.completed; })
-                      .concat(wipData.map(function(d) { return d.date; }));
-
               var chart = new CycleTimeChart({
                   container: '#container',
                   aspectRatio: 2.0,
@@ -158,28 +155,18 @@
 
               chart.bind();
 
-              var xScale = d3.time.scale()
-                      .domain([d3.min(allDates), d3.max(allDates)])
-                      .range([0, chart.getClientWidth()], .1);
-
-              var yCycleTimeScale = d3.scale.linear()
-                      .domain([0, d3.max(cycleTimeData, function(d) { return d.cycleTime; })])
-                      .range([chart.getClientHeight(), 0]);
-
-              var yWipScale = d3.scale.linear()
-                      .domain([0, d3.max(wipData, function(d) { return d.wip; })])
-                      .range([chart.getClientHeight(), 0]);
+              chart.setSeries(cycleTimeData, wipData);
 
               $('.d3-tip').remove();
 
               var cycleTimeLine = d3.svg.line()
-                      .x(function(d) { return xScale(d.completed); })
-                      .y(function(d) { return yCycleTimeScale(d.avg); });
+                      .x(function(d) { return chart._xScale(d.completed); })
+                      .y(function(d) { return chart._yCycleTimeScale(d.avg); });
 
               var cycleTimeArea = d3.svg.area()
-                      .x(function(d) { return xScale(d.completed); })
-                      .y0(function(d) { return yCycleTimeScale(d.avg - d.sd); })
-                      .y1(function(d) { return yCycleTimeScale(d.avg + d.sd); });
+                      .x(function(d) { return chart._xScale(d.completed); })
+                      .y0(function(d) { return chart._yCycleTimeScale(d.avg - d.sd); })
+                      .y1(function(d) { return chart._yCycleTimeScale(d.avg + d.sd); });
 
               chart.svg.append("path")
                       .datum(cycleTimeData)
@@ -195,13 +182,13 @@
 
               var wipLine = d3.svg.line()
                       .interpolate("monotone")
-                      .x(function(d) { return xScale(d.date); })
-                      .y(function(d) { return yWipScale(d.avg); });
+                      .x(function(d) { return chart._xScale(d.date); })
+                      .y(function(d) { return chart._yWipScale(d.avg); });
 
               var wipArea = d3.svg.area()
-                      .x(function(d) { return xScale(d.date); })
-                      .y0(function(d) { return yWipScale(d.avg - d.sd); })
-                      .y1(function(d) { return yWipScale(d.avg + d.sd); });
+                      .x(function(d) { return chart._xScale(d.date); })
+                      .y0(function(d) { return chart._yWipScale(d.avg - d.sd); })
+                      .y1(function(d) { return chart._yWipScale(d.avg + d.sd); });
 
               chart.svg.append("path")
                       .datum(wipData)
@@ -219,11 +206,11 @@
 
               var tip = d3.tip().attr('class', 'd3-tip')
                       .direction(function(d) {
-                          var y = d.cycleTime ? yCycleTimeScale(d.cycleTime) : yWipScale(d.wip);
+                          var y = d.cycleTime ? chart._yCycleTimeScale(d.cycleTime) : chart._yWipScale(d.wip);
                           return y > chart.getClientHeight() / 2 ? 'n' : 's';
                       })
                       .offset(function(d) {
-                          var y = d.cycleTime ? yCycleTimeScale(d.cycleTime) : yWipScale(d.wip);
+                          var y = d.cycleTime ? chart._yCycleTimeScale(d.cycleTime) : chart._yWipScale(d.wip);
                           return y > chart.getClientHeight() / 2 ? [-10, 0] : [10, 0];
                       })
                       .html(function(d) {
@@ -238,7 +225,7 @@
               chart.svg.call(tip);
 
               var xAxis = d3.svg.axis()
-                      .scale(xScale)
+                      .scale(chart._xScale)
                       .ticks(5)
                       .orient("bottom");
 
@@ -248,7 +235,7 @@
                       .call(xAxis);
 
               var yCycleTimeAxis = d3.svg.axis()
-                      .scale(yCycleTimeScale)
+                      .scale(chart._yCycleTimeScale)
                       .orient("left");
 
               chart.svg.append("g")
@@ -256,7 +243,7 @@
                       .call(yCycleTimeAxis);
 
               var yWipAxis = d3.svg.axis()
-                      .scale(yWipScale)
+                      .scale(chart._yWipScale)
                       .tickFormat(d3.format("d"))
                       .orient("right");
 
@@ -268,16 +255,16 @@
               var cycleTimeCircle = chart.svg.selectAll("circle.cycle_time")
                       .data(cycleTimeData)
                       .enter().append("circle")
-                      .attr("cx", function(d) { return xScale(d.completed); })
-                      .attr("cy", function(d) { return yCycleTimeScale(d.cycleTime); })
+                      .attr("cx", function(d) { return chart._xScale(d.completed); })
+                      .attr("cy", function(d) { return chart._yCycleTimeScale(d.cycleTime); })
                       .attr("r", 3)
                       .classed("cycle_time", true);
 
               var wipCircle = chart.svg.selectAll("circle.wip")
                       .data(wipData)
                       .enter().append("circle")
-                      .attr("cx", function(d) { return xScale(d.date); })
-                      .attr("cy", function(d) { return yWipScale(d.wip); })
+                      .attr("cx", function(d) { return chart._xScale(d.date); })
+                      .attr("cy", function(d) { return chart._yWipScale(d.wip); })
                       .attr("r", 1.5)
                       .classed("wip", true);
 
@@ -303,7 +290,7 @@
                                   return { x: -999999, y: -999999, data: d };
                               }
                               var d = cycleTimeData[index];
-                              return { x: xScale(d.completed), y: yCycleTimeScale(d.cycleTime), data: d };
+                              return { x: chart._xScale(d.completed), y: chart._yCycleTimeScale(d.cycleTime), data: d };
                           }
 
                           function getWipXY(index) {
@@ -311,7 +298,7 @@
                                   return { x: -999999, y: -999999, data: d };
                               }
                               var d = wipData[index];
-                              return { x: xScale(d.date), y: yWipScale(d.wip), data: d };
+                              return { x: chart._xScale(d.date), y: chart._yWipScale(d.wip), data: d };
                           }
 
                           function distanceSq(p0, p1) {
@@ -319,7 +306,7 @@
                           }
 
                           function getClosestCycleTimeXY(p) {
-                              var mouseDate = xScale.invert(mouse.x);
+                              var mouseDate = chart._xScale.invert(mouse.x);
                               var i = bisectDate(cycleTimeData, mouseDate); // returns the index to the current data item
                               var p0 = getCycleTimeXY(i - 1);
                               var p1 = getCycleTimeXY(i);
@@ -332,7 +319,7 @@
                           }
 
                           function getClosestWipXY(p) {
-                              var mouseDate = xScale.invert(mouse.x);
+                              var mouseDate = chart._xScale.invert(mouse.x);
                               var i = bisectDate(wipData, mouseDate); // returns the index to the current data item
                               var p0 = getWipXY(i - 1);
                               var p1 = getWipXY(i);
