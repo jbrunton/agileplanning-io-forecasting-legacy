@@ -110,9 +110,6 @@
 
   <script>
       $(function () {
-          var parseDate = d3.time.format("%Y-%m-%d").parse;
-          var parseTime = d3.time.format("%Y-%m-%dT%H:%M:%S.%LZ").parse;
-          var formatDate = d3.time.format("%a %d %b");
           var bisectDate = d3.bisector(function(d) { return d.completed ? d.completed : d.date; }).left;
 
           function cycleTimeTip(d, active) {
@@ -132,7 +129,7 @@
                       })
                       .map(function(item) {
                           return {
-                              completed: parseTime(item.epic.completed),
+                              completed: datetime.parseTime(item.epic.completed),
                               cycleTime: item.cycle_time,
                               avg: item.mean,
                               sd: item.stddev,
@@ -142,7 +139,7 @@
 
               var wipData = Object.keys(wip[0]).map(function(date) {
                   return {
-                      date: parseDate(date),
+                      date: datetime.parseDate(date),
                       wip: wip[0][date].wip,
                       issues: wip[0][date].epics,
                       avg: wip[0][date].mean,
