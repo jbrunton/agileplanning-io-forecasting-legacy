@@ -67,4 +67,34 @@ describe('CycleTimeChart', function () {
       expect(container).not.toContainText('whatevs');
     });
   });
+
+  describe('#setSeries', function() {
+    beforeEach(function() {
+      chart.bind();
+      expect(chart.getClientWidth()).toBeGreaterThan(0);
+    });
+
+    it('updates the series', function() {
+      var wipSeries = [{}],
+          cycleTimeSeries = [{}];
+
+      chart.setSeries(cycleTimeSeries, wipSeries);
+
+      expect(chart.cycleTimeSeries).toBe(cycleTimeSeries);
+      expect(chart.wipSeries).toBe(wipSeries);
+    });
+
+    it('sets _xScale', function() {
+      var firstDate = datetime.parseDate('2001-01-01'),
+          anotherDate = datetime.parseDate('2001-02-01'),
+          lastDate = datetime.parseDate('2001-03-01');
+      var cycleTimeSeries = [{ completed: firstDate }, { completed: anotherDate }],
+          wipSeries = [{ date: anotherDate }, { date: lastDate }];
+
+      chart.setSeries(cycleTimeSeries, wipSeries);
+
+      expect(chart._xScale(firstDate)).toBe(0);
+      expect(chart._xScale(lastDate)).toBe(chart.getClientWidth());
+    });
+  });
 });
