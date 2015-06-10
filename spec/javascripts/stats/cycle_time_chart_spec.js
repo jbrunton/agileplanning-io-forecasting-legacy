@@ -120,5 +120,26 @@ describe('CycleTimeChart', function () {
       expect(chart._yWipScale(0)).toBe(chart.getClientHeight());
       expect(chart._yWipScale(highestWip)).toBe(0);
     });
+
+    it('adds svg elements for the cycle time paths', function() {
+      var cycleTimeSeries = [{ completed: datetime.parseDate('2001-01-01'), cycleTime: 8 }],
+          wipSeries = [];
+
+      chart.setSeries(cycleTimeSeries, wipSeries);
+
+      var pathData = chart.svg.selectAll('path.cycle_time.mean').data()[0];
+      expect(pathData).toEqual(cycleTimeSeries);
+    });
+
+    it('adds svg elements for the WIP paths', function() {
+      var cycleTimeSeries = [],
+          wipSeries = [{ date: datetime.parseDate('2001-01-01'), wip: 0 }];
+
+      chart.setSeries(cycleTimeSeries, wipSeries);
+
+      var pathData = chart.svg.selectAll('path.wip.mean').data()[0];
+      expect(pathData).toEqual(wipSeries);
+    });
+
   });
 });

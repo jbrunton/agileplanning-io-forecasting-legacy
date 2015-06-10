@@ -50,4 +50,28 @@ CycleTimeChart.prototype.setSeries = function(cycleTimeSeries, wipSeries) {
   this._yWipScale = d3.scale.linear()
       .domain([0, d3.max(wipSeries, function(d) { return d.wip; })])
       .range([this.getClientHeight(), 0]);
+
+  var chart = this;
+  var cycleTimeLine = d3.svg.line()
+      .x(function(d) { return chart._xScale(d.completed); })
+      .y(function(d) { return chart._yCycleTimeScale(d.avg); });
+
+  this.svg.append("path")
+      .datum(this.cycleTimeSeries)
+      .attr("class", "line")
+      .attr("d", cycleTimeLine)
+      .classed("cycle_time", true)
+      .classed("mean", true);
+
+  var wipLine = d3.svg.line()
+      .interpolate("monotone")
+      .x(function(d) { return chart._xScale(d.date); })
+      .y(function(d) { return chart._yWipScale(d.avg); });
+
+  this.svg.append("path")
+      .datum(this.wipSeries)
+      .attr("class", "line")
+      .attr("d", wipLine)
+      .classed("wip", true)
+      .classed("mean", true);
 };

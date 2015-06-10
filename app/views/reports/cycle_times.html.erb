@@ -159,10 +159,6 @@
 
               $('.d3-tip').remove();
 
-              var cycleTimeLine = d3.svg.line()
-                      .x(function(d) { return chart._xScale(d.completed); })
-                      .y(function(d) { return chart._yCycleTimeScale(d.avg); });
-
               var cycleTimeArea = d3.svg.area()
                       .x(function(d) { return chart._xScale(d.completed); })
                       .y0(function(d) { return chart._yCycleTimeScale(d.avg - d.sd); })
@@ -170,31 +166,14 @@
 
               chart.svg.append("path")
                       .datum(cycleTimeData)
-                      .attr("class", "line")
-                      .attr("d", cycleTimeLine)
-                      .classed("cycle_time", true);
-
-              chart.svg.append("path")
-                      .datum(cycleTimeData)
                       .attr("class", "area")
                       .attr("d", cycleTimeArea)
                       .classed("cycle_time", true);
-
-              var wipLine = d3.svg.line()
-                      .interpolate("monotone")
-                      .x(function(d) { return chart._xScale(d.date); })
-                      .y(function(d) { return chart._yWipScale(d.avg); });
 
               var wipArea = d3.svg.area()
                       .x(function(d) { return chart._xScale(d.date); })
                       .y0(function(d) { return chart._yWipScale(d.avg - d.sd); })
                       .y1(function(d) { return chart._yWipScale(d.avg + d.sd); });
-
-              chart.svg.append("path")
-                      .datum(wipData)
-                      .attr("class", "line")
-                      .attr("d", wipLine)
-                      .classed("wip", true);
 
               chart.svg.append("path")
                       .datum(wipData)
