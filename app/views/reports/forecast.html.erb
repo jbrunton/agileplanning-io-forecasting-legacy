@@ -30,61 +30,131 @@
 
     <h3>Forecast</h3>
 
-    <div class="panel">
-      <%= form_tag do %>
-          <div class="row">
-            <div class="large-3 columns">
-              <label>Start date
-                <input type="text" name="start_date" id="start_date" value="<%= @start_date ? @start_date.to_s : nil %>"/>
-              </label>
-            </div>
-            <div class="large-3 columns">
-              <label>Wip scale factor
-                <input type="text" name="wip_scale_factor" id="wip_scale_factor" value="<%= @wip_scale_factor ? @wip_scale_factor : nil %>"/>
-              </label>
-            </div>
-            <div class="large-6 columns">
-              <label>Filter
-                <input type="text" name="filter" id="filter" value="<%= params[:filter] ? params[:filter] : nil %>"/>
-              </label>
-            </div>
-          </div>
-          <div class="row">
-            <div class="large-2 columns">
-              <%= submit_tag 'Forecast', :class => 'button' %>
-            </div>
-          </div>
-      <% end %>
-    </div>
+    <ul class="tabs" data-tab>
+      <li class="tab-title <%= params[:forecast_type] == 'backlog' ? 'active' : '' %>"><a href="#tab-backlog">Backlog</a></li>
+      <li class="tab-title <%= params[:forecast_type] == 'lead_times' ? 'active' : '' %>"><a href="#tab-lead-times">Lead Times</a></li>
+    </ul>
+    <div class="tabs-content">
+      <div class="content <%= params[:forecast_type] == 'backlog' ? 'active' : '' %>" id="tab-backlog">
+        <div class="panel">
+          <%= form_tag do %>
+              <div class="row">
+                <div class="large-3 columns">
+                  <label>Start date
+                    <input type="text" name="start_date" id="start_date" value="<%= @start_date ? @start_date.to_s : nil %>"/>
+                  </label>
+                </div>
+                <div class="large-3 columns">
+                  <label>Wip scale factor
+                    <input type="text" name="wip_scale_factor" id="wip_scale_factor" value="<%= @wip_scale_factor ? @wip_scale_factor : nil %>"/>
+                  </label>
+                </div>
+                <div class="large-6 columns">
+                  <label>Filter
+                    <input type="text" name="filter" id="filter" value="<%= params[:filter] ? params[:filter] : nil %>"/>
+                  </label>
+                </div>
+              </div>
+              <div class="row">
+                <div class="large-2 columns">
+                  <input type="hidden" name="forecast_type" value="backlog"/>
+                  <%= submit_tag 'Forecast', :class => 'button' %>
+                </div>
+              </div>
+          <% end %>
+        </div>
 
-    <% if @forecasts %>
-        <table style="width: 100%">
-          <tr>
-            <th width="30%">Likelihood</th>
-            <th width="30%">Time</th>
-            <th width="40%">Date</th>
-          </tr>
-        </table>
-        <% @forecasts.each do |record| %>
+        <% if @forecasts %>
             <table style="width: 100%">
-              <tr class="panel callout">
-                <th colspan="4"><%= record[:epic].summary %></th>
-              </tr>
-
               <tr>
-                <% record[:forecast].each do |interval| %>
-                  <tr>
-                    <td width="30%"><%= "#{interval[:likelihood]} %" %></td>
-                    <td width="30%"><%= "#{sprintf('%.1f', interval[:actual_time])} days" %></td>
-                    <td width="40%"><%= format_datetime(@start_date + interval[:actual_time].days) %></td>
-                  </tr>
-              <% end %>
-
+                <th width="30%">Likelihood</th>
+                <th width="30%">Time</th>
+                <th width="40%">Date</th>
               </tr>
             </table>
+            <% @forecasts.each do |record| %>
+                <table style="width: 100%">
+                  <tr class="panel callout">
+                    <th colspan="4"><%= record[:epic].summary %></th>
+                  </tr>
 
+                  <tr>
+                    <% record[:forecast].each do |interval| %>
+                      <tr>
+                        <td width="30%"><%= "#{interval[:likelihood]} %" %></td>
+                        <td width="30%"><%= "#{sprintf('%.1f', interval[:actual_time])} days" %></td>
+                        <td width="40%"><%= format_datetime(@start_date + interval[:actual_time].days) %></td>
+                      </tr>
+                  <% end %>
+
+                  </tr>
+                </table>
+            <% end %>
         <% end %>
+      </div>
+      <div class="content <%= params[:forecast_type] == 'lead_times' ? 'active' : '' %>" id="tab-lead-times">
+        <div class="panel">
+          <%= form_tag do %>
+              <div class="row">
+                <div class="large-3 large-offset-3 columns">
+                  <label>Wip scale factor
+                    <input type="text" name="wip_scale_factor" id="wip_scale_factor" value="<%= @wip_scale_factor ? @wip_scale_factor : nil %>"/>
+                  </label>
+                </div>
+                <div class="large-6 columns">
+                  <label>Filter
+                    <input type="text" name="filter" id="filter" value="<%= params[:filter] ? params[:filter] : nil %>"/>
+                  </label>
+                </div>
+              </div>
+              <div class="row">
+                <div class="large-3 columns">
+                  <label>S
+                    <input type="text" name="small" id="small" value="<%= params[:small] ? params[:small].to_s : nil %>"/>
+                  </label>
+                </div>
+                <div class="large-3 columns">
+                  <label>M
+                    <input type="text" name="medium" id="medium" value="<%= params[:medium] ? params[:medium] : nil %>"/>
+                  </label>
+                </div>
+                <div class="large-3 columns">
+                  <label>L
+                    <input type="text" name="large" id="large" value="<%= params[:large] ? params[:large] : nil %>"/>
+                  </label>
+                </div>
+                <div class="large-3 columns">
+                  <label>L
+                    <input type="text" name="unknown" id="unknown" value="<%= params[:unknown] ? params[:unknown] : nil %>"/>
+                  </label>
+                </div>
+              </div>
+              <div class="row">
+                <div class="large-2 columns">
+                  <input type="hidden" name="forecast_type" value="lead_times"/>
+                  <%= submit_tag 'Forecast', :class => 'button' %>
+                </div>
+              </div>
+          <% end %>
+        </div>
 
-    <% end %>
+        <% if @lead_times %>
+            <table style="width: 100%">
+              <tr>
+                <th width="25%">Likelihood</th>
+                <th width="25%">50%</th>
+                <th width="25%">80%</th>
+                <th width="25%">90%</th>
+              </tr>
+              <tr>
+                <th>Lead Time</th>
+                <% @lead_times.each do |interval| %>
+                    <td><%= "#{interval[:actual_time]} days" %></td>
+                <% end %>
+              </tr>
+            </table>
+        <% end %>
+      </div>
+    </div>
   </div>
 </div>

@@ -61,7 +61,7 @@ protected
     average_wip = wip_values.reduce(:+) / wip_values.length
     average_wip = average_wip * opts[:wip_scale_factor] if opts[:wip_scale_factor]
 
-    if opts[:rank] >= average_wip
+    if opts[:rank].nil? || opts[:rank] >= average_wip
       sizes = opts[:sizes]
     else
       sizes = { opts[:size] => 1 }
@@ -72,7 +72,7 @@ protected
 
 
     actual_time = total_time
-    actual_time = total_time / average_wip if opts[:rank] >= average_wip
+    actual_time = total_time / average_wip if opts[:rank].nil? || opts[:rank] >= average_wip
 
     { total_time: total_time, average_wip: average_wip, actual_time: actual_time }
   end
