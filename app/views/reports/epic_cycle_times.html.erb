@@ -1,113 +1,6 @@
 <div class="row">
   <div class="large-12 columns">
     <h1>Epic Cycle Times</h1>
-
-  <style>
-      #container, .d3-tip, .d3-tip ul {
-          font-family: "Lato","Helvetica Neue",Helvetica,Arial,sans-serif;
-          color: #525263;
-          font-size: 12px;
-          font-weight: 300;
-      }
-
-      .d3-tip ul {
-          margin-bottom: 0;
-      }
-
-      .d3-tip {
-          pointer-events: none !important;
-          box-shadow: 1px 1px 6px rgba(127, 127, 127, 0.6);
-      }
-
-      .d3-tip .header {
-          padding: 6px;
-      }
-
-      .d3-tip.wip .header {
-          background: rgba(240, 240, 255, 0.8);
-          border-bottom: solid 1px rgba(200, 200, 250, 0.8);
-      }
-
-      .d3-tip.cycle_time .header {
-          background: rgba(250, 240, 240, 0.8);
-          border-bottom: solid 1px rgba(250, 200, 200, 0.8);
-      }
-
-      .d3-tip .content {
-          padding: 6px;
-      }
-
-      .d3-tip.wip .content {
-          background: rgba(250, 250, 255, 0.8);
-      }
-
-      .d3-tip.cycle_time .content {
-          background: rgba(255, 250, 250, 0.8);
-      }
-
-      .axis path,
-      .axis line {
-          fill: none;
-          stroke: grey;
-          shape-rendering: crispEdges;
-      }
-
-      .chart circle {
-          fill: white;
-      }
-
-      .chart circle.cycle_time {
-          stroke: indianred;
-          stroke-width: 1.5px;
-      }
-
-
-      .chart circle.wip {
-          stroke: steelblue;
-          stroke-width: 1.5px;
-      }
-
-      .chart .line {
-          fill: none;
-          stroke-width: 1.5px;
-          stroke-opacity: 0.6;
-      }
-
-      .chart .line.wip {
-          stroke: steelblue;
-      }
-
-      .chart .area.wip {
-          fill: steelblue;
-          opacity: 0.15;
-      }
-
-      .chart .line.cycle_time {
-          stroke: indianred;
-          stroke-width: 2px;
-      }
-
-      .chart .area.cycle_time {
-          fill: indianred;
-          opacity: 0.15;
-      }
-
-      .chart .overlay {
-          fill: none;
-          stroke: none;
-          pointer-events: all;
-      }
-
-      #focusCircle {
-          fill: white;
-          cursor: pointer;
-      }
-
-      #container {
-          width: 100%;
-      }
-  </style>
-
   <script>
       $(function () {
           var bisectDate = d3.bisector(function(d) { return d.completed ? d.completed : d.date; }).left;
@@ -125,15 +18,15 @@
           function drawChart(epics, wip) {
               var cycleTimeData = epics[0]
                       .filter(function(item) {
-                          return item.epic.completed != null;
+                          return item.issue.completed != null;
                       })
                       .map(function(item) {
                           return {
-                              completed: datetime.parseTime(item.epic.completed),
+                              completed: datetime.parseTime(item.issue.completed),
                               cycleTime: item.cycle_time,
                               avg: item.mean,
                               sd: item.stddev,
-                              epic: item.epic
+                              epic: item.issue
                           };
                       });
 
@@ -352,8 +245,8 @@
           function drawReport() {
               var filter = $('#filter').val();
               $.when(
-                      $.get('<%= project_path(@project) %>/data/cycle_times.json?filter=' + filter),
-                      $.get('<%= project_path(@project) %>/data/wip.json?filter=' + filter)
+                      $.get('<%= project_path(@project) %>/data/cycle_times.json?issue_type=Epic&filter=' + filter),
+                      $.get('<%= project_path(@project) %>/data/wip.json?issue_type=Epic&filter=' + filter)
               ).done(drawChart);
           }
 

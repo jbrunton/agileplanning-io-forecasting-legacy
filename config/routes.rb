@@ -13,7 +13,8 @@ Rails.application.routes.draw do
       get 'data/wip', to: 'data#wip'
     end
 
-    get 'reports/cycle_times', to: 'reports#cycle_times'
+    get 'reports/epic_cycle_times', to: 'reports#epic_cycle_times'
+    get 'reports/issue_cycle_times', to: 'reports#issue_cycle_times'
     get 'reports/forecast', to: 'reports#forecast'
     post 'reports/forecast', to: 'reports#forecast'
   end

@@ -3,23 +3,25 @@ class DataController < ApplicationController
   before_action :set_filter, only: [:cycle_times, :wip, :epic_cycle_times]
 
   def cycle_times
-    epics = @project.issues.includes(:issues).
-        where(issue_type: 'Epic').
-        select{ |epic| epic.cycle_time && @filter.allow_issue(epic) }.
-        sort_by{ |epic| epic.completed }
+    query = @project.issues.includes(:issues)
+    query = query.where(issue_type: 'Epic') if params[:issue_type] == 'Epic'
+    query = query.where.not(issue_type: 'Epic') if params[:issue_type] == 'Story'
+
+    issues = query.
+        select{ |issue| issue.cycle_time && @filter.allow_issue(issue) }.
+        sort_by{ |issue| issue.completed }
 
     trend_builder = Stats::TrendBuilder.new.
-        pluck{ |epic| epic.cycle_time }.
-        map do |epic, mean, stddev|
-          { epic: epic, cycle_time: epic.cycle_time, mean: mean, stddev: stddev }
+        pluck{ |issue| issue.cycle_time }.
+        map do |issue, mean, stddev|
+          { issue: issue, cycle_time: issue.cycle_time, mean: mean, stddev: stddev }
         end
 
-    trend = trend_builder.analyze(epics)
+    trend = trend_builder.analyze(issues)
 
 
     respond_to do |format|
-      format.json { render json: trend.to_json(:include => :issues)
-      }
+      format.json { render json: trend.to_json(:include => :issues) }
     end
   end
 
