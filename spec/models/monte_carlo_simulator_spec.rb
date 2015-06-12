@@ -87,7 +87,8 @@ RSpec.describe MonteCarloSimulator do
       allow(simulator).to receive(:pick_wip_values).and_return([1, 2, 3])
 
       result = simulator.play_once({
-              :sizes => sizes
+              :sizes => sizes,
+              :rank => 100
           })
 
       expect(result).to eq({

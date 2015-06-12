@@ -58,6 +58,8 @@ private
         },
         :wip_scale_factor => @wip_scale_factor
     }
+    total = opts[:sizes].values.reduce(:+)
+    opts[:rank] = total # to ensure that we don't divide by WIP when total < WIP
     @lead_times = @simulator.play(opts)
   end
 end
