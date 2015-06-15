@@ -90,4 +90,26 @@ CycleTimeChart.prototype.setSeries = function(cycleTimeSeries, wipSeries) {
       .attr("cy", function(d) { return chart._yWipScale(d.wip); })
       .attr("r", 1.5)
       .classed("wip", true);
+
+  var cycleTimeArea = d3.svg.area()
+      .x(function(d) { return chart._xScale(d.completed); })
+      .y0(function(d) { return chart._yCycleTimeScale(d.avg - d.sd); })
+      .y1(function(d) { return chart._yCycleTimeScale(d.avg + d.sd); });
+
+  chart.svg.append("path")
+      .datum(cycleTimeSeries)
+      .attr("class", "area")
+      .attr("d", cycleTimeArea)
+      .classed("cycle_time", true);
+
+  var wipArea = d3.svg.area()
+      .x(function(d) { return chart._xScale(d.date); })
+      .y0(function(d) { return chart._yWipScale(d.avg - d.sd); })
+      .y1(function(d) { return chart._yWipScale(d.avg + d.sd); });
+
+  chart.svg.append("path")
+      .datum(wipSeries)
+      .attr("class", "area")
+      .attr("d", wipArea)
+      .classed("wip", true);
 };

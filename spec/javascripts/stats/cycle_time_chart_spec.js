@@ -129,6 +129,7 @@ describe('CycleTimeChart', function () {
 
       expect(dataForPath('cycle_time.mean')).toEqual(cycleTimeSeries);
       expect(dataForCircles('cycle_time')).toEqual(cycleTimeSeries);
+      expect(dataForPath('cycle_time.area')).toEqual(cycleTimeSeries);
     });
 
     it('adds svg elements for the WIP series', function() {
@@ -139,6 +140,7 @@ describe('CycleTimeChart', function () {
 
       expect(dataForPath('wip.mean')).toEqual(wipSeries);
       expect(dataForCircles('wip')).toEqual(wipSeries);
+      expect(dataForPath('wip.area')).toEqual(wipSeries);
     });
   });
 

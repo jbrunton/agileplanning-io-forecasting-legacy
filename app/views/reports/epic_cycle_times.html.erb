@@ -52,28 +52,6 @@
 
               $('.d3-tip').remove();
 
-              var cycleTimeArea = d3.svg.area()
-                      .x(function(d) { return chart._xScale(d.completed); })
-                      .y0(function(d) { return chart._yCycleTimeScale(d.avg - d.sd); })
-                      .y1(function(d) { return chart._yCycleTimeScale(d.avg + d.sd); });
-
-              chart.svg.append("path")
-                      .datum(cycleTimeData)
-                      .attr("class", "area")
-                      .attr("d", cycleTimeArea)
-                      .classed("cycle_time", true);
-
-              var wipArea = d3.svg.area()
-                      .x(function(d) { return chart._xScale(d.date); })
-                      .y0(function(d) { return chart._yWipScale(d.avg - d.sd); })
-                      .y1(function(d) { return chart._yWipScale(d.avg + d.sd); });
-
-              chart.svg.append("path")
-                      .datum(wipData)
-                      .attr("class", "area")
-                      .attr("d", wipArea)
-                      .classed("wip", true);
-
               var focusActive = false;
 
               var tip = d3.tip().attr('class', 'd3-tip')
