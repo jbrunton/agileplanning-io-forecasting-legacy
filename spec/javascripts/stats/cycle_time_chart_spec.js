@@ -127,10 +127,8 @@ describe('CycleTimeChart', function () {
 
       chart.setSeries(cycleTimeSeries, wipSeries);
 
-      var pathData = chart.svg.selectAll('path.cycle_time.mean').data()[0];
-      var pointsData = chart.svg.selectAll('circle.cycle_time').data();
-      expect(pathData).toEqual(cycleTimeSeries);
-      expect(pointsData).toEqual(cycleTimeSeries);
+      expect(dataForPath('cycle_time.mean')).toEqual(cycleTimeSeries);
+      expect(dataForCircles('cycle_time')).toEqual(cycleTimeSeries);
     });
 
     it('adds svg elements for the WIP series', function() {
@@ -139,10 +137,16 @@ describe('CycleTimeChart', function () {
 
       chart.setSeries(cycleTimeSeries, wipSeries);
 
-      var pathData = chart.svg.selectAll('path.wip.mean').data()[0];
-      var pointsData = chart.svg.selectAll('circle.wip').data();
-      expect(pathData).toEqual(wipSeries);
-      expect(pointsData).toEqual(wipSeries);
+      expect(dataForPath('wip.mean')).toEqual(wipSeries);
+      expect(dataForCircles('wip')).toEqual(wipSeries);
     });
   });
+
+  function dataForPath(className) {
+    return chart.svg.selectAll('path.' + className).data()[0];
+  }
+
+  function dataForCircles(className) {
+    return chart.svg.selectAll('circle.' + className).data();
+  }
 });
