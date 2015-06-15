@@ -74,4 +74,20 @@ CycleTimeChart.prototype.setSeries = function(cycleTimeSeries, wipSeries) {
       .attr("d", wipLine)
       .classed("wip", true)
       .classed("mean", true);
+
+  var cycleTimeCircle = chart.svg.selectAll("circle.cycle_time")
+      .data(cycleTimeSeries)
+      .enter().append("circle")
+      .attr("cx", function(d) { return chart._xScale(d.completed); })
+      .attr("cy", function(d) { return chart._yCycleTimeScale(d.cycleTime); })
+      .attr("r", 3)
+      .classed("cycle_time", true);
+
+  var wipCircle = chart.svg.selectAll("circle.wip")
+      .data(wipSeries)
+      .enter().append("circle")
+      .attr("cx", function(d) { return chart._xScale(d.date); })
+      .attr("cy", function(d) { return chart._yWipScale(d.wip); })
+      .attr("r", 1.5)
+      .classed("wip", true);
 };

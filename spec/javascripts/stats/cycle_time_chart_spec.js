@@ -121,25 +121,28 @@ describe('CycleTimeChart', function () {
       expect(chart._yWipScale(highestWip)).toBe(0);
     });
 
-    it('adds svg elements for the cycle time paths', function() {
+    it('adds svg elements for the cycle time series', function() {
       var cycleTimeSeries = [{ completed: datetime.parseDate('2001-01-01'), cycleTime: 8 }],
           wipSeries = [];
 
       chart.setSeries(cycleTimeSeries, wipSeries);
 
       var pathData = chart.svg.selectAll('path.cycle_time.mean').data()[0];
+      var pointsData = chart.svg.selectAll('circle.cycle_time').data();
       expect(pathData).toEqual(cycleTimeSeries);
+      expect(pointsData).toEqual(cycleTimeSeries);
     });
 
-    it('adds svg elements for the WIP paths', function() {
+    it('adds svg elements for the WIP series', function() {
       var cycleTimeSeries = [],
           wipSeries = [{ date: datetime.parseDate('2001-01-01'), wip: 0 }];
 
       chart.setSeries(cycleTimeSeries, wipSeries);
 
       var pathData = chart.svg.selectAll('path.wip.mean').data()[0];
+      var pointsData = chart.svg.selectAll('circle.wip').data();
       expect(pathData).toEqual(wipSeries);
+      expect(pointsData).toEqual(wipSeries);
     });
-
   });
 });

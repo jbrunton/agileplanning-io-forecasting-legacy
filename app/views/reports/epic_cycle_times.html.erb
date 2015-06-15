@@ -124,21 +124,7 @@
                       .attr("transform", "translate(" + chart.getClientWidth() + ",0)")
                       .call(yWipAxis);
 
-              var cycleTimeCircle = chart.svg.selectAll("circle.cycle_time")
-                      .data(cycleTimeData)
-                      .enter().append("circle")
-                      .attr("cx", function(d) { return chart._xScale(d.completed); })
-                      .attr("cy", function(d) { return chart._yCycleTimeScale(d.cycleTime); })
-                      .attr("r", 3)
-                      .classed("cycle_time", true);
 
-              var wipCircle = chart.svg.selectAll("circle.wip")
-                      .data(wipData)
-                      .enter().append("circle")
-                      .attr("cx", function(d) { return chart._xScale(d.date); })
-                      .attr("cy", function(d) { return chart._yWipScale(d.wip); })
-                      .attr("r", 1.5)
-                      .classed("wip", true);
 
               var overlay = chart.svg.append('rect')
                       .attr('class', 'overlay')
