@@ -52,6 +52,10 @@ CycleTimeChart.prototype.setSeries = function(cycleTimeSeries, wipSeries) {
       .range([this.getClientHeight(), 0]);
 
   var chart = this;
+
+
+  // paths
+
   var cycleTimeLine = d3.svg.line()
       .x(function(d) { return chart._xScale(d.completed); })
       .y(function(d) { return chart._yCycleTimeScale(d.avg); });
@@ -75,6 +79,9 @@ CycleTimeChart.prototype.setSeries = function(cycleTimeSeries, wipSeries) {
       .classed("wip", true)
       .classed("mean", true);
 
+
+  // points
+
   var cycleTimeCircle = chart.svg.selectAll("circle.cycle_time")
       .data(cycleTimeSeries)
       .enter().append("circle")
@@ -90,6 +97,9 @@ CycleTimeChart.prototype.setSeries = function(cycleTimeSeries, wipSeries) {
       .attr("cy", function(d) { return chart._yWipScale(d.wip); })
       .attr("r", 1.5)
       .classed("wip", true);
+
+
+  // areas
 
   var cycleTimeArea = d3.svg.area()
       .x(function(d) { return chart._xScale(d.completed); })
@@ -112,4 +122,35 @@ CycleTimeChart.prototype.setSeries = function(cycleTimeSeries, wipSeries) {
       .attr("class", "area")
       .attr("d", wipArea)
       .classed("wip", true);
+
+
+  // axes
+
+  var xAxis = d3.svg.axis()
+      .scale(chart._xScale)
+      .ticks(5)
+      .orient("bottom");
+
+  chart.svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + chart.getClientHeight() + ")")
+      .call(xAxis);
+
+  var yCycleTimeAxis = d3.svg.axis()
+      .scale(chart._yCycleTimeScale)
+      .orient("left");
+
+  chart.svg.append("g")
+      .attr("class", "y axis")
+      .call(yCycleTimeAxis);
+
+  var yWipAxis = d3.svg.axis()
+      .scale(chart._yWipScale)
+      .tickFormat(d3.format("d"))
+      .orient("right");
+
+  chart.svg.append("g")
+      .attr("class", "y axis")
+      .attr("transform", "translate(" + chart.getClientWidth() + ",0)")
+      .call(yWipAxis);
 };
