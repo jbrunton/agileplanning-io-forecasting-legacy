@@ -2,7 +2,7 @@ describe('CycleTimeChart', function () {
   var container, chart, margin;
 
   beforeEach(function() {
-    container = sandbox({id: 'container'});
+    container = $('<svg id="container"></svg>');
     jasmine.getFixtures().set(container);
 
     margin = { top: 10, right: 40, bottom: 30, left: 40 };

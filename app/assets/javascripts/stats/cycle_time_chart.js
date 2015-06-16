@@ -192,6 +192,7 @@ CycleTimeChart.prototype.setSeries = function(cycleTimeSeries, wipSeries) {
         }
         return html;
       });
+
   chart.svg.call(tip);
 
   var overlay = chart.svg.append('rect')
