@@ -1,0 +1,21 @@
+class IssueFilter
+  DATE_FILTER = /complete: (.*)/
+  CYCLE_TIME_FILTER = /cycle_time: (.*)/
+
+
+  def initialize(filter)
+    @filters = filter.split(";").map do |x|
+      case x
+        when DATE_FILTER
+          DateFilter.new($1)
+        when CYCLE_TIME_FILTER
+          CycleTimeFilter.new($1)
+      end
+    end
+  end
+
+  def allow_issue(issue)
+    return true if @filters.empty?
+    @filters.all?{ |filter| filter.allow_issue(issue) }
+  end
+end
