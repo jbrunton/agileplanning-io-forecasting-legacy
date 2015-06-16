@@ -1,11 +1,11 @@
 <div class='header'>
-    Epic: <strong>{{d.epic.summary}}</strong>
+    Epic: <strong>{{d.issue.summary}}</strong>
 </div>
 <div class='content'>
     Cycle Time: <strong>{{round d.cycleTime}} days</strong>
     {{#if active}}
         <ul>
-            {{#each d.epic.issues}}
+            {{#each d.issue.issues}}
                 <li>{{summary}}</li>
             {{/each}}
         </ul>
