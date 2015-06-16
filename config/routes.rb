@@ -6,11 +6,15 @@ Rails.application.routes.draw do
 
     member do
       post 'sync'
-      get 'cycle_times'
-      get 'wip'
     end
 
-    get 'reports/cycle_times', to: 'reports#cycle_times'
+    member do
+      get 'data/cycle_times', to: 'data#cycle_times'
+      get 'data/wip', to: 'data#wip'
+    end
+
+    get 'reports/epic_cycle_times', to: 'reports#epic_cycle_times'
+    get 'reports/issue_cycle_times', to: 'reports#issue_cycle_times'
     get 'reports/forecast', to: 'reports#forecast'
     post 'reports/forecast', to: 'reports#forecast'
   end

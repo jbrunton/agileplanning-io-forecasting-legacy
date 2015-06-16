@@ -18,6 +18,8 @@
 //= require websocket_rails/main
 //= require d3
 //= require d3-tip
+//= require handlebars
+//= require_tree ./templates
 //= require_tree .
 
 

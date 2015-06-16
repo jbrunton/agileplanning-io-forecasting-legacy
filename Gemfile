@@ -35,6 +35,8 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 gem 'celluloid'
 gem 'websocket-rails'
 gem 'foundation-rails'
+gem 'handlebars_assets'
+gem 'descriptive_statistics'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
@@ -48,6 +50,7 @@ group :development, :test do
 
   gem 'rspec-rails'
   gem 'factory_girl_rails'
+  gem 'jasmine'
 end
 
 group :test do

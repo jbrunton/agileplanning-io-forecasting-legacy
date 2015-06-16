@@ -1,0 +1,85 @@
+<div class="row">
+  <div class="large-12 columns">
+    <h1>Epic Cycle Times</h1>
+  <script>
+      $(function () {
+          var bisectDate = d3.bisector(function(d) { return d.completed ? d.completed : d.date; }).left;
+
+          function cycleTimeTip(d, active) {
+              var context = { d: d, active: active };
+              return HandlebarsTemplates['epic_tooltip'](context);
+          }
+
+          function wipTip(d, active) {
+              var context = { d: d, active: active };
+              return HandlebarsTemplates['wip_tooltip'](context);
+          }
+
+          function drawChart(epics, wip) {
+              var cycleTimeData = epics[0]
+                      .filter(function(item) {
+                          return item.issue.completed != null;
+                      })
+                      .map(function(item) {
+                          return {
+                              completed: datetime.parseTime(item.issue.completed),
+                              cycleTime: item.cycle_time,
+                              avg: item.mean,
+                              sd: item.stddev,
+                              epic: item.issue
+                          };
+                      });
+
+              var wipData = Object.keys(wip[0]).map(function(date) {
+                  return {
+                      date: datetime.parseDate(date),
+                      wip: wip[0][date].wip,
+                      issues: wip[0][date].epics,
+                      avg: wip[0][date].mean,
+                      sd: wip[0][date].stddev
+                  };
+              });
+
+              var chart = new CycleTimeChart({
+                  container: '#container',
+                  aspectRatio: 2.0,
+                  margin: {top: 20, right: 30, bottom: 30, left: 40}
+              });
+
+              chart.bind();
+
+              chart.setSeries(cycleTimeData, wipData);
+
+
+          }
+
+          function drawReport() {
+              var filter = $('#filter').val();
+              $.when(
+                      $.get('<%= project_path(@project) %>/data/cycle_times.json?issue_type=Epic&filter=' + filter),
+                      $.get('<%= project_path(@project) %>/data/wip.json?issue_type=Epic&filter=' + filter)
+              ).done(drawChart);
+          }
+
+          drawReport();
+
+          $('#filter').on('change', drawReport);
+          $(window).resize(drawReport);
+      });
+
+  </script>
+
+
+
+    <svg id="container" class="chart"></svg>
+
+    <form>
+      <div class="row">
+        <div class="large-4 columns">
+          <label>Date Filter</label>
+          <input id="filter" type="text" value="<%= "#{(Date.today - 1.year).strftime('%d %b %Y')} - #{Date.today.strftime('%d %b %Y')}"  %>" />
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

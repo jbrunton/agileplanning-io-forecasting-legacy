@@ -1,7 +1,10 @@
 class ReportsController < ApplicationController
   before_action :set_project, :set_filter
 
-  def cycle_times
+  def epic_cycle_times
+  end
+
+  def issue_cycle_times
   end
 
   def forecast
