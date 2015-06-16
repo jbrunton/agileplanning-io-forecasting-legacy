@@ -18,4 +18,9 @@ class Filters::IssueFilter
     return true if @filters.empty?
     @filters.all?{ |filter| filter.allow_issue(issue) }
   end
+
+  def allow_date(date)
+    return true if @filters.empty?
+    @filters.select{ |f| f.class == Filters::DateFilter }.all?{ |f| f.allow_date(date) }
+  end
 end

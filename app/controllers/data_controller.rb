@@ -49,6 +49,6 @@ private
   end
 
   def set_filter
-    @filter = ::Filters::DateFilter.new(params[:filter] || "")
+    @filter = ::Filters::IssueFilter.new(params[:filter] || "")
   end
 end

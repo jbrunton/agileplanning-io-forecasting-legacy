@@ -39,4 +39,11 @@ RSpec.describe Filters::IssueFilter do
       expect(filter.allow_issue(issue)).to eq(false)
     end
   end
+
+  describe "#allow_date" do
+    it "passes if all the date filters match the date" do
+      filter = Filters::IssueFilter.new("cycle_time: 20-30d; complete: 1 Jan 2015-1 Feb 2015")
+      expect(filter.allow_date(DateTime.new(2015, 1, 2))).to eq(true)
+    end
+  end
 end
