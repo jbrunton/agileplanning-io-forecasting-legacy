@@ -10,6 +10,10 @@ class Project < ActiveRecord::Base
     issues.where(issue_type: 'Epic')
   end
 
+  def stories
+    issues.where("issue_type <> 'Epic' AND epic_key IS NOT NULL")
+  end
+
   def self.compute_cycle_times_for(epic)
     raise 'Issue must be an epic.' unless epic.issue_type == 'Epic'
 

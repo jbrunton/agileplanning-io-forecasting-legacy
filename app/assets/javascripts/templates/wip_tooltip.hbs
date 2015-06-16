@@ -1,0 +1,17 @@
+<div class='header'>
+  <strong>{{date d.date}}</strong>
+</div>
+<div class='content'>
+  WIP: <strong>{{d.wip}}</strong>
+  <ul>
+      {{#if active}}
+          {{#each d.issues}}
+            <li>{{summary}}</li>
+          {{/each}}
+      {{else}}
+        <li>
+          Avg WIP: {{round d.avg}}, std dev: {{round d.sd}}
+        </li>
+      {{/if}}
+  </ul>
+</div>
