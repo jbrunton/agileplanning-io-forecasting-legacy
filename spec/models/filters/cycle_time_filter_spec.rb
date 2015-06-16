@@ -1,8 +1,8 @@
 require 'rails_helper'
 
-RSpec.describe CycleTimeFilter do
+RSpec.describe Filters::CycleTimeFilter do
   describe "#allow_cycle_time" do
-    let(:filter) { CycleTimeFilter.new("5-10d") }
+    let(:filter) { Filters::CycleTimeFilter.new("5-10d") }
 
     it "allows cycle times in the given range" do
       expect(filter.allow_cycle_time(7)).to eq(true)
@@ -18,12 +18,12 @@ RSpec.describe CycleTimeFilter do
     let(:issue) { create(:issue, started: DateTime.new(2015, 1, 1), completed: DateTime.new(2015, 1, 5)) }
 
     it "allows issues with cycle times in the given range" do
-      filter = CycleTimeFilter.new("1-10d")
+      filter = Filters::CycleTimeFilter.new("1-10d")
       expect(filter.allow_issue(issue)).to eq(true)
     end
 
     it "disallows issues with cycle times outside the given range" do
-      filter = CycleTimeFilter.new("1-2d")
+      filter = Filters::CycleTimeFilter.new("1-2d")
       expect(filter.allow_issue(issue)).to eq(false)
     end
   end

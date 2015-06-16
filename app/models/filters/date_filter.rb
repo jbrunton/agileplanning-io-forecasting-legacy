@@ -1,4 +1,4 @@
-class DateFilter
+class Filters::DateFilter
   def initialize(filter)
     @date_ranges = filter.split(",").map do |x|
       x.split("-").map{ |x| DateTime.parse(x.strip) }

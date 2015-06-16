@@ -1,4 +1,4 @@
-class CycleTimeFilter
+class Filters::CycleTimeFilter
   FILTER = /(\d+)-(\d+)d/
 
   def initialize(filter)

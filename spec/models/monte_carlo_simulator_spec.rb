@@ -6,7 +6,7 @@ RSpec.describe MonteCarloSimulator do
   end
 
   let (:start_date) { DateTime.new(2001, 1, 1) }
-  let (:filter) { DateFilter.new("1 Jan 2001-5 Jan 2001")}
+  let (:filter) { Filters::DateFilter.new("1 Jan 2001-5 Jan 2001")}
 
   let (:project) {
     epics = [

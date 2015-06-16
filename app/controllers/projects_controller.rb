@@ -104,6 +104,6 @@ class ProjectsController < ApplicationController
     end
 
   def set_filter
-    @filter = DateFilter.new(params[:filter] || "")
+    @filter = ::Filters::DateFilter.new(params[:filter] || "")
   end
 end

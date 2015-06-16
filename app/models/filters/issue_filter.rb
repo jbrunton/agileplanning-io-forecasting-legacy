@@ -1,4 +1,4 @@
-class IssueFilter
+class Filters::IssueFilter
   DATE_FILTER = /complete: (.*)/
   CYCLE_TIME_FILTER = /cycle_time: (.*)/
 
@@ -7,9 +7,9 @@ class IssueFilter
     @filters = filter.split(";").map do |x|
       case x
         when DATE_FILTER
-          DateFilter.new($1)
+          Filters::DateFilter.new($1)
         when CYCLE_TIME_FILTER
-          CycleTimeFilter.new($1)
+          Filters::CycleTimeFilter.new($1)
       end
     end
   end
