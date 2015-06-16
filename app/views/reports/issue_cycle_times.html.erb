@@ -3,18 +3,6 @@
     <h1>Issue Cycle Times</h1>
     <script>
         $(function () {
-            var bisectDate = d3.bisector(function(d) { return d.completed ? d.completed : d.date; }).left;
-
-            function cycleTimeTip(d, active) {
-                var context = { d: d, active: active };
-                return HandlebarsTemplates['epic_tooltip'](context);
-            }
-
-            function wipTip(d, active) {
-                var context = { d: d, active: active };
-                return HandlebarsTemplates['wip_tooltip'](context);
-            }
-
             function drawChart(epics, wip) {
                 var cycleTimeData = epics[0]
                         .filter(function(item) {
