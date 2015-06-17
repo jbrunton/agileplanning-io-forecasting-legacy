@@ -149,7 +149,7 @@
               <tr>
                 <th>Lead Time</th>
                 <% @lead_times.each do |interval| %>
-                    <td><%= "#{interval[:actual_time]} days" %></td>
+                    <td><%= "#{sprintf('%.1f', interval[:actual_time])} days" %></td>
                 <% end %>
               </tr>
             </table>

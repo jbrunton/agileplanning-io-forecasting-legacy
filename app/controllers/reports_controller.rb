@@ -11,6 +11,7 @@ class ReportsController < ApplicationController
     @backlog = @project.epics.select{ |epic| epic.epic_status != 'Done' }
     @upcoming = @backlog.select{ |epic| !epic.started }
     @in_progress = @backlog.select{ |epic| epic.started }
+    params[:forecast_type] = 'backlog' if params[:forecast_type].nil?
 
     if request.request_method == 'POST'
       @wip_scale_factor = params[:wip_scale_factor].to_f unless params[:wip_scale_factor].empty?
