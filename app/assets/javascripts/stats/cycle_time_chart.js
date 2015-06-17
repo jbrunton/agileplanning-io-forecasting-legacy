@@ -38,7 +38,7 @@ CycleTimeChart.prototype.setSeries = function(cycleTimeSeries, wipSeries) {
 
   function cycleTimeTip(d, active) {
     var context = { d: d, active: active };
-    return HandlebarsTemplates['epic_tooltip'](context);
+    return HandlebarsTemplates['issue_tooltip'](context);
   }
 
   function wipTip(d, active) {
