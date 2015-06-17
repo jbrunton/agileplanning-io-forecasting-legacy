@@ -40,10 +40,12 @@ ActiveRecord::Schema.define(version: 3) do
   create_table "wip_histories", force: :cascade do |t|
     t.date     "date"
     t.integer  "issue_id"
+    t.string   "issue_type"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
   add_index "wip_histories", ["issue_id"], name: "index_wip_histories_on_issue_id"
+  add_index "wip_histories", ["issue_type"], name: "index_wip_histories_on_issue_type"
 
 end

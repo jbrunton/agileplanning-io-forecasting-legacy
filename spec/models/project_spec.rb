@@ -11,10 +11,10 @@ RSpec.describe Project, type: :model do
   end
 
   describe "#stories" do
-    it "returns all the issues which belong to epics" do
-      project = create(:project, issues: [create(:issue)])
+    it "returns all stories" do
+      project = create(:project)
       epic = create(:epic, project: project)
-      issue = create(:issue, epic: epic, project: project)
+      issue = create(:issue, project: project)
 
       expect(project.stories).to eq([issue])
     end
@@ -53,18 +53,19 @@ RSpec.describe Project, type: :model do
   end
 
   describe "#complete_wip_history" do
-    it "returns wip histories grouped by date" do
+    it "returns wip histories for epics grouped by date" do
       start_date = DateTime.new(2001, 1, 1)
       project = create(:project, issues: [
               build(:epic, started: start_date, completed: start_date + 1.day),
-              build(:epic, started: start_date + 3.days)
+              build(:epic, started: start_date + 3.days),
+              build(:issue, :completed)
           ])
       epic_one = project.issues[0]
       epic_two = project.issues[1]
       WipHistory.compute_history_for!(project)
 
       Timecop.freeze(start_date + 5.days)
-      history = project.complete_wip_history
+      history = project.complete_wip_history('Epic')
 
       expect(history).to eq({
                   start_date.to_date => [epic_one],
