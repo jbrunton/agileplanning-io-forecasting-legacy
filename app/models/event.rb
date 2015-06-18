@@ -2,13 +2,11 @@ class Event
   attr_reader :time
   attr_reader :event_type
   attr_reader :issue
-  attr_reader :issue_type
 
   def initialize(opts)
     @time = opts[:time]
     @event_type = opts[:event_type]
     @issue = opts[:issue]
-    @issue_type = opts[:issue_type]
   end
 
   def ==(other)
