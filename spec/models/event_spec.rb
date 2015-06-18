@@ -9,10 +9,10 @@ RSpec.describe Event do
     it "computes the events for a project in order" do
       events = Event.compute_for(project)
       expect(events).to eq([
-                  Event.new(time: epic.started, event_type: 'started', issue: epic, issue_type: 'Epic'),
-                  Event.new(time: story.started, event_type: 'started', issue: story, issue_type: 'Story'),
-                  Event.new(time: epic.completed, event_type: 'completed', issue: epic, issue_type: 'Epic'),
-                  Event.new(time: story.completed, event_type: 'completed', issue: story, issue_type: 'Story')
+                  Event.new(time: epic.started, event_type: 'started', issue: epic),
+                  Event.new(time: story.started, event_type: 'started', issue: story),
+                  Event.new(time: epic.completed, event_type: 'completed', issue: epic),
+                  Event.new(time: story.completed, event_type: 'completed', issue: story)
               ])
     end
   end
