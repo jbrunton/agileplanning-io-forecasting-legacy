@@ -17,7 +17,7 @@ Rails.application.routes.draw do
     end
 
     get 'reports', to: 'reports#index'
-    get 'reports/epic_control_chart', to: 'reports#epic_control_chart'
+    get 'reports/control_chart', to: 'reports#control_chart'
     get 'reports/story_control_chart', to: 'reports#story_control_chart'
     get 'reports/forecast', to: 'reports#forecast'
     post 'reports/forecast', to: 'reports#forecast'
