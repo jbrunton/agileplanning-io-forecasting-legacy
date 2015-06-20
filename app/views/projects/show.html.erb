@@ -1,3 +1,5 @@
+<% breadcrumb :project, @project %>
+
 <script type="application/javascript">
     var dispatcher = new WebSocketRails('localhost:3000/websocket');
     var channel = dispatcher.subscribe('project:<%= @project.id %>');
@@ -34,6 +36,10 @@
     <p>
       <strong>Board:</strong>
       <%= @project.board_id %>
+    </p>
+
+    <p>
+      <%= link_to('Reports', project_reports_path(@project)) %>
     </p>
   </div>
 

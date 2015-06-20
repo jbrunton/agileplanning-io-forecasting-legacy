@@ -1,4 +1,7 @@
 Rails.application.routes.draw do
+
+  root 'projects#index'
+
   resources :issues, only: [:show]
 
   resources :projects do
@@ -13,6 +16,7 @@ Rails.application.routes.draw do
       get 'data/wip', to: 'data#wip'
     end
 
+    get 'reports', to: 'reports#index'
     get 'reports/epic_control_chart', to: 'reports#epic_control_chart'
     get 'reports/story_control_chart', to: 'reports#story_control_chart'
     get 'reports/forecast', to: 'reports#forecast'
