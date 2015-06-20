@@ -12,13 +12,8 @@ crumb :reports do |project|
   parent :project, project
 end
 
-crumb :epic_control_chart do |project|
-  link 'Epic Control Chart', project_reports_epic_control_chart_path(project)
-  parent :reports, project
-end
-
-crumb :story_control_chart do |project|
-  link 'Story Control Chart', project_reports_story_control_chart_path(project)
+crumb :control_chart do |project|
+  link 'Control Chart', project_reports_control_chart_path(project)
   parent :reports, project
 end
 

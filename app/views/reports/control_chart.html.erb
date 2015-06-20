@@ -1,8 +1,30 @@
-<% breadcrumb :epic_control_chart, @project %>
+<% breadcrumb :control_chart, @project %>
 
 <div class="row">
   <div class="large-12 columns">
-    <h1>Epic Control Chart</h1>
+    <h1>Control Chart</h1>
+  </div>
+</div>
+<div class="row">
+  <div class="large-12 columns">
+    <form>
+      <div class="row">
+        <div class="large-4 columns">
+          <label>Issue Type</label>
+          <select id="issue_type" style="display: float;" class="left">
+            <option value="Epic">Epic</option>
+            <option value="Story">Story</option>
+          </select>
+        </div>
+        <div class="large-8 columns">
+          <label>Date Filter</label>
+          <input id="filter" type="text" value="<%= "complete: #{(Date.today - 1.year).strftime('%d %b %Y')} - #{Date.today.strftime('%d %b %Y')}"  %>" />
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
   <script>
       $(function () {
           var bisectDate = d3.bisector(function(d) { return d.completed ? d.completed : d.date; }).left;
@@ -57,31 +79,24 @@
 
           function drawReport() {
               var filter = $('#filter').val();
+              var issueType = $('#issue_type').val();
               $.when(
-                      $.get('<%= project_path(@project) %>/data/cycle_times.json?issue_type=Epic&filter=' + filter),
-                      $.get('<%= project_path(@project) %>/data/wip.json?issue_type=Epic&filter=' + filter)
+                      $.get('<%= project_path(@project) %>/data/cycle_times.json?issue_type=' + issueType + '&filter=' + filter),
+                      $.get('<%= project_path(@project) %>/data/wip.json?issue_type=' + issueType + '&filter=' + filter)
               ).done(drawChart);
           }
 
           drawReport();
 
           $('#filter').on('change', drawReport);
+          $('#issue_type').on('change', drawReport);
           $(window).resize(drawReport);
       });
 
   </script>
 
-
-
+<div class="row">
+  <div class="large-12 columns">
     <svg id="container" class="chart"></svg>
-
-    <form>
-      <div class="row">
-        <div class="large-4 columns">
-          <label>Date Filter</label>
-          <input id="filter" type="text" value="<%= "complete: #{(Date.today - 1.year).strftime('%d %b %Y')} - #{Date.today.strftime('%d %b %Y')}"  %>" />
-        </div>
-      </div>
-    </form>
   </div>
 </div>

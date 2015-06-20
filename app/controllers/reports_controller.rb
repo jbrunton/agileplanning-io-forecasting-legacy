@@ -4,10 +4,7 @@ class ReportsController < ApplicationController
   def index
   end
 
-  def epic_control_chart
-  end
-
-  def story_control_chart
+  def control_chart
   end
 
   def forecast
