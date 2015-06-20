@@ -49,9 +49,14 @@ class Project < ActiveRecord::Base
 
     DateRange.new(history_array.first[0], DateTime.now.to_date).to_a.each do |date|
       if history[date].nil?
-        history[date] = date > history_array.last[0] ?
-            history_array.last[1] :
-            []
+        last_date = history_array.last[0]
+        if date > last_date
+          last_issues = history_array.last[1]
+          in_progress = last_issues.select{ |issue| issue.completed.nil? }
+          history[date] = in_progress
+        else
+          history[date] = []
+        end
       end
     end
 

@@ -10,17 +10,17 @@ class WipHistory < ActiveRecord::Base
     from_date = events.first.time.to_date
     to_date = events.last.time.to_date + 1.day
 
-    issue = []
+    issues = []
     dates = DateRange.new(from_date, to_date).to_a
     dates.each do |date|
       events_for_day = events.select{ |e| date <= e.time && e.time < date + 1.day }
       started_events = events_for_day.select{ |e| e.event_type == 'started' }
       completed_events = events_for_day.select{ |e| e.event_type == 'completed' }
 
-      started_events.each{ |event| issue << event.issue }
-      completed_events.each{ |event| issue.delete(event.issue) }
+      started_events.each{ |event| issues << event.issue }
+      completed_events.each{ |event| issues.delete(event.issue) }
 
-      issue.each{ |issue| WipHistory.create(date: date, issue: issue, issue_type: issue.issue_type) }
+      issues.each{ |issue| WipHistory.create(date: date, issue: issue, issue_type: issue.issue_type) }
     end
   end
 end
