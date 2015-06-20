@@ -1,6 +1,9 @@
 class ReportsController < ApplicationController
   before_action :set_project, :set_filter
 
+  def index
+  end
+
   def epic_control_chart
   end
 
