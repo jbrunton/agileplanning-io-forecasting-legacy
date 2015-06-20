@@ -1,10 +1,5 @@
-crumb :root do
-  link 'Home', root_path
-end
-
 crumb :projects do
   link 'Projects', projects_path
-  parent :root
 end
 
 crumb :project do |project|
