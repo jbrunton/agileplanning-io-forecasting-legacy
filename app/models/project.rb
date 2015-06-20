@@ -11,7 +11,7 @@ class Project < ActiveRecord::Base
   end
 
   def stories
-    issues.where("issue_type <> 'Epic' AND epic_key IS NOT NULL")
+    issues.where(issue_type: 'Story')
   end
 
   def self.compute_cycle_times_for(epic)
@@ -38,8 +38,9 @@ class Project < ActiveRecord::Base
     save
   end
 
-  def complete_wip_history
+  def complete_wip_history(issue_type)
     history_array = wip_histories.
+        where(issue_type: issue_type).
         group_by{ |history| history.date }.
         map{ |date, histories| [date, histories.map{ |history| history.issue }] }.
         sort
@@ -48,9 +49,14 @@ class Project < ActiveRecord::Base
 
     DateRange.new(history_array.first[0], DateTime.now.to_date).to_a.each do |date|
       if history[date].nil?
-        history[date] = date > history_array.last[0] ?
-            history_array.last[1] :
-            []
+        last_date = history_array.last[0]
+        if date > last_date
+          last_issues = history_array.last[1]
+          in_progress = last_issues.select{ |issue| issue.completed.nil? }
+          history[date] = in_progress
+        else
+          history[date] = []
+        end
       end
     end
 

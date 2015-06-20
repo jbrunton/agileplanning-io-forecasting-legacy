@@ -1,26 +1,26 @@
 class Event
   attr_reader :time
   attr_reader :event_type
-  attr_reader :epic
+  attr_reader :issue
 
   def initialize(opts)
     @time = opts[:time]
     @event_type = opts[:event_type]
-    @epic = opts[:epic]
+    @issue = opts[:issue]
   end
 
   def ==(other)
     @time == other.time &&
         @event_type == other.event_type &&
-        @epic == other.epic
+        @issue == other.issue
   end
 
   def self.compute_for(project)
     events = []
 
-    project.epics.each do |epic|
-      events << Event.new(time: epic.started, event_type: 'started', epic: epic) if (epic.started)
-      events << Event.new(time: epic.completed, event_type: 'completed', epic: epic) if (epic.completed)
+    (project.epics + project.stories).each do |issue|
+      events << Event.new(time: issue.started, event_type: 'started', issue: issue) if (issue.started)
+      events << Event.new(time: issue.completed, event_type: 'completed', issue: issue) if (issue.completed)
     end
 
     events.sort_by{ |event| event.time }
