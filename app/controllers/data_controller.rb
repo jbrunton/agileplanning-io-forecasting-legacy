@@ -3,11 +3,8 @@ class DataController < ApplicationController
   before_action :set_filter, only: [:cycle_times, :wip, :epic_cycle_times]
 
   def cycle_times
-    query = @project.issues.includes(:issues)
-    query = query.where(issue_type: 'Epic') if params[:issue_type] == 'Epic'
-    query = query.where.not(issue_type: 'Epic') if params[:issue_type] == 'Story'
-
-    issues = query.
+    issues = @project.issues.includes(:issues).
+        where(issue_type: params[:issue_type]).
         select{ |issue| issue.cycle_time && @filter.allow_issue(issue) }.
         sort_by{ |issue| issue.completed }
 
