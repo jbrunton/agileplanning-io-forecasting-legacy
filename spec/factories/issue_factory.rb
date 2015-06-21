@@ -16,6 +16,7 @@ FactoryGirl.define do
 
     trait :completed do
       started
+      epic_status { 'Done' if issue_type == 'Epic' }
       sequence(:completed) do |k|
         started + (cycle_time ? cycle_time.days : k.days)
       end

@@ -26,21 +26,21 @@ RSpec.describe Issue, type: :model do
         expect(story.completed?).to eq(false)
       end
 
-      it "returns false otherwise" do
+      it "returns true otherwise" do
         story = create(:issue, :completed)
         expect(story.completed?).to eq(true)
       end
     end
 
     context "for epics" do
-      it "returns false if #epic_status is nil" do
-        epic = create(:epic, :completed)
-        expect(epic.completed?).to eq(false)
+      it "returns true if epic_status is 'Done'" do
+        epic = create(:epic, epic_status: 'Done')
+        expect(epic.completed?).to eq(true)
       end
 
-      it "returns true if #epic_status is 'Done'" do
-        epic = create(:epic, :completed, epic_status: 'Done')
-        expect(epic.completed?).to eq(true)
+      it "returns false otherwise" do
+        epic = create(:epic, :completed, epic_status: nil)
+        expect(epic.completed?).to eq(false)
       end
     end
   end

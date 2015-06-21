@@ -40,14 +40,10 @@ class DataController < ApplicationController
   end
 
   def backlog
-    @backlog = @project.issues.
-        select{ |issue| issue.issue_type == params[:issue_type] }.
-        select{ |issue| issue.completed.nil? && issue.epic_status != 'Done' }
-    @upcoming = @backlog.select{ |issue| !issue.started }
-    @in_progress = @backlog.select{ |issue| issue.started }
+    backlog = BacklogBuilder.new(@project, params[:issue_type]).build
 
     respond_to do |format|
-      format.json { render json: { in_progress: @in_progress, upcoming: @upcoming } }
+      format.json { render json: { in_progress: backlog[:in_progress], upcoming: backlog[:upcoming] } }
     end
   end
 

@@ -13,7 +13,8 @@ class Issue < ActiveRecord::Base
   end
 
   def completed?
-    !completed.nil? && (issue_type != 'Epic' || epic_status == 'Done')
+    return epic_status == 'Done' if issue_type == 'Epic'
+    !completed.nil?
   end
 
   def size

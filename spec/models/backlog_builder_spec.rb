@@ -34,8 +34,8 @@ RSpec.describe BacklogBuilder do
     end
 
     context "when the issue_type is 'Epic'" do
-      let(:completed_epic) { create(:epic, :completed) }
-      let(:done_epic) { create(:epic, :completed, epic_status: 'Done') }
+      let(:completed_epic) { create(:epic, :completed, epic_status: nil) }
+      let(:done_epic) { create(:epic, :completed) }
       let(:in_progress_story) { create(:issue, :started) }
       let(:in_progress_epic) { create(:epic, :started) }
       let(:upcoming_story) { create(:issue) }
