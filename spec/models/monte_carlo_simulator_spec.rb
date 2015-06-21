@@ -29,9 +29,9 @@ RSpec.describe MonteCarloSimulator do
     end
   }
 
-  describe "#epic_values" do
-    it "returns the sets of filtered epic values grouped by size" do
-      expect(simulator.epic_values).to eq({
+  describe "#cycle_time_values" do
+    it "returns the sets of filtered cycle time values grouped by size" do
+      expect(simulator.cycle_time_values).to eq({
                   'S' => [1.0, 2.0],
                   'M' => [3.0, 4.0],
                   '?' => [1.0, 2.0, 3.0, 4.0]
@@ -66,7 +66,7 @@ RSpec.describe MonteCarloSimulator do
     end
 
     it "falls back to the unsized category if no data exists for the given category" do
-      allow(simulator).to receive(:epic_values).and_return('S' => [1], '?' => [2])
+      allow(simulator).to receive(:cycle_time_values).and_return('S' => [1], '?' => [2])
       result = simulator.pick_cycle_time_values('S' => 1, 'M' => 1)
       expect(result).to eq([1, 2])
     end
