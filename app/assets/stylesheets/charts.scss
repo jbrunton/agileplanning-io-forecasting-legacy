@@ -77,6 +77,10 @@
   opacity: 0.15;
 }
 
+.chart .legend.wip {
+  fill: steelblue;
+}
+
 .chart .line.cycle_time {
   stroke: indianred;
   stroke-width: 2px;
@@ -85,6 +89,10 @@
 .chart .area.cycle_time {
   fill: indianred;
   opacity: 0.15;
+}
+
+.chart .legend.cycle_time {
+  fill: indianred;
 }
 
 .chart .overlay {

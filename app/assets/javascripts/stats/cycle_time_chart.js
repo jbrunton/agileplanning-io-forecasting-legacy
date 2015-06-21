@@ -78,7 +78,8 @@ CycleTimeChart.prototype.setSeries = function(cycleTimeSeries, wipSeries) {
       .attr("class", "line")
       .attr("d", cycleTimeLine)
       .classed("cycle_time", true)
-      .classed("mean", true);
+      .classed("mean", true)
+      .attr("data-legend", "cycle_time");
 
   var wipLine = d3.svg.line()
       .interpolate("monotone")
@@ -90,7 +91,8 @@ CycleTimeChart.prototype.setSeries = function(cycleTimeSeries, wipSeries) {
       .attr("class", "line")
       .attr("d", wipLine)
       .classed("wip", true)
-      .classed("mean", true);
+      .classed("mean", true)
+      .attr("data-legend", "wip");
 
 
   // points
@@ -166,6 +168,59 @@ CycleTimeChart.prototype.setSeries = function(cycleTimeSeries, wipSeries) {
       .attr("class", "y axis")
       .attr("transform", "translate(" + chart.getClientWidth() + ",0)")
       .call(yWipAxis);
+
+  chart.svg.append("text")
+      .attr("class", "y label")
+      .attr("text-anchor", "end")
+      .attr("y", 6)
+      .attr("dy", ".75em")
+      .attr("transform", "rotate(-90)")
+      .text("cycle time (days)");
+
+  chart.svg.append("text")
+      .attr("class", "y label")
+      .attr("text-anchor", "end")
+      .attr("y", this.getClientWidth())
+      .attr("dy", "-.75em")
+      .attr("transform", "rotate(-90)")
+      .text("WIP");
+
+
+  // legend
+
+  // add legend
+  var legend = chart.svg.append("g")
+      .attr("class", "legend")
+      .attr("height", 50)
+      .attr("width", 200)
+      .attr('transform', 'translate(' + (this.getClientWidth() - 200) + ',-30)');
+
+  var key = [
+    { series: 'cycle_time', label: 'Cycle Time' },
+    { series: 'wip', label: 'WIP' }
+  ];
+
+
+  legend.selectAll('rect')
+      .data(key)
+      .enter()
+      .append("rect")
+      .attr("x", function(d, i){ return i * 100;})
+      .attr("width", 10)
+      .attr("height", 10)
+      .attr("class", function(d) {
+        return "legend " + d.series;
+      });
+
+  legend.selectAll('text')
+      .data(key)
+      .enter()
+      .append("text")
+      .attr("y", "9")
+      .attr("x", function(d, i){ return i * 100 + 14;})
+      .text(function(d) {
+        return d.label;
+      });
 
 
   // overlay
