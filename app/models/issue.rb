@@ -9,7 +9,11 @@ class Issue < ActiveRecord::Base
   validates :summary, presence: true
 
   def cycle_time
-    (completed - started) / 1.day unless started.nil? || completed.nil?
+    (completed - started) / 1.day if completed?
+  end
+
+  def completed?
+    !completed.nil? && (issue_type != 'Epic' || epic_status == 'Done')
   end
 
   def size
