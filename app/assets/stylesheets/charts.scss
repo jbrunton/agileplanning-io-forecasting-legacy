@@ -77,6 +77,10 @@
   opacity: 0.15;
 }
 
+.chart .line.throughput {
+  stroke: green;
+}
+
 .chart .line.cycle_time {
   stroke: indianred;
   stroke-width: 2px;

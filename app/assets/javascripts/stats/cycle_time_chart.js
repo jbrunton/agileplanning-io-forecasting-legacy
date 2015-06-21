@@ -64,6 +64,32 @@ CycleTimeChart.prototype.setSeries = function(cycleTimeSeries, wipSeries) {
       .domain([0, d3.max(wipSeries, function(d) { return d.wip; })])
       .range([this.getClientHeight(), 0]);
 
+  this.throughputSeries = this.wipSeries.map(function(d) {
+    var i = bisectDate(cycleTimeSeries, d.date); // returns the index to the current data item
+    if (i > 0) {
+      var p0 = cycleTimeSeries[i - 1];
+    }
+    if (i < cycleTimeSeries.length) {
+      var p1 = cycleTimeSeries[i];
+    }
+
+    if (p0 && p1) {
+      var f = (d.date.getTime() - p0.completed.getTime()) / (p1.completed.getTime() - p0.completed.getTime());
+      var cycleTime = (1 - f) * p0.avg + f * p1.avg;
+      var wip = d.avg;
+      return {
+        date: d.date,
+        throughput: wip / cycleTime
+      };
+    }
+  }).filter(function(d) {
+    return !!d;
+  });
+
+  this._yThroughputScale = d3.scale.linear()
+      .domain([0, d3.max(this.throughputSeries, function(d) { return d.throughput; })])
+      .range([this.getClientHeight(), 0]);
+
   var chart = this;
 
 
@@ -90,6 +116,18 @@ CycleTimeChart.prototype.setSeries = function(cycleTimeSeries, wipSeries) {
       .attr("class", "line")
       .attr("d", wipLine)
       .classed("wip", true)
+      .classed("mean", true);
+
+  var throughputLine = d3.svg.line()
+      .interpolate("monotone")
+      .x(function(d) { return chart._xScale(d.date); })
+      .y(function(d) { return chart._yThroughputScale(d.throughput); });
+
+  this.svg.append("path")
+      .datum(this.throughputSeries)
+      .attr("class", "line")
+      .attr("d", throughputLine)
+      .classed("throughput", true)
       .classed("mean", true);
 
 
