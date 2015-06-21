@@ -52,6 +52,10 @@ group :development, :test do
   gem 'rspec-rails'
   gem 'factory_girl_rails'
   gem 'jasmine'
+
+  gem 'pry'
+  gem 'pry-rescue'
+  gem 'pry-stack_explorer'
 end
 
 group :test do

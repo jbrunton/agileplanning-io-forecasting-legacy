@@ -14,7 +14,8 @@ RSpec.describe MonteCarloSimulator do
         build(:epic, :completed, started: start_date, cycle_time: 2, small: true),
         build(:epic, :completed, started: start_date, cycle_time: 3, medium: true),
         build(:epic, :completed, started: start_date, cycle_time: 4, medium: true),
-        build(:epic, :completed, started: start_date + 10.days, cycle_time: 1, small: true)
+        build(:epic, :completed, started: start_date + 10.days, cycle_time: 1, small: true),
+        build(:issue, :completed)
     ]
     project = create(:project, issues: epics)
     WipHistory.compute_history_for!(project)
@@ -25,13 +26,13 @@ RSpec.describe MonteCarloSimulator do
 
   let (:simulator) {
     Timecop.freeze(now) do
-      MonteCarloSimulator.new(project, filter)
+      MonteCarloSimulator.new(project, filter, 'Epic')
     end
   }
 
-  describe "#epic_values" do
-    it "returns the sets of filtered epic values grouped by size" do
-      expect(simulator.epic_values).to eq({
+  describe "#cycle_time_values" do
+    it "returns the sets of filtered cycle time values grouped by size" do
+      expect(simulator.cycle_time_values).to eq({
                   'S' => [1.0, 2.0],
                   'M' => [3.0, 4.0],
                   '?' => [1.0, 2.0, 3.0, 4.0]
@@ -66,7 +67,7 @@ RSpec.describe MonteCarloSimulator do
     end
 
     it "falls back to the unsized category if no data exists for the given category" do
-      allow(simulator).to receive(:epic_values).and_return('S' => [1], '?' => [2])
+      allow(simulator).to receive(:cycle_time_values).and_return('S' => [1], '?' => [2])
       result = simulator.pick_cycle_time_values('S' => 1, 'M' => 1)
       expect(result).to eq([1, 2])
     end

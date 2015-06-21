@@ -12,6 +12,11 @@ class Issue < ActiveRecord::Base
     (completed - started) / 1.day unless started.nil? || completed.nil?
   end
 
+  def completed?
+    return epic_status == 'Done' if issue_type == 'Epic'
+    !completed.nil?
+  end
+
   def size
     size_match = /\[(S|M|L)\]/.match(summary) if issue_type == 'Epic'
     size_match[1] unless size_match.nil?

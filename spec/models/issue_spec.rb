@@ -18,4 +18,30 @@ RSpec.describe Issue, type: :model do
       end
     end
   end
+
+  describe "#completed?" do
+    context "for stories" do
+      it "returns false if #completed is nil" do
+        story = create(:issue)
+        expect(story.completed?).to eq(false)
+      end
+
+      it "returns true otherwise" do
+        story = create(:issue, :completed)
+        expect(story.completed?).to eq(true)
+      end
+    end
+
+    context "for epics" do
+      it "returns true if epic_status is 'Done'" do
+        epic = create(:epic, epic_status: 'Done')
+        expect(epic.completed?).to eq(true)
+      end
+
+      it "returns false otherwise" do
+        epic = create(:epic, :completed, epic_status: nil)
+        expect(epic.completed?).to eq(false)
+      end
+    end
+  end
 end

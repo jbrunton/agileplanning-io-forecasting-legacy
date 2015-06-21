@@ -1,31 +1,45 @@
 <% breadcrumb :forecast_report, @project %>
 
+<script>
+  function updateBacklog(backlog) {
+      $('#backlog').empty();
+      $('#backlog').append(HandlebarsTemplates.backlog({
+          title: 'In Progress',
+          issues: backlog.in_progress
+      }));
+      $('#backlog').append(HandlebarsTemplates.backlog({
+          title: 'Upcoming',
+          issues: backlog.upcoming
+      }));
+  }
+
+  function issueTypeChanged() {
+      var issueType = $('#issue_type').val();
+      $('[name=issue_type]').val(issueType);
+      $.when(
+              $.get('<%= project_path(@project) %>/data/backlog.json?issue_type=' + issueType)
+      ).done(updateBacklog);
+  }
+
+  $(function() {
+      issueTypeChanged();
+      $('#issue_type').change(issueTypeChanged);
+  });
+</script>
+
 <div class="row">
 
   <div class="large-4 columns">
+    <select id="issue_type">
+      <option value="Story">Story</option>
+      <option value="Epic">Epic</option>
+    </select>
+
     <h3>Backlog</h3>
 
-    <table style="width: 100%">
-      <tr class="panel callout">
-        <th>In Progress</th>
-      </tr>
-      <% @in_progress.each do |epic| %>
-          <tr>
-            <td><%= epic.summary %></td>
-          </tr>
-      <% end %>
-    </table>
+    <div id="backlog">
 
-    <table style="width: 100%">
-      <tr class="panel callout">
-        <th>Upcoming</th>
-      </tr>
-      <% @upcoming.each do |epic| %>
-          <tr>
-            <td><%= epic.summary %></td>
-          </tr>
-      <% end %>
-    </table>
+    </div>
 
   </div>
   <div class="large-8 columns">
@@ -60,6 +74,7 @@
               <div class="row">
                 <div class="large-2 columns">
                   <input type="hidden" name="forecast_type" value="backlog"/>
+                  <input type="hidden" name="issue_type" value="Story"/>
                   <%= submit_tag 'Forecast', :class => 'button' %>
                 </div>
               </div>
@@ -126,7 +141,7 @@
                   </label>
                 </div>
                 <div class="large-3 columns">
-                  <label>L
+                  <label>?
                     <input type="text" name="unknown" id="unknown" value="<%= params[:unknown] ? params[:unknown] : nil %>"/>
                   </label>
                 </div>
@@ -134,6 +149,7 @@
               <div class="row">
                 <div class="large-2 columns">
                   <input type="hidden" name="forecast_type" value="lead_times"/>
+                  <input type="hidden" name="issue_type" value="Story"/>
                   <%= submit_tag 'Forecast', :class => 'button' %>
                 </div>
               </div>

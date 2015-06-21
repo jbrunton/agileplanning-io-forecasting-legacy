@@ -1,23 +1,14 @@
 class MonteCarloSimulator
   attr_reader :random
-  attr_reader :epic_values
+  attr_reader :cycle_time_values
   attr_reader :wip_values
 
   PLAY_COUNT = 100
 
-  def initialize(project, filter)
+  def initialize(project, filter, issue_type)
     @random = Random.new(0)
-
-    epic_values = project.epics.
-        select{ |epic| epic.cycle_time && filter.allow_issue(epic) }.
-        group_by{ |epic| epic.size }.
-        map{ |size, epics| [size, epics.map{ |epic| epic.cycle_time }] }.to_h
-    @epic_values = epic_values.merge({'?' => epic_values.values.flatten})
-
-    @wip_values = project.complete_wip_history('Epic').
-        select{ |date, issues| filter.allow_date(date) }.
-        values.
-        map{ |issues| issues.length }
+    @cycle_time_values = compute_cycle_time_values(project, filter, issue_type)
+    @wip_values = compute_wip_values(project, filter, issue_type)
   end
 
   def play(opts)
@@ -45,8 +36,8 @@ protected
   def pick_cycle_time_values(sizes)
     values = []
     sizes.each do |size, count|
-      values_for_size = epic_values[size]
-      values_for_size = epic_values['?'] if values_for_size.nil?
+      values_for_size = cycle_time_values[size]
+      values_for_size = cycle_time_values['?'] if values_for_size.nil?
       values.concat(pick_values(values_for_size, count))
     end
     values
@@ -75,5 +66,21 @@ protected
     actual_time = total_time / average_wip if opts[:rank] >= average_wip
 
     { total_time: total_time, average_wip: average_wip, actual_time: actual_time }
+  end
+
+  def compute_cycle_time_values(project, filter, issue_type)
+    partitioned_values = project.issues.
+        select{ |issue| issue.issue_type == issue_type && issue.cycle_time && filter.allow_issue(issue) }.
+        group_by{ |issue| issue.size }.
+        map{ |size, issues| [size, issues.map{ |issue| issue.cycle_time }] }.to_h
+
+    partitioned_values.merge({'?' => partitioned_values.values.flatten})
+  end
+
+  def compute_wip_values(project, filter, issue_type)
+    project.complete_wip_history(issue_type).
+        select{ |date, issues| filter.allow_date(date) }.
+        values.
+        map{ |issues| issues.length }
   end
 end
