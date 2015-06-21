@@ -14,6 +14,7 @@ Rails.application.routes.draw do
     member do
       get 'data/cycle_times', to: 'data#cycle_times'
       get 'data/wip', to: 'data#wip'
+      get 'data/backlog', to: 'data#backlog'
     end
 
     get 'reports', to: 'reports#index'

@@ -1,6 +1,6 @@
 class DataController < ApplicationController
-  before_action :set_project, only: [:cycle_times, :wip, :epic_cycle_times]
-  before_action :set_filter, only: [:cycle_times, :wip, :epic_cycle_times]
+  before_action :set_project, only: [:cycle_times, :wip, :backlog]
+  before_action :set_filter, only: [:cycle_times, :wip]
 
   def cycle_times
     issues = @project.issues.includes(:issues).
@@ -36,6 +36,18 @@ class DataController < ApplicationController
 
     respond_to do |format|
       format.json { render json: trend.to_h.to_json }
+    end
+  end
+
+  def backlog
+    @backlog = @project.issues.
+        select{ |issue| issue.issue_type == params[:issue_type] }.
+        select{ |issue| issue.completed.nil? && issue.epic_status != 'Done' }
+    @upcoming = @backlog.select{ |issue| !issue.started }
+    @in_progress = @backlog.select{ |issue| issue.started }
+
+    respond_to do |format|
+      format.json { render json: { in_progress: @in_progress, upcoming: @upcoming } }
     end
   end
 

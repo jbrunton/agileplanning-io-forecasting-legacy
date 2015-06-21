@@ -1,31 +1,44 @@
 <% breadcrumb :forecast_report, @project %>
 
+<script>
+  function updateBacklog(backlog) {
+      $('#backlog').empty();
+      $('#backlog').append(HandlebarsTemplates.backlog({
+          title: 'In Progress',
+          issues: backlog.in_progress
+      }));
+      $('#backlog').append(HandlebarsTemplates.backlog({
+          title: 'Upcoming',
+          issues: backlog.upcoming
+      }));
+  }
+
+  function refreshBacklog() {
+      var issueType = $('#issue_type').val();
+      $.when(
+              $.get('<%= project_path(@project) %>/data/backlog.json?issue_type=' + issueType)
+      ).done(updateBacklog);
+  }
+
+  $(function() {
+      refreshBacklog();
+      $('#issue_type').change(refreshBacklog);
+  });
+</script>
+
 <div class="row">
 
   <div class="large-4 columns">
+    <select id="issue_type">
+      <option value="Story">Story</option>
+      <option value="Epic">Epic</option>
+    </select>
+
     <h3>Backlog</h3>
 
-    <table style="width: 100%">
-      <tr class="panel callout">
-        <th>In Progress</th>
-      </tr>
-      <% @in_progress.each do |epic| %>
-          <tr>
-            <td><%= epic.summary %></td>
-          </tr>
-      <% end %>
-    </table>
+    <div id="backlog">
 
-    <table style="width: 100%">
-      <tr class="panel callout">
-        <th>Upcoming</th>
-      </tr>
-      <% @upcoming.each do |epic| %>
-          <tr>
-            <td><%= epic.summary %></td>
-          </tr>
-      <% end %>
-    </table>
+    </div>
 
   </div>
   <div class="large-8 columns">
