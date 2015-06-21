@@ -8,14 +8,14 @@ class ReportsController < ApplicationController
   end
 
   def forecast
-    backlog = BacklogBuilder.new(@project, 'Epic').build
+    backlog = BacklogBuilder.new(@project, params[:issue_type]).build
     @upcoming = backlog[:upcoming]
     @in_progress = backlog[:in_progress]
     params[:forecast_type] = 'backlog' if params[:forecast_type].nil?
 
     if request.request_method == 'POST'
       @wip_scale_factor = params[:wip_scale_factor].to_f unless params[:wip_scale_factor].empty?
-      @simulator = MonteCarloSimulator.new(@project, @filter)
+      @simulator = MonteCarloSimulator.new(@project, @filter, params[:issue_type])
       if params[:forecast_type] == 'backlog'
         forecast_backlog
       else

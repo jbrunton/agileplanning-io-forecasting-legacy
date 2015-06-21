@@ -13,16 +13,17 @@
       }));
   }
 
-  function refreshBacklog() {
+  function issueTypeChanged() {
       var issueType = $('#issue_type').val();
+      $('[name=issue_type]').val(issueType);
       $.when(
               $.get('<%= project_path(@project) %>/data/backlog.json?issue_type=' + issueType)
       ).done(updateBacklog);
   }
 
   $(function() {
-      refreshBacklog();
-      $('#issue_type').change(refreshBacklog);
+      issueTypeChanged();
+      $('#issue_type').change(issueTypeChanged);
   });
 </script>
 
@@ -73,6 +74,7 @@
               <div class="row">
                 <div class="large-2 columns">
                   <input type="hidden" name="forecast_type" value="backlog"/>
+                  <input type="hidden" name="issue_type" value="Story"/>
                   <%= submit_tag 'Forecast', :class => 'button' %>
                 </div>
               </div>
@@ -147,6 +149,7 @@
               <div class="row">
                 <div class="large-2 columns">
                   <input type="hidden" name="forecast_type" value="lead_times"/>
+                  <input type="hidden" name="issue_type" value="Story"/>
                   <%= submit_tag 'Forecast', :class => 'button' %>
                 </div>
               </div>
