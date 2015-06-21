@@ -9,7 +9,7 @@ class Issue < ActiveRecord::Base
   validates :summary, presence: true
 
   def cycle_time
-    (completed - started) / 1.day if completed?
+    (completed - started) / 1.day unless started.nil? || completed.nil?
   end
 
   def completed?
