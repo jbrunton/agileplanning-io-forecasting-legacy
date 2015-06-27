@@ -22,8 +22,9 @@
   }
 
   $(function() {
-      issueTypeChanged();
       $('#issue_type').change(issueTypeChanged);
+      $('#issue_type').val('<%= params[:issue_type] || 'Epic' %>');
+      issueTypeChanged();
   });
 </script>
 
@@ -113,7 +114,12 @@
         <div class="panel">
           <%= form_tag do %>
               <div class="row">
-                <div class="large-3 large-offset-3 columns">
+                <div class="large-3 columns">
+                  <label>Start date
+                    <input type="text" name="start_date" id="start_date" value="<%= @start_date ? @start_date.to_s : nil %>"/>
+                  </label>
+                </div>
+                <div class="large-3 columns">
                   <label>Wip scale factor
                     <input type="text" name="wip_scale_factor" id="wip_scale_factor" value="<%= @wip_scale_factor ? @wip_scale_factor : nil %>"/>
                   </label>
@@ -170,6 +176,14 @@
                     <td><%= "#{sprintf('%.1f', interval[:actual_time])} days" %></td>
                 <% end %>
               </tr>
+              <% unless @start_date.nil? %>
+              <tr>
+                <th>Date</th>
+                <% @lead_times.each do |interval| %>
+                    <td><%= format_datetime(@start_date + interval[:actual_time].days) %></td>
+                <% end %>
+              </tr>
+              <% end %>
             </table>
         <% end %>
       </div>
