@@ -15,7 +15,6 @@
 // TODO: Why is this hack necessary for foundation js to be loaded?
 //= require foundation/foundation
 //= require foundation
-//= require turbolinks
 //= require websocket_rails/main
 //= require d3
 //= require d3-tip
