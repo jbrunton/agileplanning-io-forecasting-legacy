@@ -7,11 +7,11 @@ RSpec.describe WipHistory, type: :model do
       start_date = start_time.to_date
       epic = create(:epic, started: start_time, completed: start_time + 2.days)
       story = create(:issue, started: epic.started + 1.day, completed: epic.completed + 1.day)
-      project = create(:dashboard, issues: [epic, story])
+      dashboard = create(:dashboard, issues: [epic, story])
 
-      history = WipHistory.compute_history_for!(project)
+      history = WipHistory.compute_history_for!(dashboard)
 
-      expect(simplify_history(project)).to eq [
+      expect(simplify_history(dashboard)).to eq [
                   { date: start_date, issue: epic, issue_type: 'Epic' },
                   { date: start_date + 1.day, issue: epic, issue_type: 'Epic' },
                   { date: start_date + 1.day, issue: story, issue_type: 'Story' },
@@ -20,8 +20,8 @@ RSpec.describe WipHistory, type: :model do
     end
   end
 
-  def simplify_history(project)
-    project.wip_histories.map do |history|
+  def simplify_history(dashboard)
+    dashboard.wip_histories.map do |history|
       { date: history.date, issue: history.issue, issue_type: history.issue_type }
     end
   end

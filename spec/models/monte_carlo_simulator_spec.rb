@@ -17,9 +17,9 @@ RSpec.describe MonteCarloSimulator do
         build(:epic, :completed, started: start_date + 10.days, cycle_time: 1, small: true),
         build(:issue, :completed)
     ]
-    project = create(:dashboard, issues: epics)
-    WipHistory.compute_history_for!(project)
-    project
+    dashboard = create(:dashboard, issues: epics)
+    WipHistory.compute_history_for!(dashboard)
+    dashboard
   }
 
   let (:now) { start_date + 5.5.days }

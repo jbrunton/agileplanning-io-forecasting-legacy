@@ -3,20 +3,20 @@ require 'rails_helper'
 RSpec.describe Dashboard, type: :model do
   describe "#epics" do
     it "returns all the epics" do
-      project = create(:dashboard, issues: [create(:issue)])
-      epic = create(:issue, issue_type: 'Epic', dashboard: project)
+      dashboard = create(:dashboard, issues: [create(:issue)])
+      epic = create(:issue, issue_type: 'Epic', dashboard: dashboard)
 
-      expect(project.epics).to eq([epic])
+      expect(dashboard.epics).to eq([epic])
     end
   end
 
   describe "#stories" do
     it "returns all stories" do
-      project = create(:dashboard)
-      epic = create(:epic, dashboard: project)
-      issue = create(:issue, dashboard: project)
+      dashboard = create(:dashboard)
+      epic = create(:epic, dashboard: dashboard)
+      issue = create(:issue, dashboard: dashboard)
 
-      expect(project.stories).to eq([issue])
+      expect(dashboard.stories).to eq([issue])
     end
   end
 

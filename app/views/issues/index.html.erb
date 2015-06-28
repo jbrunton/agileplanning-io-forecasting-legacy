@@ -11,7 +11,7 @@
       <th>Completed</th>
       <th>Type</th>
       <th>Size</th>
-      <th>Project</th>
+      <th>Dashboard</th>
       <th>Cycle Time</th>
       <th></th>
     </tr>
@@ -26,7 +26,7 @@
         <td><%= issue.completed %></td>
         <td><%= issue.issue_type %></td>
         <td><%= issue.size %></td>
-        <td><%= issue.project_id %></td>
+        <td><%= issue.dashboard_id %></td>
         <td>
           <% unless issue.completed.nil? or issue.started.nil? %>
               <%= distance_of_time_in_words(issue.started, issue.completed) %>

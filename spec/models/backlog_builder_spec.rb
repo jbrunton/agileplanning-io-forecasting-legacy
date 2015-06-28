@@ -20,8 +20,8 @@ RSpec.describe BacklogBuilder do
       let(:upcoming) { create(:issue) }
 
       let(:builder) do
-        project = create(:dashboard, issues: [completed, in_progress, upcoming])
-        BacklogBuilder.new(project, 'Story')
+        dashboard = create(:dashboard, issues: [completed, in_progress, upcoming])
+        BacklogBuilder.new(dashboard, 'Story')
       end
 
       it "enumerates the in progress issues" do
@@ -42,11 +42,11 @@ RSpec.describe BacklogBuilder do
       let(:upcoming_epic) { create(:epic) }
 
       let(:builder) do
-        project = create(:dashboard, issues: [
+        dashboard = create(:dashboard, issues: [
                 completed_epic, done_epic,
                 in_progress_story, in_progress_epic,
                 upcoming_story, upcoming_epic])
-        BacklogBuilder.new(project, 'Epic')
+        BacklogBuilder.new(dashboard, 'Epic')
       end
 
       it "returns epics on the backlog" do

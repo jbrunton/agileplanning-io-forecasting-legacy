@@ -1,4 +1,4 @@
-json.array!(dashboards) do |project|
-  json.extract! project, :id, :domain, :board_id, :name
-  json.url project_url(project, format: :json)
+json.array!(dashboards) do |dashboard|
+  json.extract! dashboard, :id, :domain, :board_id, :name
+  json.url dashboard_url(dashboard, format: :json)
 end

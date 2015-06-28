@@ -24,7 +24,7 @@ class DashboardsController < ApplicationController
   # POST /dashboards
   # POST /dashboards.json
   def create
-    @dashboard = Dashboard.new(project_params)
+    @dashboard = Dashboard.new(dashboard_params)
 
     respond_to do |format|
       if @dashboard.save
@@ -41,7 +41,7 @@ class DashboardsController < ApplicationController
   # PATCH/PUT /dashboards/1.json
   def update
     respond_to do |format|
-      if @dashboard.update(project_params)
+      if @dashboard.update(dashboard_params)
         format.html { redirect_to @dashboard, notice: 'Dashboard was successfully updated.' }
         format.json { render :show, status: :ok, location: @dashboard }
       else
@@ -64,8 +64,8 @@ class DashboardsController < ApplicationController
   # POST /dashboards/1/sync
   # POST /dashboards/1/sync.json
   def sync
-    job = SyncProjectJob.new
-    job.async.sync_project(@dashboard, params)
+    job = SyncDashboardJob.new
+    job.async.sync_dashboard(@dashboard, params)
     render nothing: true
   end
 
@@ -76,7 +76,7 @@ class DashboardsController < ApplicationController
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.
-    def project_params
+    def dashboard_params
       params.require(:dashboard).permit(:domain, :board_id, :name)
     end
 end

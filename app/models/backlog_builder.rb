@@ -1,6 +1,6 @@
 class BacklogBuilder
-  def initialize(project, issue_type)
-    @dashboard = project
+  def initialize(dashboard, issue_type)
+    @dashboard = dashboard
     @issue_type = issue_type
   end
 
