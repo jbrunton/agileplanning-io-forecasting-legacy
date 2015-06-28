@@ -30,6 +30,5 @@ RSpec.describe DomainsController, type: :routing do
     it "routes to #destroy" do
       expect(:delete => "/domains/1").to route_to("domains#destroy", :id => "1")
     end
-
   end
 end

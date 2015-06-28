@@ -1,5 +1,5 @@
 class DomainsController < ApplicationController
-  before_action :set_domain, only: [:show, :edit, :update, :destroy]
+  before_action :set_domain, only: [:show, :edit, :update, :destroy, :sync, :dashboards]
 
   # GET /domains
   # GET /domains.json
@@ -58,6 +58,26 @@ class DomainsController < ApplicationController
     respond_to do |format|
       format.html { redirect_to domains_url, notice: 'Domain was successfully destroyed.' }
       format.json { head :no_content }
+    end
+  end
+
+  def sync
+    client = Jira::Client.new(@domain.domain, params.permit(:username, :password))
+    pending_dashboards = @domain.dashboards.to_a
+    client.get_rapid_boards.each do |rapid_board|
+      dashboard = Dashboard.find_or_initialize_by(board_id: rapid_board.id)
+      dashboard.name = rapid_board.name
+      dashboard.domain = @domain
+      dashboard.save
+      pending_dashboards.delete(dashboard)
+    end
+
+    pending_dashboards.each do |dashboard|
+      dashboard.destroy
+    end
+
+    respond_to do |format|
+      format.html { redirect_to @domain }
     end
   end
 
