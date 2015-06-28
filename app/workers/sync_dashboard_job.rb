@@ -5,7 +5,7 @@ class SyncDashboardJob
     dashboard.issues.each { |issue| issue.wip_histories.destroy_all }
     dashboard.issues.destroy_all
 
-    jira_client = Jira::Client.new(dashboard.domain, params.permit(:username, :password))
+    jira_client = Jira::Client.new(dashboard.domain.domain, params.permit(:username, :password))
     rapid_board = jira_client.get_rapid_board(dashboard.board_id)
 
     issues = jira_client.search_issues(query: rapid_board.query, expand: ['changelog']) do |progress|

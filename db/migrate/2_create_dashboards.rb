@@ -1,7 +1,7 @@
 class CreateDashboards < ActiveRecord::Migration
   def change
     create_table :dashboards do |t|
-      t.string :domain
+      t.references :domain, index: true, foreign_key: true
       t.integer :board_id
       t.string :name
 

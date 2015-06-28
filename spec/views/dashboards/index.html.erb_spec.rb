@@ -4,22 +4,20 @@ RSpec.describe "dashboards/index", type: :view do
   before(:each) do
     assign(:dashboards, [
       Dashboard.create!(
-        :domain => "Domain",
+        :domain => create(:domain, domain: 'Domain'),
         :board_id => 1,
-        :name => "Name"
+        :name => "Some Dashboard"
       ),
       Dashboard.create!(
-        :domain => "Domain",
+        :domain => create(:domain, domain: 'Domain'),
         :board_id => 1,
-        :name => "Name"
+        :name => "Another Dashboard"
       )
     ])
   end
 
-  it "renders a list of dashboards" do
+  it "has a search input" do
     render
-    assert_select "tr>td", :text => "Domain".to_s, :count => 2
-    assert_select "tr>td", :text => 1.to_s, :count => 2
-    assert_select "tr>td", :text => "Name".to_s, :count => 2
+    assert_select "input#search-text", :count => 1
   end
 end

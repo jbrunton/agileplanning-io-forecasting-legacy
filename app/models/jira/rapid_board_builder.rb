@@ -6,7 +6,8 @@ class Jira::RapidBoardBuilder
   def build
     attrs = {
         id: id,
-        query: query
+        query: query,
+        name: name
     }
 
     Jira::RapidBoard.new(attrs)
@@ -19,5 +20,9 @@ class Jira::RapidBoardBuilder
 
   def query
     @json['filter']['query']
+  end
+
+  def name
+    @json['name']
   end
 end

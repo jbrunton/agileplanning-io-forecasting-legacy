@@ -1,0 +1,37 @@
+<div class="row">
+  <div class="large-6 columns">
+    <p>
+      <strong>Name:</strong>
+      <%= @domain.name %>
+    </p>
+
+    <p>
+      <strong>Domain:</strong>
+      <%= @domain.domain %>
+    </p>
+
+    <p>
+      <strong>Last synced:</strong>
+      <%= @domain.last_synced %>
+    </p>
+
+    <%= link_to 'Edit', edit_domain_path(@domain) %> |
+    <%= link_to 'Back', domains_path %>
+  </div>
+  <div class="large-6 columns">
+    <div class="panel radius">
+      <h5>Sync Dashboards</h5>
+      <%= form_tag(sync_domain_path(@domain), method: "post") do %>
+          <p>
+            <%= label_tag(:username, "Username:") %>
+            <input value="jbrunton" type="text" name="username" id="username">
+
+            <%= label_tag(:password, "Password:") %>
+            <input type="text" name="password" id="password">
+
+            <%= submit_tag("Sync", class: 'button') %>
+          </p>
+      <% end %>
+    </div>
+  </div>
+</div>

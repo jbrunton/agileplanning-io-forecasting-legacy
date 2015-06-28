@@ -6,7 +6,7 @@ RSpec.describe Jira::RapidBoardBuilder do
       <<-END
       {
         "id": 2,
-        "name": "Another Dashboard",
+        "name": "Some Dashboard",
         "filter":
         {
           "id": 10001,
@@ -21,6 +21,10 @@ RSpec.describe Jira::RapidBoardBuilder do
 
     it "sets the id" do
       expect(rapid_board.id).to eq(2)
+    end
+
+    it "sets the name" do
+      expect(rapid_board.name).to eq('Some Dashboard')
     end
   end
 end
