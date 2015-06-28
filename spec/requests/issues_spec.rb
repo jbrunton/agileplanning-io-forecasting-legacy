@@ -5,7 +5,7 @@ RSpec.describe "Issues", type: :request do
     let(:dashboard) { create(:dashboard) }
 
     it "works! (now write some real specs)" do
-      get project_issues_path(dashboard)
+      get dashboard_issues_path(dashboard)
       expect(response).to have_http_status(200)
     end
   end

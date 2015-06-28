@@ -166,7 +166,7 @@ RSpec.describe DashboardsController, type: :controller do
 
     it "redirects to the dashboards list" do
       delete :destroy, {:id => dashboard.to_param}, valid_session
-      expect(response).to redirect_to(projects_url)
+      expect(response).to redirect_to(dashboards_url)
     end
   end
 
