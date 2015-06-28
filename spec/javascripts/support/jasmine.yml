@@ -56,7 +56,7 @@ spec_files:
 # src_dir
 #
 # Source directory path. Your src_files must be returned relative to this path. Will use root if left blank.
-# Default: project root
+# Default: dashboard root
 #
 # EXAMPLE:
 #

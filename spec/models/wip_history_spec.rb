@@ -2,12 +2,12 @@ require 'rails_helper'
 
 RSpec.describe WipHistory, type: :model do
   describe ".compute_history_for" do
-    it "builds the wip history for the given project" do
+    it "builds the wip history for the given dashboard" do
       start_time = DateTime.parse('2015-01-01T12:00:00.000+0100')
       start_date = start_time.to_date
       epic = create(:epic, started: start_time, completed: start_time + 2.days)
       story = create(:issue, started: epic.started + 1.day, completed: epic.completed + 1.day)
-      project = create(:project, issues: [epic, story])
+      project = create(:dashboard, issues: [epic, story])
 
       history = WipHistory.compute_history_for!(project)
 

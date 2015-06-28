@@ -8,7 +8,7 @@ RSpec.describe MonteCarloSimulator do
   let (:start_date) { DateTime.new(2001, 1, 1) }
   let (:filter) { Filters::DateFilter.new("1 Jan 2001-5 Jan 2001")}
 
-  let (:project) {
+  let (:dashboard) {
     epics = [
         build(:epic, :completed, started: start_date, cycle_time: 1, small: true),
         build(:epic, :completed, started: start_date, cycle_time: 2, small: true),
@@ -17,7 +17,7 @@ RSpec.describe MonteCarloSimulator do
         build(:epic, :completed, started: start_date + 10.days, cycle_time: 1, small: true),
         build(:issue, :completed)
     ]
-    project = create(:project, issues: epics)
+    project = create(:dashboard, issues: epics)
     WipHistory.compute_history_for!(project)
     project
   }
@@ -26,7 +26,7 @@ RSpec.describe MonteCarloSimulator do
 
   let (:simulator) {
     Timecop.freeze(now) do
-      MonteCarloSimulator.new(project, filter, 'Epic')
+      MonteCarloSimulator.new(dashboard, filter, 'Epic')
     end
   }
 
@@ -41,7 +41,7 @@ RSpec.describe MonteCarloSimulator do
   end
 
   describe "#wip_values" do
-    it "returns the set of filtered wip values for the project" do
+    it "returns the set of filtered wip values for the dashboard" do
       expect(simulator.wip_values).to eq([4, 3, 2, 1, 0])
     end
   end

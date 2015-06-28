@@ -1,4 +1,4 @@
-<% breadcrumb :forecast_report, @project %>
+<% breadcrumb :forecast_report, @dashboard %>
 
 <script>
   function updateBacklog(backlog) {
@@ -17,7 +17,7 @@
       var issueType = $('#issue_type').val();
       $('[name=issue_type]').val(issueType);
       $.when(
-              $.get('<%= project_path(@project) %>/data/backlog.json?issue_type=' + issueType)
+              $.get('<%= dashboard_path(@dashboard) %>/data/backlog.json?issue_type=' + issueType)
       ).done(updateBacklog);
   }
 

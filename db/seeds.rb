@@ -8,7 +8,7 @@
 
 random = Random.new(0)
 
-project = Project.create(domain: 'http://example.com', name: 'Example Board', board_id: 1)
+dashboard = Dashboard.create(domain: 'http://example.com', name: 'Example Board', board_id: 1)
 
 COMPLETED_EPICS = 40
 ACTIVE_EPICS = 3
@@ -22,10 +22,10 @@ start_date = DateTime.now - (TOTAL_EPICS + 30).days
 (1..TOTAL_EPICS).each do |k|
   count = count + 1
 
-  epic = project.issues.create(
+  epic = dashboard.issues.create(
       key: "DEMO-#{count}",
       summary: "Epic #{k}",
-      project: project,
+      dashboard: dashboard,
       issue_type: 'Epic',
       epic_status: k > COMPLETED_EPICS ? nil : 'Done'
   )
@@ -36,10 +36,10 @@ start_date = DateTime.now - (TOTAL_EPICS + 30).days
     started = k > COMPLETED_EPICS + ACTIVE_EPICS ? nil : start_date + (5.0 * k + random.rand(5)).to_i.days
     completed = k > COMPLETED_EPICS ? nil : started + (1 + random.rand(15)).days
 
-    project.issues.create(
+    dashboard.issues.create(
         key: "DEMO-#{count}",
         summary: "Issue #{count}",
-        project: project,
+        dashboard: dashboard,
         issue_type: 'Story',
         epic: epic,
         started: started,
@@ -48,5 +48,5 @@ start_date = DateTime.now - (TOTAL_EPICS + 30).days
   end
 end
 
-project.compute_cycle_times!
-WipHistory.compute_history_for!(project)
+dashboard.compute_cycle_times!
+WipHistory.compute_history_for!(dashboard)

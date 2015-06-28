@@ -1,8 +1,8 @@
 require 'rails_helper'
 
-RSpec.describe "projects/show", type: :view do
+RSpec.describe "dashboards/show", type: :view do
   before(:each) do
-    @project = assign(:project, Project.create!(
+    dashboard = assign(:dashboard, Dashboard.create!(
       :domain => "Domain",
       :board_id => "Board",
       :name => "Name"

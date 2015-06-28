@@ -9,7 +9,7 @@ class SyncProjectJob
     rapid_board = jira_client.get_rapid_board(project.board_id)
 
     issues = jira_client.search_issues(query: rapid_board.query, expand: ['changelog']) do |progress|
-      WebsocketRails["project:#{project.id}"].trigger(:update, { progress: progress })
+      WebsocketRails["dashboard:#{project.id}"].trigger(:update, { progress: progress })
     end
 
     issues.each do |issue|

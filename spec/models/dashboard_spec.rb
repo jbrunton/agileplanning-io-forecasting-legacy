@@ -1,10 +1,10 @@
 require 'rails_helper'
 
-RSpec.describe Project, type: :model do
+RSpec.describe Dashboard, type: :model do
   describe "#epics" do
     it "returns all the epics" do
-      project = create(:project, issues: [create(:issue)])
-      epic = create(:issue, issue_type: 'Epic', project: project)
+      project = create(:dashboard, issues: [create(:issue)])
+      epic = create(:issue, issue_type: 'Epic', dashboard: project)
 
       expect(project.epics).to eq([epic])
     end
@@ -12,9 +12,9 @@ RSpec.describe Project, type: :model do
 
   describe "#stories" do
     it "returns all stories" do
-      project = create(:project)
-      epic = create(:epic, project: project)
-      issue = create(:issue, project: project)
+      project = create(:dashboard)
+      epic = create(:epic, dashboard: project)
+      issue = create(:issue, dashboard: project)
 
       expect(project.stories).to eq([issue])
     end
@@ -23,7 +23,7 @@ RSpec.describe Project, type: :model do
   describe ".compute_cycle_times_for" do
     it "throws an error unless the issue is an epic" do
       expect{
-        Project.compute_cycle_times_for(create(:issue))
+        Dashboard.compute_cycle_times_for(create(:issue))
       }.to raise_error("Issue must be an epic.")
     end
 
@@ -31,7 +31,7 @@ RSpec.describe Project, type: :model do
       epic = create(:epic, epic_status: 'Done')
       epic.issues = [issue = create(:issue, :completed)]
 
-      Project.compute_cycle_times_for(epic)
+      Dashboard.compute_cycle_times_for(epic)
 
       expect(epic.started).to eq(issue.started)
       expect(epic.completed).to eq(issue.completed)
@@ -41,7 +41,7 @@ RSpec.describe Project, type: :model do
       epic = create(:issue, issue_type: 'Epic')
       epic.issues = [create(:issue, :started)]
 
-      Project.compute_cycle_times_for(epic)
+      Dashboard.compute_cycle_times_for(epic)
 
       expect(epic.completed).to be_nil
     end
@@ -54,23 +54,23 @@ RSpec.describe Project, type: :model do
 
   describe "#complete_wip_history" do
     let(:start_date) { DateTime.new(2001, 1, 1) }
-    let(:project) { create(:project, issues: [
+    let(:dashboard) { create(:dashboard, issues: [
             build(:epic, started: start_date, completed: start_date + 1.day),
             build(:epic, started: start_date + 3.days),
             build(:issue, started: start_date, completed: start_date + 1.day)
         ]) }
 
-    let(:epic_one) { project.issues[0] }
-    let(:epic_two) { project.issues[1] }
-    let(:story) { project.issues[2] }
+    let(:epic_one) { dashboard.issues[0] }
+    let(:epic_two) { dashboard.issues[1] }
+    let(:story) { dashboard.issues[2] }
 
     before(:each) do
-      WipHistory.compute_history_for!(project)
+      WipHistory.compute_history_for!(dashboard)
       Timecop.freeze(start_date + 5.days)
     end
 
     it "returns wip histories for epics grouped by date" do
-      history = project.complete_wip_history('Epic')
+      history = dashboard.complete_wip_history('Epic')
 
       expect(history).to eq({
                   start_date.to_date => [epic_one],
@@ -82,7 +82,7 @@ RSpec.describe Project, type: :model do
     end
 
     it "returns wip histories for stories grouped by date" do
-      history = project.complete_wip_history('Story')
+      history = dashboard.complete_wip_history('Story')
 
       expect(history).to eq({
                   start_date.to_date => [story],

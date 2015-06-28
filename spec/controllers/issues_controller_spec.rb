@@ -36,15 +36,15 @@ RSpec.describe IssuesController, type: :controller do
   # IssuesController. Be sure to keep this updated too.
   let(:valid_session) { {} }
 
-  let(:project) { create(:project) }
-  let(:issue) { create(:issue, project: project) }
+  let(:dashboard) { create(:dashboard) }
+  let(:issue) { create(:issue, dashboard: dashboard) }
 
   describe "GET #index" do
-    let!(:other_project) { create(:project) }
+    let!(:other_project) { create(:dashboard) }
 
     it "assigns all issues as @issues" do
       other_project.issues.create! valid_attributes
-      get :index, {:project_id => project.to_param}, valid_session
+      get :index, {:project_id => dashboard.to_param}, valid_session
       expect(assigns(:issues)).to eq([issue])
     end
   end

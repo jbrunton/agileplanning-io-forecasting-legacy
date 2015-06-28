@@ -1,6 +1,6 @@
-class CreateProjects < ActiveRecord::Migration
+class CreateDashboards < ActiveRecord::Migration
   def change
-    create_table :projects do |t|
+    create_table :dashboards do |t|
       t.string :domain
       t.integer :board_id
       t.string :name

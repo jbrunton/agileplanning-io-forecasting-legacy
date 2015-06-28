@@ -1,4 +1,4 @@
-<% breadcrumb :control_chart, @project %>
+<% breadcrumb :control_chart, @dashboard %>
 
 <div class="row">
   <div class="large-12 columns">
@@ -81,8 +81,8 @@
               var filter = $('#filter').val();
               var issueType = $('#issue_type').val();
               $.when(
-                      $.get('<%= project_path(@project) %>/data/cycle_times.json?issue_type=' + issueType + '&filter=' + filter),
-                      $.get('<%= project_path(@project) %>/data/wip.json?issue_type=' + issueType + '&filter=' + filter)
+                      $.get('<%= dashboard_path(@dashboard) %>/data/cycle_times.json?issue_type=' + issueType + '&filter=' + filter),
+                      $.get('<%= dashboard_path(@dashboard) %>/data/wip.json?issue_type=' + issueType + '&filter=' + filter)
               ).done(drawChart);
           }
 

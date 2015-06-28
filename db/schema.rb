@@ -13,29 +13,29 @@
 
 ActiveRecord::Schema.define(version: 3) do
 
-  create_table "issues", force: :cascade do |t|
-    t.string   "key"
-    t.string   "summary"
-    t.string   "issue_type"
-    t.integer  "project_id"
-    t.string   "epic_key"
-    t.string   "epic_status"
-    t.datetime "started"
-    t.datetime "completed"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
-  end
-
-  add_index "issues", ["epic_key"], name: "index_issues_on_epic_key"
-  add_index "issues", ["project_id"], name: "index_issues_on_project_id"
-
-  create_table "projects", force: :cascade do |t|
+  create_table "dashboards", force: :cascade do |t|
     t.string   "domain"
     t.integer  "board_id"
     t.string   "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
+
+  create_table "issues", force: :cascade do |t|
+    t.string   "key"
+    t.string   "summary"
+    t.string   "issue_type"
+    t.integer  "dashboard_id"
+    t.string   "epic_key"
+    t.string   "epic_status"
+    t.datetime "started"
+    t.datetime "completed"
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
+  end
+
+  add_index "issues", ["dashboard_id"], name: "index_issues_on_dashboard_id"
+  add_index "issues", ["epic_key"], name: "index_issues_on_epic_key"
 
   create_table "wip_histories", force: :cascade do |t|
     t.date     "date"
