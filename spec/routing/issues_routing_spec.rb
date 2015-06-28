@@ -4,7 +4,7 @@ RSpec.describe IssuesController, type: :routing do
   describe "routing" do
 
     it "routes to #index" do
-      expect(:get => "/projects/2/issues").to route_to("issues#index", :project_id => "2")
+      expect(:get => "/dashboards/2/issues").to route_to("issues#index", :dashboard_id => "2")
     end
 
     it "routes to #show" do

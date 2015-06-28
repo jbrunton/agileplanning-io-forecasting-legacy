@@ -4,10 +4,10 @@ RSpec.describe Event do
   describe "#compute_for" do
     let(:epic) { create(:epic, :completed) }
     let(:story) { create(:issue, started: epic.started + 1.minute, completed: epic.completed + 1.minute) }
-    let(:project) { create(:project, issues: [epic, story]) }
+    let(:dashboard) { create(:dashboard, issues: [epic, story]) }
 
-    it "computes the events for a project in order" do
-      events = Event.compute_for(project)
+    it "computes the events for a dashboard in order" do
+      events = Event.compute_for(dashboard)
       expect(events).to eq([
                   Event.new(time: epic.started, event_type: 'started', issue: epic),
                   Event.new(time: story.started, event_type: 'started', issue: story),

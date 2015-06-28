@@ -2,11 +2,11 @@ require 'rails_helper'
 
 RSpec.describe BacklogBuilder do
   describe "#build" do
-    context "when the project is empty" do
-      let(:project) { create(:project) }
+    context "when the dashboard is empty" do
+      let(:dashboard) { create(:dashboard) }
 
       it "returns an empty backlog" do
-        builder = BacklogBuilder.new(project, 'Story')
+        builder = BacklogBuilder.new(dashboard, 'Story')
         expect(builder.build).to eq({
                     in_progress: [],
                     upcoming: []
@@ -14,14 +14,14 @@ RSpec.describe BacklogBuilder do
       end
     end
 
-    context "when the project has in progress and upcoming stories" do
+    context "when the dashboard has in progress and upcoming stories" do
       let(:completed) { create(:issue, :completed) }
       let(:in_progress) { create(:issue, :started) }
       let(:upcoming) { create(:issue) }
 
       let(:builder) do
-        project = create(:project, issues: [completed, in_progress, upcoming])
-        BacklogBuilder.new(project, 'Story')
+        dashboard = create(:dashboard, issues: [completed, in_progress, upcoming])
+        BacklogBuilder.new(dashboard, 'Story')
       end
 
       it "enumerates the in progress issues" do
@@ -42,11 +42,11 @@ RSpec.describe BacklogBuilder do
       let(:upcoming_epic) { create(:epic) }
 
       let(:builder) do
-        project = create(:project, issues: [
+        dashboard = create(:dashboard, issues: [
                 completed_epic, done_epic,
                 in_progress_story, in_progress_epic,
                 upcoming_story, upcoming_epic])
-        BacklogBuilder.new(project, 'Epic')
+        BacklogBuilder.new(dashboard, 'Epic')
       end
 
       it "returns epics on the backlog" do

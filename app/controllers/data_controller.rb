@@ -1,9 +1,9 @@
 class DataController < ApplicationController
-  before_action :set_project, only: [:cycle_times, :wip, :backlog]
+  before_action :set_dashboard, only: [:cycle_times, :wip, :backlog]
   before_action :set_filter, only: [:cycle_times, :wip]
 
   def cycle_times
-    issues = @project.issues.includes(:issues).
+    issues = @dashboard.issues.includes(:issues).
         where(issue_type: params[:issue_type]).
         select{ |issue| issue.cycle_time && @filter.allow_issue(issue) }.
         sort_by{ |issue| issue.completed }
@@ -23,7 +23,7 @@ class DataController < ApplicationController
   end
 
   def wip
-    history = @project.complete_wip_history(params[:issue_type]).
+    history = @dashboard.complete_wip_history(params[:issue_type]).
         select{ |date, _| @filter.allow_date(date) }
 
     trend_builder = Stats::TrendBuilder.new.
@@ -40,7 +40,7 @@ class DataController < ApplicationController
   end
 
   def backlog
-    backlog = BacklogBuilder.new(@project, params[:issue_type]).build
+    backlog = BacklogBuilder.new(@dashboard, params[:issue_type]).build
 
     respond_to do |format|
       format.json { render json: { in_progress: backlog[:in_progress], upcoming: backlog[:upcoming] } }
@@ -49,8 +49,8 @@ class DataController < ApplicationController
 
 private
 
-  def set_project
-    @project = Project.find(params[:id])
+  def set_dashboard
+    @dashboard = Dashboard.find(params[:id])
   end
 
   def set_filter

@@ -4,7 +4,7 @@ class CreateIssues < ActiveRecord::Migration
       t.string :key
       t.string :summary
       t.string :issue_type
-      t.references :project, index: true, foreign_key: true
+      t.references :dashboard, index: true, foreign_key: true
       t.string :epic_key, index: true
       t.string :epic_status
 

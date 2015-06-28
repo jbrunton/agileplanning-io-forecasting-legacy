@@ -1,35 +1,35 @@
-crumb :projects do
-  link 'Projects', projects_path
+crumb :dashboards do
+  link 'Dashboards', dashboards_path
 end
 
-crumb :project do |project|
-  link project.name, project_path(project)
-  parent :projects
+crumb :dashboard do |dashboard|
+  link dashboard.name, dashboard_path(dashboard)
+  parent :dashboards
 end
 
-crumb :reports do |project|
-  link 'Reports', project_reports_path(project)
-  parent :project, project
+crumb :reports do |dashboard|
+  link 'Reports', dashboard_reports_path(dashboard)
+  parent :dashboard, dashboard
 end
 
-crumb :control_chart do |project|
-  link 'Control Chart', project_reports_control_chart_path(project)
-  parent :reports, project
+crumb :control_chart do |dashboard|
+  link 'Control Chart', dashboard_reports_control_chart_path(dashboard)
+  parent :reports, dashboard
 end
 
-crumb :forecast_report do |project|
-  link 'Forecast', project_reports_forecast_path(project)
-  parent :reports, project
+crumb :forecast_report do |dashboard|
+  link 'Forecast', dashboard_reports_forecast_path(dashboard)
+  parent :reports, dashboard
 end
 
-# crumb :project_issues do |project|
-#   link "Issues", project_issues_path(project)
-#   parent :project, project
+# crumb :project_issues do |dashboard|
+#   link "Issues", project_issues_path(dashboard)
+#   parent :dashboard, dashboard
 # end
 
 # crumb :issue do |issue|
 #   link issue.title, issue_path(issue)
-#   parent :project_issues, issue.project
+#   parent :project_issues, issue.dashboard
 # end
 
 # If you want to split your breadcrumbs configuration over multiple files, you

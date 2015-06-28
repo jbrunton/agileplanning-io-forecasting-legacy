@@ -5,10 +5,10 @@ class MonteCarloSimulator
 
   PLAY_COUNT = 100
 
-  def initialize(project, filter, issue_type)
+  def initialize(dashboard, filter, issue_type)
     @random = Random.new(0)
-    @cycle_time_values = compute_cycle_time_values(project, filter, issue_type)
-    @wip_values = compute_wip_values(project, filter, issue_type)
+    @cycle_time_values = compute_cycle_time_values(dashboard, filter, issue_type)
+    @wip_values = compute_wip_values(dashboard, filter, issue_type)
   end
 
   def play(opts)
@@ -68,8 +68,8 @@ protected
     { total_time: total_time, average_wip: average_wip, actual_time: actual_time }
   end
 
-  def compute_cycle_time_values(project, filter, issue_type)
-    partitioned_values = project.issues.
+  def compute_cycle_time_values(dashboard, filter, issue_type)
+    partitioned_values = dashboard.issues.
         select{ |issue| issue.issue_type == issue_type && issue.cycle_time && filter.allow_issue(issue) }.
         group_by{ |issue| issue.size }.
         map{ |size, issues| [size, issues.map{ |issue| issue.cycle_time }] }.to_h
@@ -77,8 +77,8 @@ protected
     partitioned_values.merge({'?' => partitioned_values.values.flatten})
   end
 
-  def compute_wip_values(project, filter, issue_type)
-    project.complete_wip_history(issue_type).
+  def compute_wip_values(dashboard, filter, issue_type)
+    dashboard.complete_wip_history(issue_type).
         select{ |date, issues| filter.allow_date(date) }.
         values.
         map{ |issues| issues.length }

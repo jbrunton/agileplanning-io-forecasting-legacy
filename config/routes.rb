@@ -1,10 +1,10 @@
 Rails.application.routes.draw do
 
-  root 'projects#index'
+  root 'dashboards#index'
 
   resources :issues, only: [:show]
 
-  resources :projects do
+  resources :dashboards do
     resources :issues, only: [:index]
 
     member do

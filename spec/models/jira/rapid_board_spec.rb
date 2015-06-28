@@ -6,12 +6,12 @@ RSpec.describe Jira::RapidBoardBuilder do
       <<-END
       {
         "id": 2,
-        "name": "Another Project",
+        "name": "Another Dashboard",
         "filter":
         {
           "id": 10001,
-          "name": "Filter for Another Project",
-          "query": "project = \\"Another Project\\" ORDER BY Rank ASC"
+          "name": "Filter for Another Dashboard",
+          "query": "dashboard = \\"Another Dashboard\\" ORDER BY Rank ASC"
         }
       }
       END

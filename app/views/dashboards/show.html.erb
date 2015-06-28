@@ -1,8 +1,8 @@
-<% breadcrumb :project, @project %>
+<% breadcrumb :dashboard, @dashboard %>
 
 <script type="application/javascript">
     var dispatcher = new WebSocketRails('localhost:3000/websocket');
-    var channel = dispatcher.subscribe('project:<%= @project.id %>');
+    var channel = dispatcher.subscribe('dashboard:<%= @dashboard.id %>');
     channel.bind('update', function(data) {
         $('#progress-bar').css('width', data.progress + '%');
         if (data.progress >= 100) {
@@ -24,29 +24,29 @@
       <span id="progress-bar" class="meter" style="width: 0%"></span>
     </div>
 
-    <h3><%= @project.name %></h5>
+    <h3><%= @dashboard.name %></h5>
   </div>
 
   <div class="large-6 columns">
     <p>
       <strong>Domain:</strong>
-      <%= @project.domain %>
+      <%= @dashboard.domain %>
     </p>
 
     <p>
       <strong>Board:</strong>
-      <%= @project.board_id %>
+      <%= @dashboard.board_id %>
     </p>
 
     <p>
-      <%= link_to('Reports', project_reports_path(@project)) %>
+      <%= link_to('Reports', dashboard_reports_path(@dashboard)) %>
     </p>
   </div>
 
   <div class="large-6 columns">
     <div class="panel radius">
       <h5>Sync Issues</h5>
-      <%= form_tag(sync_project_path(@project), method: "post", remote: true) do %>
+      <%= form_tag(sync_dashboard_path(@dashboard), method: "post", remote: true) do %>
           <p>
             <%= label_tag(:username, "Username:") %>
             <input value="jbrunton" type="text" name="username" id="username">

@@ -1,4 +1,4 @@
-class Project < ActiveRecord::Base
+class Dashboard < ActiveRecord::Base
   has_many :issues
   has_many :wip_histories, through: :issues
 
@@ -32,7 +32,7 @@ class Project < ActiveRecord::Base
 
   def compute_cycle_times!
     epics.each do |epic|
-      Project.compute_cycle_times_for(epic)
+      Dashboard.compute_cycle_times_for(epic)
       epic.save
     end
     save

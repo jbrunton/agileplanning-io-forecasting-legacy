@@ -1,11 +1,11 @@
 class BacklogBuilder
-  def initialize(project, issue_type)
-    @project = project
+  def initialize(dashboard, issue_type)
+    @dashboard = dashboard
     @issue_type = issue_type
   end
 
   def build
-    backlog = @project.issues.
+    backlog = @dashboard.issues.
         select { |issue| issue.issue_type == @issue_type && !issue.completed? }
 
     in_progress = backlog.

@@ -1,5 +1,5 @@
 class ReportsController < ApplicationController
-  before_action :set_project, :set_filter
+  before_action :set_dashboard, :set_filter
 
   def index
   end
@@ -8,14 +8,14 @@ class ReportsController < ApplicationController
   end
 
   def forecast
-    backlog = BacklogBuilder.new(@project, params[:issue_type]).build
+    backlog = BacklogBuilder.new(@dashboard, params[:issue_type]).build
     @upcoming = backlog[:upcoming]
     @in_progress = backlog[:in_progress]
     params[:forecast_type] = 'backlog' if params[:forecast_type].nil?
 
     if request.request_method == 'POST'
       @wip_scale_factor = params[:wip_scale_factor].to_f unless params[:wip_scale_factor].empty?
-      @simulator = MonteCarloSimulator.new(@project, @filter, params[:issue_type])
+      @simulator = MonteCarloSimulator.new(@dashboard, @filter, params[:issue_type])
       if params[:forecast_type] == 'backlog'
         forecast_backlog
       else
@@ -26,8 +26,8 @@ class ReportsController < ApplicationController
 
 private
   # Use callbacks to share common setup or constraints between actions.
-  def set_project
-    @project = Project.find(params[:project_id]) if params[:project_id]
+  def set_dashboard
+    @dashboard = Dashboard.find(params[:dashboard_id]) if params[:dashboard_id]
   end
 
   def set_filter

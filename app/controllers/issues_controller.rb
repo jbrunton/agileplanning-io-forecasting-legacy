@@ -4,14 +4,14 @@ class IssuesController < ApplicationController
   # GET /issues
   # GET /issues.json
   def index
-    @project = Project.find(params[:project_id])
-    @issues = @project.issues
+    dashboard = Dashboard.find(params[:dashboard_id])
+    @issues = dashboard.issues
   end
 
   # GET /issues/1
   # GET /issues/1.json
   def show
-    @project = @issue.project
+    dashboard = @issue.dashboard
   end
 
   private

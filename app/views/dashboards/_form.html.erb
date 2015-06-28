@@ -1,10 +1,10 @@
-<%= form_for(@project) do |f| %>
-  <% if @project.errors.any? %>
+<%= form_for(@dashboard) do |f| %>
+  <% if @dashboard.errors.any? %>
     <div id="error_explanation">
-      <h2><%= pluralize(@project.errors.count, "error") %> prohibited this project from being saved:</h2>
+      <h2><%= pluralize(@dashboard.errors.count, "error") %> prohibited this dashboard from being saved:</h2>
 
       <ul>
-      <% @project.errors.full_messages.each do |message| %>
+      <% @dashboard.errors.full_messages.each do |message| %>
         <li><%= message %></li>
       <% end %>
       </ul>

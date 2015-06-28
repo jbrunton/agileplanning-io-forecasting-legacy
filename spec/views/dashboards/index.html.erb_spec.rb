@@ -1,14 +1,14 @@
 require 'rails_helper'
 
-RSpec.describe "projects/index", type: :view do
+RSpec.describe "dashboards/index", type: :view do
   before(:each) do
-    assign(:projects, [
-      Project.create!(
+    assign(:dashboards, [
+      Dashboard.create!(
         :domain => "Domain",
         :board_id => 1,
         :name => "Name"
       ),
-      Project.create!(
+      Dashboard.create!(
         :domain => "Domain",
         :board_id => 1,
         :name => "Name"
@@ -16,7 +16,7 @@ RSpec.describe "projects/index", type: :view do
     ])
   end
 
-  it "renders a list of projects" do
+  it "renders a list of dashboards" do
     render
     assert_select "tr>td", :text => "Domain".to_s, :count => 2
     assert_select "tr>td", :text => 1.to_s, :count => 2

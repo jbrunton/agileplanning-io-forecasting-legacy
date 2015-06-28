@@ -3,7 +3,7 @@ FactoryGirl.define do
     sequence(:key) { |k| "DEMO-#{k}" }
     sequence(:summary) { |k| "Issue #{k}" }
     issue_type 'Story'
-    project
+    dashboard
 
     factory :epic do
       sequence(:summary) { |k| "Epic #{k}" }
