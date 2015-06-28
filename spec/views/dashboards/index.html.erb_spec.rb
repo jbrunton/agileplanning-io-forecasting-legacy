@@ -4,12 +4,12 @@ RSpec.describe "dashboards/index", type: :view do
   before(:each) do
     assign(:dashboards, [
       Dashboard.create!(
-        :domain => "Domain",
+        :domain => create(:domain, domain: 'Domain'),
         :board_id => 1,
         :name => "Name"
       ),
       Dashboard.create!(
-        :domain => "Domain",
+        :domain => create(:domain, domain: 'Domain'),
         :board_id => 1,
         :name => "Name"
       )

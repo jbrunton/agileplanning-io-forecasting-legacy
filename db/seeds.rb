@@ -8,7 +8,8 @@
 
 random = Random.new(0)
 
-dashboard = Dashboard.create(domain: 'http://example.com', name: 'Example Board', board_id: 1)
+domain = Domain.create(domain: 'http://example.com', name: 'Example Domain')
+dashboard = Dashboard.create(domain: domain, name: 'Example Board', board_id: 1)
 
 COMPLETED_EPICS = 40
 ACTIVE_EPICS = 3

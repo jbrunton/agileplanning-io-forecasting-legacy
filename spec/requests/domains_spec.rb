@@ -1,9 +1,9 @@
 require 'rails_helper'
 
-RSpec.describe "Dashboards", type: :request do
-  describe "GET /1/dashboards" do
+RSpec.describe "Domains", type: :request do
+  describe "GET /domains" do
     it "works! (now write some real specs)" do
-      get domain_dashboards_path(create(:domain))
+      get domains_path
       expect(response).to have_http_status(200)
     end
   end

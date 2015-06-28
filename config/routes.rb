@@ -2,9 +2,13 @@ Rails.application.routes.draw do
 
   root 'dashboards#index'
 
+  resources :domains do
+    resources :dashboards, only: [:index]
+  end
+
   resources :issues, only: [:show]
 
-  resources :dashboards do
+  resources :dashboards, only: [:show] do
     resources :issues, only: [:index]
 
     member do

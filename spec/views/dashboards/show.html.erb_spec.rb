@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe "dashboards/show", type: :view do
   before(:each) do
     dashboard = assign(:dashboard, Dashboard.create!(
-      :domain => "Domain",
+      :domain => create(:domain),
       :board_id => "Board",
       :name => "Name"
     ))
