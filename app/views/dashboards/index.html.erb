@@ -4,7 +4,7 @@
     var dashboards = [
         <% @dashboards.each do |dashboard| %>
         {
-            boardId: <%= dashboard.board_id %>,
+            id: <%= dashboard.id %>,
             name: '<%= dashboard.name %>'
         },
         <% end %>
