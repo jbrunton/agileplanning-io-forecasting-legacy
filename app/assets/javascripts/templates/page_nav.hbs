@@ -1,7 +1,12 @@
 <div class="pagination-centered">
     <ul class="pagination">
         {{#each pages}}
-            <li class="{{paginationClass @index ../currentPageIndex}}"><a data-page-index="{{@index}}" href="">{{paginationIndex @index}}</a></li>
+            {{#if (paginationShow @index ../currentPageIndex ../pages)}}
+                    <li class="{{paginationClass @index ../../currentPageIndex}}">
+                        <a data-page-index="{{@index}}"
+                           href="">{{paginationIndex @index}}</a>
+                    </li>
+            {{/if}}
         {{/each}}
     </ul>
 </div>
