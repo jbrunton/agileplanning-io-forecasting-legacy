@@ -9,17 +9,53 @@
         },
         <% end %>
     ];
+
+    var currentPageIndex = 0;
+    var pages = [];
+
+    var createPages = function(dashboards) {
+        var pageSize = 10;
+        var pages = [];
+        for (var i = 0; i < dashboards.length; i += pageSize) {
+            pages.push(dashboards.slice(i, i + pageSize));
+        }
+        return pages;
+    }
+
     function search() {
         var searchText = $('#search-text').val().toLowerCase();
         var searchResults = dashboards.filter(function(dashboard) {
             return dashboard.name.toLowerCase().includes(searchText);
         });
+        pages = createPages(searchResults);
+        currentPageIndex = 0;
+        refreshResults();
+    }
+
+    function refreshResults() {
         $('#results').html(
                 HandlebarsTemplates.dashboard_search_results({
-                    results: searchResults
+                    results: pages[currentPageIndex]
+                })
+        );
+
+        $('#results').append(
+                HandlebarsTemplates.page_nav({
+                    pages: pages,
+                    currentPageIndex: currentPageIndex
                 })
         );
     }
+
+    $(function() {
+        search();
+
+        $('body').on('click', '.pagination li a', function() {
+            currentPageIndex = $(this).data('pageIndex');
+            refreshResults();
+            return false;
+        });
+    });
 </script>
 
 <div class="row">
