@@ -35,12 +35,7 @@
     function refreshResults() {
         $('#results').html(
                 HandlebarsTemplates.dashboard_search_results({
-                    results: pages[currentPageIndex]
-                })
-        );
-
-        $('#results').append(
-                HandlebarsTemplates.page_nav({
+                    results: pages[currentPageIndex],
                     pages: pages,
                     currentPageIndex: currentPageIndex
                 })
