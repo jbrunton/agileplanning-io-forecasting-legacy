@@ -10,16 +10,6 @@ RSpec.describe Dashboard, type: :model do
     end
   end
 
-  describe "#stories" do
-    it "returns all stories" do
-      dashboard = create(:dashboard)
-      epic = create(:epic, dashboard: dashboard)
-      issue = create(:issue, dashboard: dashboard)
-
-      expect(dashboard.stories).to eq([issue])
-    end
-  end
-
   describe ".compute_cycle_times_for" do
     it "throws an error unless the issue is an epic" do
       expect{

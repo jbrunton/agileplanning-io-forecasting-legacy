@@ -18,7 +18,7 @@ class Event
   def self.compute_for(dashboard)
     events = []
 
-    (dashboard.epics + dashboard.all_issues).each do |issue|
+    (dashboard.issues).each do |issue|
       events << Event.new(time: issue.started, event_type: 'started', issue: issue) if (issue.started)
       events << Event.new(time: issue.completed, event_type: 'completed', issue: issue) if (issue.completed)
     end

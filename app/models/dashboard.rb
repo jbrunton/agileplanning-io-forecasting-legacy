@@ -11,14 +11,6 @@ class Dashboard < ActiveRecord::Base
     issues.of_type('Epic')
   end
 
-  def stories
-    issues.of_type('Story')
-  end
-
-  def all_issues
-    issues.of_type('All')
-  end
-
   def self.compute_cycle_times_for(epic)
     raise 'Issue must be an epic.' unless epic.issue_type == 'Epic'
 
