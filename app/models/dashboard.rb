@@ -8,11 +8,15 @@ class Dashboard < ActiveRecord::Base
   validates :name, presence: true
 
   def epics
-    issues.where(issue_type: 'Epic')
+    issues.of_type('Epic')
   end
 
   def stories
-    issues.where(issue_type: 'Story')
+    issues.of_type('Story')
+  end
+
+  def all_issues
+    issues.of_type('All')
   end
 
   def self.compute_cycle_times_for(epic)
