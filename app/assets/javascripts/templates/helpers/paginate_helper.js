@@ -12,6 +12,10 @@ Handlebars.registerHelper('paginate', function(pages, currentPageIndex) {
       maxPageIndex -= 1;
     }
 
+    if (minPageIndex > 0) {
+      content += '<li class="arrow"><a href="#" data-direction="previous">&laquo;</a></li>';
+    }
+
     pages.forEach(function(_, index) {
       if (index < minPageIndex || index > maxPageIndex) {
         return;
@@ -25,6 +29,10 @@ Handlebars.registerHelper('paginate', function(pages, currentPageIndex) {
       content += '>' + (index + 1) + '</a>';
       content += '</li>';
     });
+
+    if (maxPageIndex < pages.length - 1) {
+      content += '<li class="arrow"><a href="#" data-direction="next">&raquo;</a></li>';
+    }
 
     content += '</ul></div>';
   }

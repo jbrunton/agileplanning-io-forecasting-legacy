@@ -46,7 +46,15 @@
         search();
 
         $('body').on('click', '.pagination li a', function() {
-            currentPageIndex = $(this).data('pageIndex');
+            if ($(this).closest('li').hasClass('arrow')) {
+                if ($(this).data('direction') == 'next') {
+                    currentPageIndex += 1;
+                } else {
+                    currentPageIndex -= 1;
+                }
+            } else {
+                currentPageIndex = $(this).data('pageIndex');
+            }
             refreshResults();
             return false;
         });

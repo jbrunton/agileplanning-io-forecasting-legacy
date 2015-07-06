@@ -51,11 +51,13 @@ describe('templates/helpers/paginate', function () {
     it('renders the surrounding 5 pages', function() {
       var output = this.template({ pages: [1, 2, 3, 4, 5, 6, 7], currentPageIndex: 3 });
       expect(paginationLinks(output)).toEqual([
+        { arrow: true, direction: 'previous', text: '«' },
         { pageIndex: 1, text: "2" },
         { pageIndex: 2, text: "3" },
         { pageIndex: 3, text: "4", current: true },
         { pageIndex: 4, text: "5" },
-        { pageIndex: 5, text: "6" }
+        { pageIndex: 5, text: "6" },
+        { arrow: true, direction: 'next', text: '»' }
       ]);
     });
 
@@ -66,13 +68,15 @@ describe('templates/helpers/paginate', function () {
         { pageIndex: 1, text: "2", current: true },
         { pageIndex: 2, text: "3" },
         { pageIndex: 3, text: "4" },
-        { pageIndex: 4, text: "5" }
+        { pageIndex: 4, text: "5" },
+        { arrow: true, direction: 'next', text: '»' }
       ]);
     });
 
     it('renders the last 5 pages when at the end of the range', function() {
       var output = this.template({ pages: [1, 2, 3, 4, 5, 6, 7], currentPageIndex: 5 });
       expect(paginationLinks(output)).toEqual([
+        { arrow: true, direction: 'previous', text: '«' },
         { pageIndex: 2, text: "3" },
         { pageIndex: 3, text: "4" },
         { pageIndex: 4, text: "5" },
@@ -85,12 +89,23 @@ describe('templates/helpers/paginate', function () {
   function paginationLinks(output) {
     function pickPageData(pageLink) {
       var data = {
-        pageIndex: $(pageLink).data('pageIndex'),
-        text: $(pageLink).text()
+          text: $(pageLink).text()
       };
-      if ($(pageLink).closest('li').hasClass('current')) {
+
+      var pageIndex = $(pageLink).data('pageIndex');
+      if (pageIndex != undefined) {
+        data.pageIndex = pageIndex;
+      }
+
+      var listItem = $(pageLink).closest('li');
+      if (listItem.hasClass('current')) {
         data.current = true;
       }
+      if (listItem.hasClass('arrow')) {
+        data.arrow = true;
+        data.direction = $(pageLink).data('direction');
+      }
+
       return data;
     }
     return $(output).find('ul.pagination li a').toArray().map(pickPageData);
