@@ -41,7 +41,7 @@ class Dashboard < ActiveRecord::Base
 
   def complete_wip_history(issue_type)
     history_array = wip_histories.
-        where(issue_type: issue_type).
+        for_issue_type(issue_type).
         group_by{ |history| history.date }.
         map{ |date, histories| [date, histories.map{ |history| history.issue }] }.
         sort

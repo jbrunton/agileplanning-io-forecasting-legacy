@@ -21,4 +21,12 @@ class Issue < ActiveRecord::Base
     size_match = /\[(S|M|L)\]/.match(summary) if issue_type == 'Epic'
     size_match[1] unless size_match.nil?
   end
+
+  def self.of_type(issue_type)
+    if issue_type == 'All'
+      where("issue_type <> 'Epic'")
+    else
+      where("issue_type = ?", issue_type)
+    end
+  end
 end

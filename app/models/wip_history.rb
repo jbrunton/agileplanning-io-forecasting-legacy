@@ -23,4 +23,12 @@ class WipHistory < ActiveRecord::Base
       issues.each{ |issue| WipHistory.create(date: date, issue: issue, issue_type: issue.issue_type) }
     end
   end
+
+  def self.for_issue_type(issue_type)
+    if (issue_type == 'All')
+      where("wip_histories.issue_type <> 'Epic'")
+    else
+      where("wip_histories.issue_type = ?", issue_type)
+    end
+  end
 end
