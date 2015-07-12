@@ -2,6 +2,7 @@ require 'rails_helper'
 
 RSpec.describe "dashboards/index", type: :view do
   before(:each) do
+    assign(:domain, create(:domain, last_synced: DateTime.now))
     assign(:dashboards, [
       Dashboard.create!(
         :domain => create(:domain, domain: 'Domain'),
