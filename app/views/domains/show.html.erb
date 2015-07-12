@@ -1,26 +1,31 @@
 <div class="row">
-  <div class="large-6 columns">
-    <p>
-      <strong>Name:</strong>
-      <%= @domain.name %>
-    </p>
-
+  <div class="large-12 columns">
+    <h3><%= @domain.name %></h3>
+  </div>
+  <div class="large-8 columns">
     <p>
       <strong>Domain:</strong>
       <%= @domain.domain %>
     </p>
 
-    <p>
-      <strong>Last synced:</strong>
-      <%= @domain.last_synced %>
-    </p>
+    <% if @domain.last_synced %>
+        <p>
+          <strong>Last synced:</strong>
+            <%= format_datetime(@domain.last_synced) %>
+        </p>
+        <p>
+          <%= link_to 'Dashboards', domain_dashboards_path(@domain), class: 'radius button' %>
+        </p>
+    <% else %>
+        <p>Sync this domain to view JRIA dashboards.</p>
+    <% end %>
 
     <%= link_to 'Edit', edit_domain_path(@domain) %> |
     <%= link_to 'Back', domains_path %>
   </div>
-  <div class="large-6 columns">
+  <div class="large-4 columns">
     <div class="panel radius">
-      <h5>Sync Dashboards</h5>
+      <h5>Sync Domain</h5>
       <%= form_tag(sync_domain_path(@domain), method: "post") do %>
           <p>
             <%= label_tag(:username, "Username:") %>
