@@ -76,6 +76,9 @@ class DomainsController < ApplicationController
       dashboard.destroy
     end
 
+    @domain.last_synced = DateTime.now
+    @domain.save
+
     respond_to do |format|
       format.html { redirect_to @domain }
     end
