@@ -16,6 +16,7 @@ class SyncDashboardJob
       dashboard.issues.append(issue)
     end
 
+    dashboard.last_synced = DateTime.now
     dashboard.save
 
     dashboard.compute_cycle_times!

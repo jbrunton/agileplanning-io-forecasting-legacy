@@ -6,7 +6,7 @@
     channel.bind('update', function(data) {
         $('#progress-bar').css('width', data.progress + '%');
         if (data.progress >= 100) {
-            $('#progress-bar-container').hide();
+            location.reload();
         }
     });
 
