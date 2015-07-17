@@ -65,6 +65,6 @@ private
     total = opts[:sizes].values.reduce(:+)
     opts[:rank] = total # to ensure that we don't divide by WIP when total < WIP
     @lead_times = @simulator.play(opts)
-    @start_date = DateTime.parse(params[:start_date]).to_date unless params[:start_date].nil?
+    @start_date = DateTime.parse(params[:start_date]).to_date unless params[:start_date].empty?
   end
 end
