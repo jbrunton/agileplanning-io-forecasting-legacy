@@ -4,6 +4,7 @@ class CreateDashboards < ActiveRecord::Migration
       t.references :domain, index: true, foreign_key: true
       t.integer :board_id
       t.string :name
+      t.timestamp :last_synced
 
       t.timestamps null: false
     end
