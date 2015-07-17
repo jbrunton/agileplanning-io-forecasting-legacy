@@ -17,8 +17,9 @@ ActiveRecord::Schema.define(version: 4) do
     t.integer  "domain_id"
     t.integer  "board_id"
     t.string   "name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "last_synced"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
   end
 
   add_index "dashboards", ["domain_id"], name: "index_dashboards_on_domain_id"
