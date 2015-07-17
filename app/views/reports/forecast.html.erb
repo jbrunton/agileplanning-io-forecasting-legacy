@@ -85,7 +85,7 @@
                       <tr>
                         <td width="30%"><%= "#{interval[:likelihood]} %" %></td>
                         <td width="30%"><%= "#{sprintf('%.1f', interval[:actual_time])} days" %></td>
-                        <td width="40%"><%= format_datetime(@start_date + interval[:actual_time].days) %></td>
+                        <td width="40%"><%= format_date(@start_date + interval[:actual_time].days) %></td>
                       </tr>
                   <% end %>
 
@@ -148,7 +148,7 @@
               <tr>
                 <th>Date</th>
                 <% @lead_times.each do |interval| %>
-                    <td><%= format_datetime(@start_date + interval[:actual_time].days) %></td>
+                    <td><%= format_date(@start_date + interval[:actual_time].days) %></td>
                 <% end %>
               </tr>
               <% end %>

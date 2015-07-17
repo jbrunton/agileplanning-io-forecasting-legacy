@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
 
-  root 'dashboards#index'
+  root 'home#index'
 
   resources :domains do
     member do

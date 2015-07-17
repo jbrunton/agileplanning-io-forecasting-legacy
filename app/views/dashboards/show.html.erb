@@ -6,7 +6,7 @@
     channel.bind('update', function(data) {
         $('#progress-bar').css('width', data.progress + '%');
         if (data.progress >= 100) {
-            $('#progress-bar-container').hide();
+            location.reload();
         }
     });
 
@@ -27,7 +27,7 @@
     <h3><%= @dashboard.name %></h5>
   </div>
 
-  <div class="large-6 columns">
+  <div class="large-8 columns">
     <p>
       <strong>Domain:</strong>
       <%= @dashboard.domain %>
@@ -38,12 +38,20 @@
       <%= @dashboard.board_id %>
     </p>
 
-    <p>
-      <%= link_to('Reports', dashboard_reports_path(@dashboard)) %>
-    </p>
+    <% if @dashboard.last_synced %>
+        <p>
+          <strong>Last synced:</strong>
+          <%= format_datetime(@dashboard.last_synced) %>
+        </p>
+        <p>
+          <%= link_to('Reports', dashboard_reports_path(@dashboard), class: 'radius button') %>
+        </p>
+    <% else %>
+        <p>Sync this dashboard to view reports.</p>
+    <% end %>
   </div>
 
-  <div class="large-6 columns">
+  <div class="large-4 columns">
     <div class="panel radius">
       <h5>Sync Issues</h5>
       <%= form_tag(sync_dashboard_path(@dashboard), method: "post", remote: true) do %>

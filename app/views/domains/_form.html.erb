@@ -1,29 +1,25 @@
 <%= form_for(@domain) do |f| %>
-  <% if @domain.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(@domain.errors.count, "error") %> prohibited this domain from being saved:</h2>
+    <% if @domain.errors.any? %>
+        <div id="error_explanation">
+          <h2><%= pluralize(@domain.errors.count, "error") %> prohibited this domain from being saved:</h2>
 
-      <ul>
-      <% @domain.errors.full_messages.each do |message| %>
-        <li><%= message %></li>
-      <% end %>
-      </ul>
+          <ul>
+            <% @domain.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+    <% end %>
+
+    <label>
+      Name
+      <%= f.text_field :name %>
+    </label>
+    <label>
+      Domain
+      <%= f.text_field :domain %>
+    </label>
+    <div class="actions">
+      <%= f.submit :class => 'radius button' %>
     </div>
-  <% end %>
-
-  <div class="field">
-    <%= f.label :name %><br>
-    <%= f.text_field :name %>
-  </div>
-  <div class="field">
-    <%= f.label :domain %><br>
-    <%= f.text_field :domain %>
-  </div>
-  <div class="field">
-    <%= f.label :last_synced %><br>
-    <%= f.datetime_select :last_synced %>
-  </div>
-  <div class="actions">
-    <%= f.submit %>
-  </div>
 <% end %>

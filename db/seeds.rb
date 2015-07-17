@@ -8,8 +8,8 @@
 
 random = Random.new(0)
 
-domain = Domain.create(domain: 'http://example.com', name: 'Example Domain')
-dashboard = Dashboard.create(domain: domain, name: 'Example Board', board_id: 1)
+domain = Domain.create(domain: 'http://example.com', name: 'Example Domain', last_synced: DateTime.now)
+dashboard = Dashboard.create(domain: domain, name: 'Example Board', board_id: 1, last_synced: DateTime.now)
 
 COMPLETED_EPICS = 40
 ACTIVE_EPICS = 3
