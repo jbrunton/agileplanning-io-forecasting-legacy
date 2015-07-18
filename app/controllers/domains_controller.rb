@@ -65,7 +65,7 @@ class DomainsController < ApplicationController
     client = Jira::Client.new(@domain.domain, params.permit(:username, :password))
     pending_dashboards = @domain.dashboards.to_a
     client.get_rapid_boards.each do |rapid_board|
-      dashboard = Dashboard.find_or_initialize_by(board_id: rapid_board.id)
+      dashboard = Dashboard.find_or_initialize_by(board_id: rapid_board.id, domain_id: @domain.id)
       dashboard.name = rapid_board.name
       dashboard.domain = @domain
       dashboard.save

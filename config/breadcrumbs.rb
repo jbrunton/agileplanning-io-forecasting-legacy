@@ -1,10 +1,15 @@
-crumb :domains do
-  link 'Domains', domains_path
+crumb :home do
+  link 'Home', root_path
+end
+
+crumb :domain do |domain|
+  link domain.name, domain
+  parent :home
 end
 
 crumb :dashboards do |domain|
   link 'Dashboards', domain_dashboards_path(domain)
-  parent :domains
+  parent :domain, domain
 end
 
 crumb :dashboard do |dashboard|
