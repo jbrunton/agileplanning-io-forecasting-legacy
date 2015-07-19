@@ -4,7 +4,7 @@ class DataController < ApplicationController
 
   def cycle_times
     issues = @dashboard.issues.includes(:issues).
-        where(issue_type: params[:issue_type]).
+        of_type(params[:issue_type]).
         select{ |issue| issue.cycle_time && @filter.allow_issue(issue) }.
         sort_by{ |issue| issue.completed }
 
