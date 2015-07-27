@@ -44,6 +44,7 @@ start_date = DateTime.now - (TOTAL_EPICS + 30).days
         issue_type: 'Story',
         epic: epic,
         started: started,
+        story_points: [1,2,3,5,8][random.rand(5)],
         completed: completed
     )
   end

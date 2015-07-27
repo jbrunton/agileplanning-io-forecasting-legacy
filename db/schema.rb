@@ -39,6 +39,7 @@ ActiveRecord::Schema.define(version: 4) do
     t.integer  "dashboard_id"
     t.string   "epic_key"
     t.string   "epic_status"
+    t.integer  "story_points"
     t.datetime "started"
     t.datetime "completed"
     t.datetime "created_at",   null: false

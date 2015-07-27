@@ -1,6 +1,11 @@
 <% breadcrumb :forecast_report, @dashboard %>
 
 <script>
+  var partitions = {
+      Story: <%= @dashboard.size_partitions_for('Story').to_json.html_safe %>,
+      Epic: <%= @dashboard.size_partitions_for('Epic').to_json.html_safe %>
+  };
+
   function updateBacklog(backlog) {
       $('#backlog').empty();
       $('#backlog').append(HandlebarsTemplates.backlog({
@@ -13,8 +18,25 @@
       }));
   }
 
+  function updatePartitions(issueType) {
+      function appendPartition(size) {
+          var context = {
+              size: size,
+              value: <%= (params[:sizes] || {}).to_json.html_safe %>[size]
+          };
+          $('#partitions').append(HandlebarsTemplates['partition_option'](context));
+      }
+
+      $('#partitions').empty();
+      partitions[issueType].forEach(function(size) {
+          appendPartition(size);
+      });
+      appendPartition('?');
+  }
+
   function issueTypeChanged() {
       var issueType = $('#issue_type').val();
+      updatePartitions(issueType);
       $('[name=issue_type]').val(issueType);
       $.when(
               $.get('<%= dashboard_path(@dashboard) %>/data/backlog.json?issue_type=' + issueType)
@@ -98,7 +120,7 @@
         <div class="panel">
           <%= form_tag do %>
               <%= render 'reports/forecast_options' %>
-              <div class="row">
+              <div class="row" id="partitions">
                 <div class="large-3 columns">
                   <label>S
                     <input type="text" name="small" id="small" value="<%= params[:small] ? params[:small].to_s : nil %>"/>
@@ -114,11 +136,7 @@
                     <input type="text" name="large" id="large" value="<%= params[:large] ? params[:large] : nil %>"/>
                   </label>
                 </div>
-                <div class="large-3 columns">
-                  <label>?
-                    <input type="text" name="unknown" id="unknown" value="<%= params[:unknown] ? params[:unknown] : nil %>"/>
-                  </label>
-                </div>
+
               </div>
               <div class="row">
                 <div class="large-2 columns">
@@ -148,7 +166,7 @@
               <tr>
                 <th>Date</th>
                 <% @lead_times.each do |interval| %>
-                    <td><%= format_date(@start_date + interval[:actual_time].days) %></td>
+                    <td><%= format_date(interval[:expected_date]) %></td>
                 <% end %>
               </tr>
               <% end %>
