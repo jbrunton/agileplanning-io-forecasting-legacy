@@ -117,7 +117,7 @@ RSpec.describe MonteCarloSimulator do
               })
     end
 
-    it "forecasts only the given size without scaling by throughput if rank < wip" do
+    it "forecasts only the given size without scaling by throughput if rank < wip and a size is given" do
       allow(simulator).to receive(:pick_cycle_time_values).with('S' => 1).and_return([2])
       allow(simulator).to receive(:pick_wip_values).and_return([1, 2, 3])
 
@@ -132,6 +132,23 @@ RSpec.describe MonteCarloSimulator do
                   total_time: 2, # cycle time for the epic
                   average_wip: 3, # mean of wip values * wip_scale_factor
                   actual_time: 2  # total_time, since :rank < :average_wip
+              })
+    end
+
+    it "forecasts the max lead time without scaling by throughput if rank <= wip and no size is given" do
+      allow(simulator).to receive(:pick_cycle_time_values).with('S' => 1, 'M' => 1).and_return([2, 5])
+      allow(simulator).to receive(:pick_wip_values).and_return([1, 2, 3])
+
+      result = simulator.play_once({
+              :sizes => { 'S' => 1, 'M' => 1 },
+              :wip_scale_factor => 1.5,
+              :rank => 2
+          })
+
+      expect(result).to eq({
+                  total_time: 5, # max cycle time for the epics
+                  average_wip: 3, # mean of wip values * wip_scale_factor
+                  actual_time: 5  # total_time, since :rank < :average_wip
               })
     end
   end
