@@ -4,6 +4,13 @@ RSpec.describe Issue, type: :model do
   let(:dashboard) { create(:dashboard) }
 
   describe "#size" do
+    context "if the issue has story points" do
+      it "returns the size" do
+        issue = create(:issue, story_points: 3, dashboard: dashboard)
+        expect(issue.size).to eq(3)
+      end
+    end
+
     context "if the epic has a t-shirt-size" do
       it "returns the size" do
         epic = create(:epic, summary: "Small Epic [S]", dashboard: dashboard)
