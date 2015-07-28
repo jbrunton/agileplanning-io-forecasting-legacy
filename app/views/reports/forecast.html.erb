@@ -144,11 +144,11 @@
                     <td><%= "#{sprintf('%.1f', interval[:actual_time])} days" %></td>
                 <% end %>
               </tr>
-              <% unless @start_date.nil? %>
+              <% if @start_date %>
               <tr>
                 <th>Date</th>
                 <% @lead_times.each do |interval| %>
-                    <td><%= format_date(@start_date + interval[:actual_time].days) %></td>
+                    <td><%= format_date(interval[:expected_date]) %></td>
                 <% end %>
               </tr>
               <% end %>

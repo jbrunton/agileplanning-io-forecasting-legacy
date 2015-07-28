@@ -53,18 +53,25 @@ private
   end
 
   def forecast_lead_times
-    opts = {
-        :sizes => {
-            'S' => params[:small].to_i,
-            'M' => params[:medium].to_i,
-            'L' => params[:large].to_i,
-            '?' => params[:unknown].to_i
-        },
-        :wip_scale_factor => @wip_scale_factor
+    forecaster = Forecaster.new(@simulator)
+    @start_date = start_date
+    @lead_times = forecaster.forecast_lead_times({
+            :sizes => sizes,
+            :wip_scale_factor => @wip_scale_factor,
+            :start_date => @start_date
+        })
+  end
+
+  def sizes
+    {
+        'S' => params[:small].to_i,
+        'M' => params[:medium].to_i,
+        'L' => params[:large].to_i,
+        '?' => params[:unknown].to_i
     }
-    total = opts[:sizes].values.reduce(:+)
-    opts[:rank] = total # to ensure that we don't divide by WIP when total < WIP
-    @lead_times = @simulator.play(opts)
-    @start_date = DateTime.parse(params[:start_date]).to_date unless params[:start_date].empty?
+  end
+
+  def start_date
+    DateTime.parse(params[:start_date]).to_date unless params[:start_date].empty?
   end
 end
