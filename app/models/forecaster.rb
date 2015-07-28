@@ -4,9 +4,8 @@ class Forecaster
   end
 
   def forecast_lead_times(opts)
-    # total = opts[:sizes].values.reduce(:+)
-    # opts = opts.merge(rank: total) # to ensure that we don't divide by WIP when total < WIP
-    opts = opts.merge(rank: 1)
+    total = opts[:sizes].values.reduce(:+)
+    opts = opts.merge(rank: total) # to ensure that we don't divide by WIP when total < WIP
     @simulator.play(opts).map do |interval|
       if opts[:start_date]
         expected_date = opts[:start_date] + interval[:actual_time].days

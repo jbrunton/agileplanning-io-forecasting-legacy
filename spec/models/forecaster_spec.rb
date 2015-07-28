@@ -24,9 +24,13 @@ RSpec.describe Forecaster do
   describe "#forecast_lead_times" do
     let (:opts) {
       {
-          sizes: { 'S' => 1, 'M' => 1 },
+          sizes: { 'S' => 1, 'M' => 2 },
           wip_scale_factor: 1.0
       }
+    }
+
+    let (:total_time) {
+      5
     }
 
     let (:forecaster) {
@@ -37,9 +41,9 @@ RSpec.describe Forecaster do
       it "forecasts the lead time" do
         forecast = forecaster.forecast_lead_times(opts)
         expect(forecast).to eq([
-                    {likelihood: 50, actual_time: 3},
-                    {likelihood: 80, actual_time: 3},
-                    {likelihood: 90, actual_time: 3}
+                    {likelihood: 50, actual_time: total_time},
+                    {likelihood: 80, actual_time: total_time},
+                    {likelihood: 90, actual_time: total_time}
                 ])
       end
     end
@@ -49,20 +53,23 @@ RSpec.describe Forecaster do
         opts.merge!(start_date: now)
         forecast = forecaster.forecast_lead_times(opts)
         expect(forecast).to eq([
-                    {likelihood: 50, actual_time: 3, expected_date: now + 3.days},
-                    {likelihood: 80, actual_time: 3, expected_date: now + 3.days},
-                    {likelihood: 90, actual_time: 3, expected_date: now + 3.days}
+                    {likelihood: 50, actual_time: total_time, expected_date: now + total_time.days},
+                    {likelihood: 80, actual_time: total_time, expected_date: now + total_time.days},
+                    {likelihood: 90, actual_time: total_time, expected_date: now + total_time.days}
                 ])
       end
     end
 
     it "divides by the WIP for issues with rank greater than the computed WIP value" do
-      allow(simulator).to receive(:pick_wip_values).and_return([2.0])
+      wip = 2.0
+      allow(simulator).to receive(:pick_wip_values).and_return([wip])
+
       forecast = forecaster.forecast_lead_times(opts)
+
       expect(forecast).to eq([
-                  {likelihood: 50, actual_time: 2 },
-                  {likelihood: 80, actual_time: 2 },
-                  {likelihood: 90, actual_time: 2 }
+                  {likelihood: 50, actual_time: total_time / wip },
+                  {likelihood: 80, actual_time: total_time / wip },
+                  {likelihood: 90, actual_time: total_time / wip }
               ])
     end
   end
