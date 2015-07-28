@@ -51,16 +51,17 @@ protected
     wip_values = pick_wip_values(10)
     average_wip = wip_values.reduce(:+) / wip_values.length
     average_wip = average_wip * opts[:wip_scale_factor] if opts[:wip_scale_factor]
+    scale_by_wip = opts[:rank] > average_wip
 
-    if opts[:rank] >= average_wip || opts[:size].nil?
-      sizes = opts[:sizes]
-    else
+    if opts[:size] && !scale_by_wip
       sizes = { opts[:size] => 1 }
+    else
+      sizes = opts[:sizes]
     end
 
     cycle_time_values = pick_cycle_time_values(sizes)
 
-    if opts[:rank] >= average_wip
+    if opts[:rank] > average_wip
       total_time = cycle_time_values.reduce(:+)
     else
       total_time = cycle_time_values.max
@@ -68,7 +69,7 @@ protected
 
 
     actual_time = total_time
-    actual_time = total_time / average_wip if opts[:rank] >= average_wip
+    actual_time = total_time / average_wip if scale_by_wip
 
     { total_time: total_time, average_wip: average_wip, actual_time: actual_time }
   end

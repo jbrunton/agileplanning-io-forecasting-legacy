@@ -99,7 +99,7 @@ RSpec.describe MonteCarloSimulator do
               })
     end
 
-    it "scales the WIP values by 'wip_scale_factor' if given as an option" do
+    it "scales the WIP values by 'wip_scale_factor' when rank > wip" do
       sizes = { 'S' => 2, 'M' => 3 }
       allow(simulator).to receive(:pick_cycle_time_values).with(sizes).and_return([1, 2, 3, 4, 2])
       allow(simulator).to receive(:pick_wip_values).and_return([1, 2, 3])
@@ -117,7 +117,7 @@ RSpec.describe MonteCarloSimulator do
               })
     end
 
-    it "forecasts only the given size without scaling by throughput if rank < wip and a size is given" do
+    it "forecasts only the given size without scaling by wip if rank < wip and a size is given" do
       allow(simulator).to receive(:pick_cycle_time_values).with('S' => 1).and_return([2])
       allow(simulator).to receive(:pick_wip_values).and_return([1, 2, 3])
 
@@ -135,14 +135,14 @@ RSpec.describe MonteCarloSimulator do
               })
     end
 
-    it "forecasts the max lead time without scaling by throughput if rank <= wip and no size is given" do
+    it "forecasts the max lead time without scaling by wip if rank >= wip and no size is given" do
       allow(simulator).to receive(:pick_cycle_time_values).with('S' => 1, 'M' => 1).and_return([2, 5])
       allow(simulator).to receive(:pick_wip_values).and_return([1, 2, 3])
 
       result = simulator.play_once({
               :sizes => { 'S' => 1, 'M' => 1 },
               :wip_scale_factor => 1.5,
-              :rank => 2
+              :rank => 3
           })
 
       expect(result).to eq({
