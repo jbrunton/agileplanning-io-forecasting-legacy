@@ -51,9 +51,10 @@ protected
     wip_values = pick_wip_values(10)
     average_wip = wip_values.reduce(:+) / wip_values.length
     average_wip = average_wip * opts[:wip_scale_factor] if opts[:wip_scale_factor]
-    scale_by_wip = opts[:rank] > average_wip
+    rank_greater_than_wip = opts[:rank] > average_wip
 
-    if opts[:size] && !scale_by_wip
+    if opts[:size] && !rank_greater_than_wip
+      # If rank <= wip, then we can't scale by WIP (see also: Mythical Man Month).
       sizes = { opts[:size] => 1 }
     else
       sizes = opts[:sizes]
@@ -61,15 +62,18 @@ protected
 
     cycle_time_values = pick_cycle_time_values(sizes)
 
-    if opts[:rank] > average_wip
+    if rank_greater_than_wip
+      # If rank > WIP, sum cycle times so we can divide by WIP
       total_time = cycle_time_values.reduce(:+)
     else
+      # Otherwise, the tasks have to be worked on in parallel, so the aggregate
+      # cycle time is equal to the max of the individual issues
       total_time = cycle_time_values.max
     end
 
 
     actual_time = total_time
-    actual_time = total_time / average_wip if scale_by_wip
+    actual_time = total_time / average_wip if rank_greater_than_wip
 
     { total_time: total_time, average_wip: average_wip, actual_time: actual_time }
   end
