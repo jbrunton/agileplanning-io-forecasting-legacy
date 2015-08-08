@@ -81,11 +81,11 @@
                   </tr>
 
                   <tr>
-                    <% record[:forecast].each do |interval| %>
+                    <% record[:forecast].each do |confidence_level| %>
                       <tr>
-                        <td width="30%"><%= "#{interval[:likelihood]} %" %></td>
-                        <td width="30%"><%= "#{sprintf('%.1f', interval[:actual_time])} days" %></td>
-                        <td width="40%"><%= format_date(@start_date + interval[:actual_time].days) %></td>
+                        <td width="30%"><%= "#{confidence_level[:likelihood]} %" %></td>
+                        <td width="30%"><%= "#{sprintf('%.1f', confidence_level[:actual_time])} days" %></td>
+                        <td width="40%"><%= format_date(@start_date + confidence_level[:actual_time].days) %></td>
                       </tr>
                   <% end %>
 
