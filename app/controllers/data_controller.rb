@@ -40,10 +40,10 @@ class DataController < ApplicationController
   end
 
   def backlog
-    backlog = BacklogBuilder.new(@dashboard, params[:issue_type]).build
+    backlog = Backlog::Builder.new(@dashboard, params[:issue_type]).build
 
     respond_to do |format|
-      format.json { render json: { in_progress: backlog[:in_progress], upcoming: backlog[:upcoming] } }
+      format.json { render json: { in_progress: backlog.in_progress, upcoming: backlog.upcoming } }
     end
   end
 

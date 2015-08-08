@@ -8,9 +8,9 @@ class ReportsController < ApplicationController
   end
 
   def forecast
-    backlog = BacklogBuilder.new(@dashboard, params[:issue_type]).build
-    @upcoming = backlog[:upcoming]
-    @in_progress = backlog[:in_progress]
+    backlog = Backlog::Builder.new(@dashboard, params[:issue_type]).build
+    @upcoming = backlog.upcoming
+    @in_progress = backlog.in_progress
     params[:forecast_type] = 'backlog' if params[:forecast_type].nil?
 
     if request.request_method == 'POST'
