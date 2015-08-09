@@ -11,14 +11,12 @@ RSpec.describe Forecaster do
   }
 
   let (:simulator) {
-    Timecop.freeze(now) do
-      WipHistory.compute_history_for!(dashboard)
-      MonteCarloSimulator.new(dashboard, ::Filters::DateFilter.new(''), 'Epic')
-    end
+    MonteCarloSimulator.new(dashboard, ::Filters::DateFilter.new(''), 'Epic')
   }
 
   before(:each) do
     allow(simulator).to receive(:pick_wip_values).and_return([1.0])
+    Timecop.freeze(now)
   end
 
   describe "#forecast_lead_times" do
