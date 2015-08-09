@@ -35,29 +35,23 @@ class Dashboard < ActiveRecord::Base
     save
   end
 
-  def complete_wip_history(issue_type)
-    history_array = wip_histories.
-        for_issue_type(issue_type).
-        group_by{ |history| history.date }.
-        map{ |date, histories| [date, histories.map{ |history| history.issue }] }.
-        sort
-
-    history = history_array.to_h
-
-    DateRange.new(history_array.first[0], DateTime.now.to_date).to_a.each do |date|
-      if history[date].nil?
-        last_date = history_array.last[0]
-        if date > last_date
-          last_issues = history_array.last[1]
-          in_progress = last_issues.select{ |issue| issue.completed.nil? }
-          history[date] = in_progress
-        else
-          history[date] = []
-        end
-      end
-    end
-
-    history.sort.to_h
+  def wip_at(date, issue_type)
+    # convert to a time for comparisons, so that we include stories that finish on the same day
+    time = date.to_datetime
+    issues.of_type(issue_type).
+        where('started <= :time AND (completed IS NULL OR completed > :time)', time: time)
   end
 
+  def wip_for(date_range, issue_type)
+    date_range.to_a.
+        map { |date| [date, wip_at(date, issue_type)] }.
+        to_h
+  end
+
+  def wip_history(issue_type)
+    start_date = issues.of_type(issue_type).minimum('started')
+    return {} if start_date.nil?
+    date_range = DateRange.new(start_date.to_date, DateTime.now.to_date)
+    wip_for(date_range, issue_type)
+  end
 end

@@ -5,9 +5,11 @@ class DateRange
   end
 
   def to_a
-    dates = [@start_date]
-    while dates.last < @end_date - 1.day
-      dates << (dates.last + 1.day)
+    dates = []
+    next_date = dates.last || @start_date
+    while next_date < @end_date
+      dates << next_date
+      next_date = next_date + 1.day
     end
     dates
   end
