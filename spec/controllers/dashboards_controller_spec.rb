@@ -55,16 +55,6 @@ RSpec.describe DashboardsController, type: :controller do
   #     expect(assigns(:issues)).to eq([first_epic, second_epic])
   #   end
   # end
-  #
-  # describe "GET #wip_histories" do
-  #   let!(:issue) { create(:issue, :started, dashboard: dashboard) }
-  #   let!(:wip_history) { WipHistory.create(date: issue.started, issue: issue) }
-  #
-  #   it "assigns the history to @wip_histories" do
-  #     get :wip_histories, {:id => dashboard.to_param, :format => :json}, valid_session
-  #     expect(assigns(:wip_histories)).to eq([wip_history])
-  #   end
-  # end
 
   describe "GET #show" do
     it "assigns the requested dashboard as @dashboard" do
