@@ -1,6 +1,5 @@
 class Dashboard < ActiveRecord::Base
   has_many :issues
-  has_many :wip_histories, through: :issues
   belongs_to :domain
 
   validates :domain, presence: true
