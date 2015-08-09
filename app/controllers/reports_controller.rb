@@ -12,39 +12,31 @@ class ReportsController < ApplicationController
     params[:forecast_type] = 'backlog' if params[:forecast_type].nil?
 
     if request.request_method == 'POST'
-      @wip_scale_factor = params[:wip_scale_factor].to_f unless params[:wip_scale_factor].empty?
+      @wip_scale_factor = wip_scale_factor
       @simulator = MonteCarloSimulator.new(@dashboard, @filter, params[:issue_type])
       @forecaster = Forecaster.new(@simulator)
+      @start_date = start_date
+
       if params[:forecast_type] == 'backlog'
-        forecast_backlog
+        @forecasts = @forecaster.forecast_backlog(@backlog, {})
+        @start_date ||= DateTime.now.to_date
       else
-        forecast_lead_times
+        @lead_times = @forecaster.forecast_lead_times({
+                :sizes => sizes,
+                :wip_scale_factor => @wip_scale_factor,
+                :start_date => @start_date
+            })
       end
     end
   end
 
 private
-  # Use callbacks to share common setup or constraints between actions.
   def set_dashboard
     @dashboard = Dashboard.find(params[:dashboard_id]) if params[:dashboard_id]
   end
 
   def set_filter
     @filter = ::Filters::DateFilter.new(params[:filter] || "")
-  end
-
-  def forecast_backlog
-    @forecasts = @forecaster.forecast_backlog(@backlog, {})
-    @start_date = params[:start_date].empty? ? DateTime.now.to_date : DateTime.parse(params[:start_date]).to_date
-  end
-
-  def forecast_lead_times
-    @start_date = start_date
-    @lead_times = @forecaster.forecast_lead_times({
-            :sizes => sizes,
-            :wip_scale_factor => @wip_scale_factor,
-            :start_date => @start_date
-        })
   end
 
   def sizes
@@ -58,5 +50,9 @@ private
 
   def start_date
     DateTime.parse(params[:start_date]).to_date unless params[:start_date].empty?
+  end
+
+  def wip_scale_factor
+    params[:wip_scale_factor].to_f unless params[:wip_scale_factor].empty?
   end
 end
