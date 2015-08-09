@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 4) do
+ActiveRecord::Schema.define(version: 3) do
 
   create_table "dashboards", force: :cascade do |t|
     t.integer  "domain_id"
@@ -47,16 +47,5 @@ ActiveRecord::Schema.define(version: 4) do
 
   add_index "issues", ["dashboard_id"], name: "index_issues_on_dashboard_id"
   add_index "issues", ["epic_key"], name: "index_issues_on_epic_key"
-
-  create_table "wip_histories", force: :cascade do |t|
-    t.date     "date"
-    t.integer  "issue_id"
-    t.string   "issue_type"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  add_index "wip_histories", ["issue_id"], name: "index_wip_histories_on_issue_id"
-  add_index "wip_histories", ["issue_type"], name: "index_wip_histories_on_issue_type"
 
 end
