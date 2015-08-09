@@ -42,45 +42,150 @@ RSpec.describe Dashboard, type: :model do
 
   end
 
-  describe "#complete_wip_history" do
-    let(:start_date) { DateTime.new(2001, 1, 1) }
-    let(:dashboard) { create(:dashboard, issues: [
-            build(:epic, started: start_date, completed: start_date + 1.day),
-            build(:epic, started: start_date + 3.days),
-            build(:issue, started: start_date, completed: start_date + 1.day)
-        ]) }
+  describe "#wip_at" do
+    let(:date) { Date.new(2001, 1, 1) }
 
-    let(:epic_one) { dashboard.issues[0] }
-    let(:epic_two) { dashboard.issues[1] }
-    let(:story) { dashboard.issues[2] }
+    context "if there were no stories in progress" do
+      let(:dashboard) { create(:dashboard) }
 
-    before(:each) do
-      WipHistory.compute_history_for!(dashboard)
-      Timecop.freeze(start_date + 5.days)
+      it "returns an empty list" do
+        expect(dashboard.wip_at(date, 'Story')).to eq([])
+      end
     end
 
-    it "returns wip histories for epics grouped by date" do
-      history = dashboard.complete_wip_history('Epic')
+    context "if the dashboard has a started issue on that date" do
+      let(:story) { create(:issue, started: date - 1.hour) }
+      let(:dashboard) { create(:dashboard, issues: [story]) }
 
-      expect(history).to eq({
-                  start_date.to_date => [epic_one],
-                  start_date.to_date + 1.days => [],
-                  start_date.to_date + 2.days => [],
-                  start_date.to_date + 3.days => [epic_two],
-                  start_date.to_date + 4.days => [epic_two]
-              })
+      it "returns a list with the started issue" do
+        expect(dashboard.wip_at(date, 'Story')).to eq([story])
+      end
     end
 
-    it "returns wip histories for stories grouped by date" do
-      history = dashboard.complete_wip_history('Story')
+    context "if the dashboard has a completed issue before that date" do
+      let(:story) { create(:issue, started: date - 2.hour, completed: date - 1.hour) }
+      let(:dashboard) { create(:dashboard, issues: [story]) }
 
-      expect(history).to eq({
-                  start_date.to_date => [story],
-                  start_date.to_date + 1.days => [],
-                  start_date.to_date + 2.days => [],
-                  start_date.to_date + 3.days => [],
-                  start_date.to_date + 4.days => []
-              })
+      it "does not include that issue" do
+        expect(dashboard.wip_at(date, 'Story')).to eq([])
+      end
+    end
+
+    context "if the dashboard has an issue that spans that date" do
+      let(:story) { create(:issue, started: date - 1.hour, completed: date + 1.hour) }
+      let(:dashboard) { create(:dashboard, issues: [story]) }
+
+      it "does not include that issue" do
+        expect(dashboard.wip_at(date, 'Story')).to eq([story])
+      end
+    end
+
+    context "if the dashboard has an issue that starts on that date" do
+      let(:story) { create(:issue, started: date, completed: date + 1.hour) }
+
+      let(:dashboard) { create(:dashboard, issues: [story]) }
+
+      it "includes the story on that issue" do
+        expect(dashboard.wip_at(date, 'Story')).to eq([story])
+      end
+    end
+
+    context "if the issue type is 'Story'" do
+      let(:story) { create(:issue, started: date - 1.hour, completed: date + 1.hour) }
+      let(:epic) { create(:epic, started: date - 1.hour, completed: date + 1.hour) }
+      let(:dashboard) { create(:dashboard, issues: [story, epic]) }
+
+      it "returns only stories" do
+        expect(dashboard.wip_at(date, 'Story')).to eq([story])
+      end
+    end
+  end
+
+  describe "#wip_for" do
+    let(:start_date) { Date.new(2001, 1, 1) }
+    let(:middle_date) { Date.new(2001, 1, 2) }
+    let(:end_date) { Date.new(2001, 1, 3) }
+    let(:range) { DateRange.new(start_date, end_date) }
+
+    context "if the range is empty" do
+      let(:dashboard) { create(:dashboard) }
+
+      it "returns an empty hash" do
+        empty_range = DateRange.new(start_date, start_date)
+        expect(dashboard.wip_for(empty_range, 'Story')).to eq({})
+      end
+    end
+
+    context "if the dashboard has no issues" do
+      let(:dashboard) { create(:dashboard) }
+
+      it "returns an empty list for each date" do
+        expect(dashboard.wip_for(range, 'Story')).to eq({
+                    start_date => [],
+                    middle_date => []
+                })
+      end
+    end
+
+    context "if the dashboard has a story completed in the range" do
+      let(:story) {
+        create(:issue,
+            started: start_date + 1.hour,
+            completed: end_date - 1.hour)
+      }
+
+      let(:dashboard) { create(:dashboard, issues: [story]) }
+
+      it "returns the story in the WIP for that date" do
+        expect(dashboard.wip_for(range, 'Story')).to eq({
+                    start_date => [],
+                    middle_date => [story]
+                })
+      end
+    end
+
+    context "if the dashboard has an epic completed in the range" do
+      let(:epic) {
+        create(:epic,
+            started: start_date + 1.hour,
+            completed: end_date - 1.hour)
+      }
+
+      let(:dashboard) { create(:dashboard, issues: [epic]) }
+
+      it "returns the epic in the WIP for that date" do
+        expect(dashboard.wip_for(range, 'Epic')).to eq({
+                    start_date => [],
+                    middle_date => [epic]
+                })
+      end
+    end
+  end
+
+  describe "#wip_history" do
+    context "if the dashboard has no issues" do
+      let(:dashboard) { create(:dashboard) }
+
+      it "returns an empty hash" do
+        expect(dashboard.wip_history('Story')).to eq({})
+      end
+    end
+
+    context "if the dashboard has an issue" do
+      let(:start_date) { Date.new(2001, 1, 1) }
+      let(:middle_date) { start_date + 1.day }
+      let(:now) { start_date + 2.days }
+      let(:story) { create(:issue, started: start_date, completed: start_date + 1.day) }
+      let(:dashboard) { create(:dashboard, issues: [story]) }
+
+      it "returns all WIP values between the start date and now" do
+        Timecop.freeze(now) do
+          expect(dashboard.wip_history('Story')).to eq({
+                      start_date => [story],
+                      middle_date => []
+                  })
+        end
+      end
     end
   end
 end

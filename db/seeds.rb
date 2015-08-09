@@ -50,4 +50,3 @@ start_date = DateTime.now - (TOTAL_EPICS + 30).days
 end
 
 dashboard.compute_cycle_times!
-WipHistory.compute_history_for!(dashboard)

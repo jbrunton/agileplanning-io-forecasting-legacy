@@ -23,7 +23,7 @@ class DataController < ApplicationController
   end
 
   def wip
-    history = @dashboard.complete_wip_history(params[:issue_type]).
+    history = @dashboard.wip_history(params[:issue_type]).
         select{ |date, _| @filter.allow_date(date) }
 
     trend_builder = Stats::TrendBuilder.new.

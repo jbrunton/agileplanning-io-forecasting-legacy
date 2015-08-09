@@ -20,6 +20,5 @@ class SyncDashboardJob
     dashboard.save
 
     dashboard.compute_cycle_times!
-    WipHistory.compute_history_for!(dashboard)
   end
 end

@@ -88,7 +88,7 @@ protected
   end
 
   def compute_wip_values(dashboard, filter, issue_type)
-    dashboard.complete_wip_history(issue_type).
+    dashboard.wip_history(issue_type).
         select{ |date, issues| filter.allow_date(date) }.
         values.
         map{ |issues| issues.length }
