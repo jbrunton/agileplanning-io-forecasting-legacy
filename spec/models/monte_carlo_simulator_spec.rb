@@ -1,8 +1,11 @@
 require 'rails_helper'
 
 RSpec.describe MonteCarloSimulator do
+  let (:now) { start_date + 5.5.days }
+
   before(:each) do
     MonteCarloSimulator.send(:public, *MonteCarloSimulator.protected_instance_methods)
+    Timecop.freeze(now)
   end
 
   let (:start_date) { DateTime.new(2001, 1, 1) }
@@ -17,17 +20,11 @@ RSpec.describe MonteCarloSimulator do
         build(:epic, :completed, started: start_date + 10.days, cycle_time: 1, small: true),
         build(:issue, :completed)
     ]
-    dashboard = create(:dashboard, issues: epics)
-    WipHistory.compute_history_for!(dashboard)
-    dashboard
+    create(:dashboard, issues: epics)
   }
 
-  let (:now) { start_date + 5.5.days }
-
   let (:simulator) {
-    Timecop.freeze(now) do
-      MonteCarloSimulator.new(dashboard, filter, 'Epic')
-    end
+    MonteCarloSimulator.new(dashboard, filter, 'Epic')
   }
 
   describe "#cycle_time_values" do
