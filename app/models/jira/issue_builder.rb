@@ -1,8 +1,9 @@
 class Jira::IssueBuilder
-  def initialize(json, epic_link_id, epic_status_id)
+  def initialize(json, epic_link_id, epic_status_id, story_points_id)
     @json = json
     @epic_link_id = epic_link_id
     @epic_status_id = epic_status_id
+    @story_points_id = story_points_id
   end
 
   def build
@@ -10,7 +11,8 @@ class Jira::IssueBuilder
         :key => key,
         :summary => summary,
         :issue_type => issue_type,
-        :epic_status => epic_status
+        :epic_status => epic_status,
+        :story_points => story_points
     }
 
     unless attrs[:issue_type] == 'Epic'
@@ -41,6 +43,11 @@ private
 
   def epic_status
     @json['fields'][@epic_status_id].try(:[], 'value')
+  end
+
+  def story_points
+    story_points_str = @json['fields'][@story_points_id]
+    story_points_str.to_i if story_points_str
   end
 
   def compute_started_date

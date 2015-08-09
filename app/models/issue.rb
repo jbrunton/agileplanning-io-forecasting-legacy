@@ -17,8 +17,12 @@ class Issue < ActiveRecord::Base
   end
 
   def size
-    size_match = /\[(S|M|L)\]/.match(summary) if issue_type == 'Epic'
-    size_match[1] unless size_match.nil?
+    if issue_type == 'Epic'
+      size_match = /\[(S|M|L)\]/.match(summary)
+      size_match[1] unless size_match.nil?
+    else
+      story_points
+    end
   end
 
   def self.of_type(issue_type)

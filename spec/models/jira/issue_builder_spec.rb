@@ -3,6 +3,7 @@ require 'rails_helper'
 RSpec.describe Jira::IssueBuilder do
   let(:epic_link_id) { 'customfield_12345' }
   let(:epic_status_id) { 'customfield_98765' }
+  let(:story_points_id) { 'customfield_2468' }
   let(:epic_status) { 'Done' }
 
   describe "#build" do
@@ -15,7 +16,8 @@ RSpec.describe Jira::IssueBuilder do
           "issuetype": {
             "name": "Story"
           },
-          "#{epic_link_id}": "EPIC-KEY"
+          "#{epic_link_id}": "EPIC-KEY",
+          "#{story_points_id}": "5"
         },
         "changelog": {
           "histories": [
@@ -45,7 +47,7 @@ RSpec.describe Jira::IssueBuilder do
       END
     }
 
-    let(:issue) { Jira::IssueBuilder.new(JSON.parse(json), epic_link_id, epic_status_id).build }
+    let(:issue) { Jira::IssueBuilder.new(JSON.parse(json), epic_link_id, epic_status_id, story_points_id).build }
 
     it "sets the key" do
       expect(issue.key).to eq('DEMO-101')
@@ -61,6 +63,10 @@ RSpec.describe Jira::IssueBuilder do
 
     it "sets the epic" do
       expect(issue.epic_key).to eq('EPIC-KEY')
+    end
+
+    it "sets the story points" do
+      expect(issue.story_points).to eq(5)
     end
 
     context "if the issue_type is 'epic'" do
@@ -105,8 +111,8 @@ RSpec.describe Jira::IssueBuilder do
         END
       }
 
-      it "sets the started and comleted dates to nil" do
-        issue = Jira::IssueBuilder.new(JSON.parse(json), epic_link_id, epic_status_id).build
+      it "sets the started and completed dates to nil" do
+        issue = Jira::IssueBuilder.new(JSON.parse(json), epic_link_id, epic_status_id, story_points_id).build
         expect(issue.started).to be_nil
         expect(issue.completed).to be_nil
       end
