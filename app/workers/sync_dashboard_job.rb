@@ -11,12 +11,14 @@ class SyncDashboardJob
       WebsocketRails["dashboard:#{dashboard.id}"].trigger(:update, { progress: progress })
     end
 
-    issues.each do |issue|
-      dashboard.issues.append(issue)
-    end
+   ActiveRecord::Base.transaction do
+      issues.each do |issue|
+        dashboard.issues.append(issue)
+      end
 
-    dashboard.last_synced = DateTime.now
-    dashboard.save
+      dashboard.last_synced = DateTime.now
+      dashboard.save
+   end
 
     dashboard.compute_cycle_times!
   end
