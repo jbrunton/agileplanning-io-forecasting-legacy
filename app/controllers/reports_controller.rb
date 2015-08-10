@@ -40,12 +40,12 @@ private
   end
 
   def sizes
-    {
-        'S' => params[:small].to_i,
-        'M' => params[:medium].to_i,
-        'L' => params[:large].to_i,
-        '?' => params[:unknown].to_i
-    }
+    params[:sizes].map do |size, count|
+      [
+          /^\d+$/.match(size) ? size.to_i : size,
+          count.to_i
+      ]
+    end.to_h
   end
 
   def start_date
