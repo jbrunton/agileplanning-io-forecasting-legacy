@@ -1,5 +1,5 @@
 class DataController < ApplicationController
-  before_action :set_dashboard, only: [:cycle_times, :wip, :backlog]
+  before_action :set_dashboard, only: [:cycle_times, :wip, :backlog, :valid_sizes]
   before_action :set_filter, only: [:cycle_times, :wip]
 
   def cycle_times
@@ -44,6 +44,15 @@ class DataController < ApplicationController
 
     respond_to do |format|
       format.json { render json: { in_progress: backlog.in_progress, upcoming: backlog.upcoming } }
+    end
+  end
+
+  def valid_sizes
+    filter = ::Filters::DateFilter.new(params[:filter] || "")
+    partitions = @dashboard.size_partitions_for(params[:issue_type], filter)
+
+    respond_to do |format|
+      format.json { render json: partitions.to_json }
     end
   end
 

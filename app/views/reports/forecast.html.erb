@@ -16,6 +16,7 @@
           title: 'Upcoming',
           issues: backlog.upcoming
       }));
+      filterChanged();
   }
 
   function updatePartitions(issueType) {
@@ -42,9 +43,26 @@
       ).done(updateBacklog);
   }
 
+  function filterChanged() {
+      var issueType = $('#issue_type').val();
+      var filter = $('.content.active .filter').val();
+      $.when(
+              $.get('<%= dashboard_path(@dashboard) %>/data/valid_sizes.json?issue_type=' + issueType + '&filter=' + filter)
+      ).done(enableSizes);
+  }
+
+  function enableSizes(sizes) {
+      $('#partitions input').prop('disabled', true);
+      sizes.forEach(function(size) {
+          $('#partitions input[name="sizes[' + size +  ']"').prop('disabled', false);
+      });
+      $('#partitions input[name="sizes[?]"]').prop('disabled', false);
+  }
+
   $(function() {
       $('#issue_type').change(issueTypeChanged);
       $('#issue_type').val('<%= params[:issue_type] || 'Epic' %>');
+      $('input.filter').change(filterChanged);
       issueTypeChanged();
   });
 </script>

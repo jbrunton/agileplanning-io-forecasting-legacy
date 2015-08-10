@@ -10,8 +10,9 @@ class Dashboard < ActiveRecord::Base
     issues.of_type('Epic')
   end
 
-  def size_partitions_for(issue_type)
+  def size_partitions_for(issue_type, filter = nil)
     issues.of_type(issue_type).
+        select{ |issue| filter.nil? || (issue.started && issue.completed && filter.allow_issue(issue)) }.
         map{ |issue| issue.size }.
         compact.
         uniq.
