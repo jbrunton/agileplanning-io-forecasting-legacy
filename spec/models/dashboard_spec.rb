@@ -10,6 +10,43 @@ RSpec.describe Dashboard, type: :model do
     end
   end
 
+  describe "#size_partitions_for" do
+    let(:issue_started) { DateTime.new(2001, 1, 1) }
+    let(:issue) { create(:issue, started: issue_started, completed: issue_started + 1.day, story_points: '5') }
+    let(:epic) { create(:epic, summary: 'Some Epic [M]') }
+    let(:dashboard) { dashboard = create(:dashboard, issues: [issue, epic]) }
+
+    it "returns the size partitions for issues" do
+      expect(dashboard.size_partitions_for('Story')).to eq([issue.size])
+    end
+
+    it "returns the size partitions for epics" do
+      expect(dashboard.size_partitions_for('Epic')).to eq([epic.size])
+    end
+
+    it "returns a unique list without nils" do
+      dashboard.issues << create(:issue)
+      dashboard.issues << create(:issue, story_points: '5')
+      dashboard.reload
+
+      expect(dashboard.size_partitions_for('Story')).to eq([issue.size])
+    end
+
+    it "orders story point sizes in ascending order" do
+      dashboard.issues << create(:issue, story_points: 1)
+      dashboard.issues << create(:issue, story_points: 2)
+
+      expect(dashboard.size_partitions_for('Story')).to eq([1, 2, 5])
+    end
+
+    it "filters by date, if given a filter" do
+      dashboard.issues << create(:issue, story_points: 2, started: issue_started + 2.days, completed: issue_started + 3.days)
+      filter = ::Filters::DateFilter.new("1 Jan 2001-2 Jan 2001")
+
+      expect(dashboard.size_partitions_for('Story', filter)).to eq([5])
+    end
+  end
+
   describe ".compute_cycle_times_for" do
     it "throws an error unless the issue is an epic" do
       expect{

@@ -6,6 +6,7 @@ class Jira::Client
     @credentials = params.slice(:username, :password)
     @epic_link_id = get_field('Epic Link')['id']
     @epic_status_id = get_field('Epic Status')['id']
+    @story_points_id = get_field('Story Points')['id']
   end
 
   def request(method, relative_url)
@@ -27,7 +28,7 @@ class Jira::Client
     response = request(:get, url)
 
     issues = response['issues'].map do |raw_issue|
-      Jira::IssueBuilder.new(raw_issue, @epic_link_id, @epic_status_id).build
+      Jira::IssueBuilder.new(raw_issue, @epic_link_id, @epic_status_id, @story_points_id).build
     end
 
     startAt = response['startAt'] || 0

@@ -23,6 +23,7 @@ Rails.application.routes.draw do
       get 'data/cycle_times', to: 'data#cycle_times'
       get 'data/wip', to: 'data#wip'
       get 'data/backlog', to: 'data#backlog'
+      get 'data/valid_sizes', to: 'data#valid_sizes'
     end
 
     get 'reports', to: 'reports#index'

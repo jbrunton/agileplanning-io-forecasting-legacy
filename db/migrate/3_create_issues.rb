@@ -7,6 +7,7 @@ class CreateIssues < ActiveRecord::Migration
       t.references :dashboard, index: true, foreign_key: true
       t.string :epic_key, index: true
       t.string :epic_status
+      t.integer :story_points
 
       t.timestamp :started
       t.timestamp :completed

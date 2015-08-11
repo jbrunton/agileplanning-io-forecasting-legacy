@@ -52,5 +52,23 @@
       "custom": "com.pyxis.greenhopper.jira:gh-epic-status",
       "customId": 98765
     }
+  },
+  {
+    "id": "customfield_13579",
+    "name": "Story Points",
+    "custom": true,
+    "orderable": true,
+    "navigable": true,
+    "searchable": true,
+    "clauseNames": [
+      "cf[13579]",
+      "Story Points"
+    ],
+    "schema": {
+      "type": "array",
+      "items": "string",
+      "custom": "com.pyxis.greenhopper.jira:gh-story-points",
+      "customId": 13579
+    }
   }
 ]

@@ -19,14 +19,14 @@ class Forecaster
     return [] if backlog.upcoming.length == 0
 
     opts = {
-        sizes: {'S' => 0, 'M' => 0, 'L' => 0, '?' => 0}
+        sizes: {'?' => 0}
     }
     
     backlog.upcoming.each_with_index.map do |issue, index|
       opts[:rank] = index + 1
 
       size = issue.size || '?'
-      opts[:sizes][size] = opts[:sizes][size] + 1
+      opts[:sizes][size] = (opts[:sizes][size] || 0) + 1
 
       { issue: issue, forecast: forecast_lead_times(opts) }
     end

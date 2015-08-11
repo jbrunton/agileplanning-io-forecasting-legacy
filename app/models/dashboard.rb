@@ -10,6 +10,15 @@ class Dashboard < ActiveRecord::Base
     issues.of_type('Epic')
   end
 
+  def size_partitions_for(issue_type, filter = nil)
+    issues.of_type(issue_type).
+        select{ |issue| filter.nil? || (issue.started && issue.completed && filter.allow_issue(issue)) }.
+        map{ |issue| issue.size }.
+        compact.
+        uniq.
+        sort_by{ |size| {'S' => 1, 'M' => 2, 'L' => 3}[size] || size }
+  end
+
   def self.compute_cycle_times_for(epic)
     raise 'Issue must be an epic.' unless epic.issue_type == 'Epic'
 
