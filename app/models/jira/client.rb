@@ -1,3 +1,6 @@
+require 'net/http'
+require 'net/https'
+
 class Jira::Client
   MAX_RESULTS = 50
 
