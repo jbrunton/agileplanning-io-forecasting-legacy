@@ -13,11 +13,11 @@
 
     <label>
       Name
-      <%= f.text_field :name %>
+      <%= f.text_field :name, :placeholder => "a name for your JIRA instance" %>
     </label>
     <label>
       Domain
-      <%= f.text_field :domain %>
+      <%= f.text_field :domain, :placeholder => "address of your JIRA instance, e.g. https://jira.example.com" %>
     </label>
     <div class="actions">
       <%= f.submit :class => 'radius button' %>
