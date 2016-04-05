@@ -14,6 +14,7 @@ class ReportsController < ApplicationController
     if request.request_method == 'POST'
       @wip_scale_factor = wip_scale_factor
       @simulator = MonteCarloSimulator.new(@dashboard, @filter, params[:issue_type])
+      #byebug
       @forecaster = Forecaster.new(@simulator)
       @start_date = start_date
 
