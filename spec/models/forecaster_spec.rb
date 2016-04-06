@@ -53,19 +53,36 @@ RSpec.describe Forecaster do
       end
     end
 
-    it "divides by the WIP for issues with rank greater than the computed WIP value" do
-      wip = 2.0
-      allow(simulator).to receive(:pick_wip_values).and_return([wip])
+    context "when the rank is greater than the computed WIP value do" do
+      it "divides by the wip if the value yielded is less than the max of the individual cycle times" do
+        wip = 2.0
+        allow(simulator).to receive(:pick_wip_values).and_return([wip])
 
-      forecast = forecaster.forecast_lead_times(opts)
+        forecast = forecaster.forecast_lead_times(opts)
 
-      expect(forecast).to eq([
-                  {likelihood: 50, actual_time: total_time / wip },
-                  {likelihood: 80, actual_time: total_time / wip },
-                  {likelihood: 90, actual_time: total_time / wip }
-              ])
+        expect(forecast).to eq([
+                    {likelihood: 50, actual_time: total_time / wip },
+                    {likelihood: 80, actual_time: total_time / wip },
+                    {likelihood: 90, actual_time: total_time / wip }
+                ])
+      end
+
+      it "returns the max of the individual cucle times otherwise" do
+        wip = 2.0
+        allow(simulator).to receive(:pick_wip_values).and_return([wip])
+        allow(simulator).to receive(:pick_cycle_time_values).and_return([1.0, 1.0, 3.0])
+
+        forecast = forecaster.forecast_lead_times(opts)
+
+        expect(forecast).to eq([
+                    {likelihood: 50, actual_time: 3 },
+                    {likelihood: 80, actual_time: 3 },
+                    {likelihood: 90, actual_time: 3 }
+                ])
+      end
     end
   end
+
   describe "#forecast_backlog" do
     let(:opts) { {} }
 
