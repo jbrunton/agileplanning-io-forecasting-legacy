@@ -72,8 +72,11 @@ protected
     end
 
 
-    actual_time = total_time
-    actual_time = total_time / average_wip if rank_greater_than_wip
+    forecast_actual_time = total_time
+    forecast_actual_time = total_time / average_wip if rank_greater_than_wip
+
+    # We can't deliver in less time than the max cycle time, regardless of our WIP
+    actual_time = [cycle_time_values.max, forecast_actual_time].max
 
     { total_time: total_time, average_wip: average_wip, actual_time: actual_time }
   end
